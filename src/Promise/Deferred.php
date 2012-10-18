@@ -111,7 +111,9 @@ class Deferred implements PromiseInterface
     public function resolve()
     {
         $this->state = self::STATE_RESOLVED;
-        $this->fire(func_get_args());
+        $this->arguments = func_get_args();
+
+        $this->fire();
 
         return $this;
     }
@@ -119,17 +121,15 @@ class Deferred implements PromiseInterface
     public function reject()
     {
         $this->state = self::STATE_REJECTED;
-        $this->fire(func_get_args());
+        $this->arguments = func_get_args();
+
+        $this->fire();
 
         return $this;
     }
 
     private function fire()
     {
-        if (0 !== func_num_args()) {
-            $this->arguments = func_get_arg(0);
-        }
-
         foreach ($this->queue as $entry) {
             $fn = $this->state === self::STATE_REJECTED ? $entry[1] : $entry[0];
 
