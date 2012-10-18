@@ -6,10 +6,6 @@ use Promise\Promise;
 
 class PromiseTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     *
-     * @group when
-     */
     public function testWhen()
     {
         $def1 = Promise::defer();

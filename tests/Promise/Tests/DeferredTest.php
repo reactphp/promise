@@ -49,10 +49,6 @@ class DeferredTest extends \PHPUnit_Framework_TestCase
         $deferred->resolve(42);
     }
 
-    /**
-     *
-     * @group test
-     */
     public function testChainingWithException()
     {
         $deferred = new Deferred();
