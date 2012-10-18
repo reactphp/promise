@@ -51,10 +51,10 @@ class Promise implements PromiseInterface
             }
         };
 
-        foreach ($promisesOrValues as $i => $promisesOrValue) {
-            if (is_callable($promisesOrValue)) {
+        foreach ($promisesOrValues as $i => $promiseOrValue) {
+            if (is_callable($promiseOrValue)) {
                 try {
-                    $promisesOrValue = call_user_func($promisesOrValue);
+                    $promiseOrValue = call_user_func($promiseOrValue);
                 } catch (\Exception $e) {
                     $errback($e);
                     continue;
@@ -66,10 +66,10 @@ class Promise implements PromiseInterface
                 $checkResolve();
             };
 
-            if ($promisesOrValue instanceof PromiseInterface) {
-                $promisesOrValue->then($callback, $errback);
+            if ($promiseOrValue instanceof PromiseInterface) {
+                $promiseOrValue->then($callback, $errback);
             } else {
-                $callback($promisesOrValue);
+                $callback($promiseOrValue);
             }
         }
 
