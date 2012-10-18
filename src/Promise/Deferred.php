@@ -41,13 +41,39 @@ class Deferred implements PromiseInterface
      */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
+        $deferred = new static();
+
+        if ($fulfilledHandler) {
+            $fulfilledHandler = function () use ($deferred, $fulfilledHandler) {
+                try {
+                    $ret = call_user_func_array($fulfilledHandler, func_get_args());
+                } catch (\Exception $e) {
+                    $deferred->reject($e);
+                    throw $e;
+                }
+
+                $deferred->resolve($ret);
+
+                return $ret;
+            };
+        }
+
+        if ($errorHandler) {
+            $errorHandler = function () use ($deferred, $errorHandler) {
+                $ret = call_user_func_array($errorHandler, func_get_args());
+                $deferred->reject($ret);
+
+                return $ret;
+            };
+        }
+
         $this->queue->enqueue(array($fulfilledHandler, $errorHandler, $progressHandler));
 
         if ($this->state !== self::STATE_UNRESOLVED) {
             $this->fire();
         }
 
-        return $this;
+        return $deferred->promise();
     }
 
     /**

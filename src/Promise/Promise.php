@@ -16,9 +16,7 @@ class Promise implements PromiseInterface
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
-
-        return $this;
+        return $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
 
     public function isResolved()

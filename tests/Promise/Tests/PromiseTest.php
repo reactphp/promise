@@ -40,10 +40,10 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
     public function testWhenWithException()
     {
 
-        $d3 = Promise::defer()
-            ->then(function() {
-                throw new \Exception('Error has occured');
-            });
+        $d3 = Promise::defer();
+        $d3->then(function() {
+            throw new \Exception('Error has occured');
+        });
 
         $self = $this;
 

@@ -31,4 +31,42 @@ class DeferredTest extends \PHPUnit_Framework_TestCase
         $d2->resolve();
         $this->assertEquals(false, $d2->isRejected());
     }
+
+    public function testChaining()
+    {
+        $deferred = new Deferred();
+
+        $self = $this;
+
+        $deferred
+            ->then(function ($value) {
+                return $value + 2;
+            })
+            ->then(function ($value) use ($self) {
+                $self->assertEquals(42, $value);
+            });
+
+        $deferred->resolve(42);
+    }
+
+    /**
+     *
+     * @group test
+     */
+    public function testChainingWithException()
+    {
+        $deferred = new Deferred();
+
+        $self = $this;
+
+        $deferred
+            ->then(function () {
+                throw new \Exception('Error has occured');
+            })
+            ->then(null, function ($e) use ($self) {
+                $self->assertEquals('Error has occured', $e->getMessage());
+            });
+
+        $deferred->resolve();
+    }
 }
