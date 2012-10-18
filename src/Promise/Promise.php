@@ -47,7 +47,7 @@ class Promise implements PromiseInterface
         $checkResolve = function () use (&$results, $length, $deferred) {
             if (count($results) === $length) {
                 ksort($results);
-                $deferred->resolve($results);
+                call_user_func_array(array($deferred, 'resolve'), $results);
             }
         };
 

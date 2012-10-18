@@ -21,13 +21,11 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
         $self = $this;
 
         Promise::when(array($def1, $def2, $var, $func))
-            ->then(function ($results) use ($self) {
-                $self->assertCount(4, $results);
-
-                $self->assertEquals(1, array_shift($results));
-                $self->assertEquals(2, array_shift($results));
-                $self->assertEquals(3, array_shift($results));
-                $self->assertEquals(4, array_shift($results));
+            ->then(function ($resultFromDef1, $resultFromDef2, $resultFromVar, $resultFromFunc) use ($self) {
+                $self->assertEquals(1, $resultFromDef1);
+                $self->assertEquals(2, $resultFromDef2);
+                $self->assertEquals(3, $resultFromVar);
+                $self->assertEquals(4, $resultFromFunc);
             });
 
         $def1->resolve(1);
@@ -65,11 +63,9 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
         $self = $this;
 
         Promise::when(array($def, $func))
-            ->then(function ($results) use ($self) {
-                $self->assertCount(2, $results);
-
-                $self->assertEquals(1, array_shift($results));
-                $self->assertEquals(2, array_shift($results));
+            ->then(function ($resultFromDef, $resultFromFunc) use ($self) {
+                $self->assertEquals(1, $resultFromDef);
+                $self->assertEquals(2, $resultFromFunc);
             });
 
         $def->resolve(1);
