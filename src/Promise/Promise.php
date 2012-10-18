@@ -34,42 +34,39 @@ class Promise implements PromiseInterface
         return new Deferred();
     }
 
-    public static function when()
+    public static function when(array $promisesOrValues)
     {
         $deferred = static::defer();
-        $args     = func_get_args();
-        $numArgs  = func_num_args();
+        $length   = count($promisesOrValues);
         $results  = array();
 
         $errback = function ($error) use ($deferred) {
             $deferred->reject($error);
         };
 
-        $checkResolve = function () use (&$results, $numArgs, $deferred) {
-            if (count($results) === $numArgs) {
+        $checkResolve = function () use (&$results, $length, $deferred) {
+            if (count($results) === $length) {
                 ksort($results);
                 $deferred->resolve($results);
             }
         };
 
-        for ($i = 0; $i < $numArgs; $i++) {
-            $arg = $args[$i];
-
+        foreach ($promisesOrValues as $i => $promisesOrValue) {
             $callback = function ($value = null) use (&$results, $i, $checkResolve) {
                 $results[$i] = $value;
                 $checkResolve();
             };
 
-            if ($arg instanceof PromiseInterface) {
-                $arg->then($callback, $errback);
-            } elseif (is_callable($arg)) {
+            if ($promisesOrValue instanceof PromiseInterface) {
+                $promisesOrValue->then($callback, $errback);
+            } elseif (is_callable($promisesOrValue)) {
                 try {
-                    $callback(call_user_func($arg));
+                    $callback(call_user_func($promisesOrValue));
                 } catch (\Exception $e) {
                     $errback($e);
                 }
             } else {
-                $callback($arg);
+                $callback($promisesOrValue);
             }
         }
 

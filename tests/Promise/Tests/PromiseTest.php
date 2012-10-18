@@ -20,7 +20,7 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
 
         $self = $this;
 
-        Promise::when($def1, $def2, $var, $func)
+        Promise::when(array($def1, $def2, $var, $func))
             ->then(function ($results) use ($self) {
                 $self->assertCount(4, $results);
 
@@ -43,7 +43,7 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
 
         $self = $this;
 
-        Promise::when($d3)
+        Promise::when(array($d3))
             ->then(
                 function () {
                 },
