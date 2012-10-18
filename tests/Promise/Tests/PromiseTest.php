@@ -35,7 +35,6 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
 
     public function testWhenWithException()
     {
-
         $d3 = Promise::defer();
         $d3->then(function() {
             throw new \Exception('Error has occured');
@@ -53,5 +52,26 @@ class PromiseTest extends \PHPUnit_Framework_TestCase
             );
 
         $d3->resolve();
+    }
+
+    public function testWhenWithNestedPromise()
+    {
+        $def = Promise::defer();
+
+        $func = function () {
+            return Promise::defer()->resolve(2)->promise();
+        };
+
+        $self = $this;
+
+        Promise::when(array($def, $func))
+            ->then(function ($results) use ($self) {
+                $self->assertCount(2, $results);
+
+                $self->assertEquals(1, array_shift($results));
+                $self->assertEquals(2, array_shift($results));
+            });
+
+        $def->resolve(1);
     }
 }

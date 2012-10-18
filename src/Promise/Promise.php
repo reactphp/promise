@@ -52,6 +52,15 @@ class Promise implements PromiseInterface
         };
 
         foreach ($promisesOrValues as $i => $promisesOrValue) {
+            if (is_callable($promisesOrValue)) {
+                try {
+                    $promisesOrValue = call_user_func($promisesOrValue);
+                } catch (\Exception $e) {
+                    $errback($e);
+                    continue;
+                }
+            }
+
             $callback = function ($value = null) use (&$results, $i, $checkResolve) {
                 $results[$i] = $value;
                 $checkResolve();
@@ -59,12 +68,6 @@ class Promise implements PromiseInterface
 
             if ($promisesOrValue instanceof PromiseInterface) {
                 $promisesOrValue->then($callback, $errback);
-            } elseif (is_callable($promisesOrValue)) {
-                try {
-                    $callback(call_user_func($promisesOrValue));
-                } catch (\Exception $e) {
-                    $errback($e);
-                }
             } else {
                 $callback($promisesOrValue);
             }
