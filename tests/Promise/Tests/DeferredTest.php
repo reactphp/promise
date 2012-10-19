@@ -9,7 +9,8 @@ use Promise\Deferred;
  */
 class DeferredTest extends TestCase
 {
-    public function testShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyResolved()
+    /** @test */
+    public function shouldReturnAPromiseForPassedInResolutionValueWhenAlreadyResolved()
     {
         $d = new Deferred();
         $d->resolve(1);
@@ -23,7 +24,8 @@ class DeferredTest extends TestCase
         $d->resolve(2)->then($mock);
     }
 
-    public function testShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyResolved()
+    /** @test */
+    public function shouldReturnAPromiseForPassedInRejectionValueWhenAlreadyResolved()
     {
         $d = new Deferred();
         $d->resolve(1);
@@ -37,7 +39,8 @@ class DeferredTest extends TestCase
         $d->reject(2)->then($this->expectCallableNever(), $mock);
     }
 
-    public function testShouldReturnSilentlyOnProgressWhenAlreadyResolved()
+    /** @test */
+    public function shouldReturnSilentlyOnProgressWhenAlreadyResolved()
     {
         $d = new Deferred();
         $d->resolve(1);
@@ -45,7 +48,8 @@ class DeferredTest extends TestCase
         $this->assertNull($d->progress());
     }
 
-    public function testShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyRejected()
+    /** @test */
+    public function shouldReturnAPromiseForPassedInResolutionValueWhenAlreadyRejected()
     {
         $d = new Deferred();
         $d->reject(1);
@@ -59,7 +63,8 @@ class DeferredTest extends TestCase
         $d->resolve(2)->then($mock);
     }
 
-    public function testShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyRejected()
+    /** @test */
+    public function shouldReturnAPromiseForPassedInRejectionValueWhenAlreadyRejected()
     {
         $d = new Deferred();
         $d->reject(1);
@@ -73,7 +78,8 @@ class DeferredTest extends TestCase
         $d->reject(2)->then($this->expectCallableNever(), $mock);
     }
 
-    public function testShouldReturnSilentlyOnProgressWhenAlreadyRejected()
+    /** @test */
+    public function shouldReturnSilentlyOnProgressWhenAlreadyRejected()
     {
         $d = new Deferred();
         $d->reject(1);

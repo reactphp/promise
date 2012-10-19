@@ -12,19 +12,22 @@ use Promise\Tests\Stub\FakePromise;
  */
 class UtilNormalizeTest extends TestCase
 {
-    public function testShouldReturnAPromiseForAValue()
+    /** @test */
+    public function shouldReturnAPromiseForAValue()
     {
         $result = Util::normalize(1);
         $this->assertInstanceOf('Promise\\Promise', $result);
     }
 
-    public function testShouldReturnAPromiseForAPromise()
+    /** @test */
+    public function shouldReturnAPromiseForAPromise()
     {
         $result = Util::normalize(new FakePromise());
         $this->assertInstanceOf('Promise\\Promise', $result);
     }
 
-    public function testShouldNotReturnTheInputPromise()
+    /** @test */
+    public function shouldNotReturnTheInputPromise()
     {
         $fake = new FakePromise();
 
@@ -34,7 +37,8 @@ class UtilNormalizeTest extends TestCase
         $this->assertNotSame($result, $fake);
     }
 
-    public function testShouldReturnAPromiseThatForwardsForAValue()
+    /** @test */
+    public function shouldReturnAPromiseThatForwardsForAValue()
     {
         $result = Util::normalize(1, $this->constant(2));
 
@@ -49,7 +53,8 @@ class UtilNormalizeTest extends TestCase
         $result->then($mock);
     }
 
-    public function testShouldSupportDeepNestingInPromiseChains()
+    /** @test */
+    public function shouldSupportDeepNestingInPromiseChains()
     {
         $d = new Deferred();
         $d->resolve(false);
@@ -74,7 +79,8 @@ class UtilNormalizeTest extends TestCase
         $result->then($mock);
     }
 
-    public function testShouldReturnAResolvedPromiseForAResolvedInputPromise()
+    /** @test */
+    public function shouldReturnAResolvedPromiseForAResolvedInputPromise()
     {
         $result = Util::normalize(Util::resolve(true));
 
@@ -87,7 +93,8 @@ class UtilNormalizeTest extends TestCase
         $result->then($mock);
     }
 
-    public function testShouldReturnAResolvedPromiseForAResolvedFunctionPromise()
+    /** @test */
+    public function shouldReturnAResolvedPromiseForAResolvedFunctionPromise()
     {
         $result = Util::normalize(Util::resolve($this->constant(true)));
 
@@ -100,7 +107,8 @@ class UtilNormalizeTest extends TestCase
         $result->then($mock);
     }
 
-    public function testShouldAssimilateUntrustedPromises()
+    /** @test */
+    public function shouldAssimilateUntrustedPromises()
     {
         $untrusted = new FakePromise();
         $result = Util::normalize($untrusted);
@@ -108,7 +116,8 @@ class UtilNormalizeTest extends TestCase
         $this->assertNotSame($untrusted, $result);
     }
 
-    public function testShouldAssimilateIntermediatePromisesAndForwardResults()
+    /** @test */
+    public function shouldAssimilateIntermediatePromisesAndForwardResults()
     {
         $untrusted = new FakePromise(1);
         $result = Util::normalize($untrusted, function ($val) {
