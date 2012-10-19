@@ -4,65 +4,80 @@ namespace Promise\Tests;
 
 use Promise\Deferred;
 
-class DeferredTest extends \PHPUnit_Framework_TestCase
+/**
+ * @group Deferred
+ */
+class DeferredTest extends TestCase
 {
-    public function testResolve()
+    public function testShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyResolved()
     {
-        $d1 = new Deferred();
+        $d = new Deferred();
+        $d->resolve(1);
 
-        $this->assertEquals(false, $d1->isResolved());
-        $d1->resolve();
-        $this->assertEquals(true, $d1->isResolved());
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
 
-        $d2 = new Deferred();
-        $d2->reject();
-        $this->assertEquals(false, $d2->isResolved());
+        $d->resolve(2)->then($mock);
     }
 
-    public function testReject()
+    public function testShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyResolved()
     {
-        $d1 = new Deferred();
+        $d = new Deferred();
+        $d->resolve(1);
 
-        $this->assertEquals(false, $d1->isRejected());
-        $d1->reject();
-        $this->assertEquals(true, $d1->isRejected());
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
 
-        $d2 = new Deferred();
-        $d2->resolve();
-        $this->assertEquals(false, $d2->isRejected());
+        $d->reject(2)->then($this->expectCallableNever(), $mock);
     }
 
-    public function testChaining()
+    public function testShouldReturnSilentlyOnProgressWhenAlreadyResolved()
     {
-        $deferred = new Deferred();
+        $d = new Deferred();
+        $d->resolve(1);
 
-        $self = $this;
-
-        $deferred
-            ->then(function ($value) {
-                return $value + 2;
-            })
-            ->then(function ($value) use ($self) {
-                $self->assertEquals(42, $value);
-            });
-
-        $deferred->resolve(42);
+        $this->assertNull($d->progress());
     }
 
-    public function testChainingWithException()
+    public function testShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyRejected()
     {
-        $deferred = new Deferred();
+        $d = new Deferred();
+        $d->reject(1);
 
-        $self = $this;
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
 
-        $deferred
-            ->then(function () {
-                throw new \Exception('Error has occured');
-            })
-            ->then(null, function ($e) use ($self) {
-                $self->assertEquals('Error has occured', $e->getMessage());
-            });
+        $d->resolve(2)->then($mock);
+    }
 
-        $deferred->resolve();
+    public function testShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyRejected()
+    {
+        $d = new Deferred();
+        $d->reject(1);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
+
+        $d->reject(2)->then($this->expectCallableNever(), $mock);
+    }
+
+    public function testShouldReturnSilentlyOnProgressWhenAlreadyRejected()
+    {
+        $d = new Deferred();
+        $d->reject(1);
+
+        $this->assertNull($d->progress());
     }
 }

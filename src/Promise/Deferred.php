@@ -2,38 +2,28 @@
 
 namespace Promise;
 
-use SplQueue;
-
 class Deferred implements PromiseInterface
 {
-    const STATE_UNRESOLVED = 'unresolved';
-    const STATE_RESOLVED   = 'resolved';
-    const STATE_REJECTED   = 'rejected';
-
     /**
      * @var Promise
      */
     private $promise;
 
     /**
-     * @var string
+     * @var array
      */
-    private $state = self::STATE_UNRESOLVED;
-
-    /**
-     * @var SplQueue
-     */
-    private $queue;
+    private $handlers = array();
 
     /**
      * @var array
      */
-    private $arguments = array();
+    private $progressHandlers = array();
 
     public function __construct()
     {
-        $this->queue = new SplQueue();
-        $this->queue->setIteratorMode(SplQueue::IT_MODE_DELETE);
+        $this->thenCallback     = array($this, 'replaceableThen');
+        $this->resolveCallback  = array($this, 'replaceableResolve');
+        $this->progressCallback = array($this, 'replaceableProgress');
     }
 
     /**
@@ -41,108 +31,88 @@ class Deferred implements PromiseInterface
      */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        $deferred = new static();
-
-        if ($fulfilledHandler) {
-            $fulfilledHandler = function () use ($deferred, $fulfilledHandler) {
-                try {
-                    $ret = call_user_func_array($fulfilledHandler, func_get_args());
-                } catch (\Exception $e) {
-                    $deferred->reject($e);
-                    throw $e;
-                }
-
-                $deferred->resolve($ret);
-
-                return $ret;
-            };
-        }
-
-        if ($errorHandler) {
-            $errorHandler = function () use ($deferred, $errorHandler) {
-                $ret = call_user_func_array($errorHandler, func_get_args());
-                $deferred->reject($ret);
-
-                return $ret;
-            };
-        }
-
-        $this->queue->enqueue(array($fulfilledHandler, $errorHandler, $progressHandler));
-
-        if ($this->state !== self::STATE_UNRESOLVED) {
-            $this->fire();
-        }
-
-        return $deferred->promise();
+        return call_user_func($this->thenCallback, $fulfilledHandler, $errorHandler, $progressHandler);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isResolved()
+    public function resolve($val = null)
     {
-        return $this->state === self::STATE_RESOLVED;
+        return call_user_func($this->resolveCallback, $val);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isRejected()
+    public function reject($err = null)
     {
-        return $this->state === self::STATE_REJECTED;
+        return call_user_func($this->resolveCallback, Util::rejected($err));
+    }
+
+    public function progress($update = null)
+    {
+        return call_user_func($this->progressCallback, $update);
     }
 
     /**
-     * Returns a Promise object which provides a subset of the methods of the
-     * Deferred object (then, isResolved, and isRejected) to prevent users from
-     * changing the state of the Deferred.
-     *
      * @return Promise
      */
     public function promise()
     {
         if (null === $this->promise) {
-            $this->promise = new Promise($this);
+            $this->promise = new Promise(array($this, 'then'));
         }
 
         return $this->promise;
     }
 
-    public function resolve()
+    private function replaceableThen($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        $this->state = self::STATE_RESOLVED;
-        $this->arguments = func_get_args();
+        $deferred = new self();
 
-        $this->fire();
-
-        return $this;
-    }
-
-    public function reject()
-    {
-        $this->state = self::STATE_REJECTED;
-        $this->arguments = func_get_args();
-
-        $this->fire();
-
-        return $this;
-    }
-
-    private function fire()
-    {
-        foreach ($this->queue as $entry) {
-            $fn = $this->state === self::STATE_REJECTED ? $entry[1] : $entry[0];
-
-            if (!$fn) {
-                continue;
-            }
-
-            try {
-                call_user_func_array($fn, $this->arguments);
-            } catch (\Exception $e) {
-                $this->state = self::STATE_REJECTED;
-                $this->arguments = array($e);
-            }
+        if ($progressHandler) {
+            $progHandler = function($update) use ($deferred, $progressHandler) {
+                try {
+                    $deferred->progress(call_user_func($progressHandler, $update));
+                } catch (\Exception $e) {
+                    $deferred->progress($e);
+                }
+            };
+        } else {
+            $progHandler = array($deferred, 'progress');
         }
+
+        $this->handlers[] = function ($promise) use ($fulfilledHandler, $errorHandler, $deferred, $progHandler) {
+            $promise
+                ->then($fulfilledHandler, $errorHandler)
+                ->then(
+                    array($deferred, 'resolve'),
+                    array($deferred, 'reject'),
+                    $progHandler
+                );
+        };
+
+        $this->progressHandlers[] = $progHandler;
+
+        return $deferred->promise();
+    }
+
+    private function replaceableProgress($update = null)
+    {
+        foreach ($this->progressHandlers as $handler) {
+            call_user_func($handler, $update);
+        }
+    }
+
+    private function replaceableResolve($completed = null)
+    {
+        $completed = Util::resolve($completed);
+
+        $this->thenCallback     = array($completed, 'then');
+        $this->resolveCallback  = array('Promise\Util', 'resolve');
+        $this->progressCallback = function() {};
+
+        foreach ($this->handlers as $handler) {
+            call_user_func($handler, $completed);
+        }
+
+        $this->progressHandlers = $this->handlers = array();
+
+        return $completed;
     }
 }

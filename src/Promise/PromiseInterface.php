@@ -12,14 +12,4 @@ interface PromiseInterface
      * @return PromiseInterface
      */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null);
-
-    /**
-     * @return boolean
-     */
-    public function isResolved();
-
-    /**
-     * @return boolean
-     */
-    public function isRejected();
 }
