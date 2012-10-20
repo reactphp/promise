@@ -2,7 +2,6 @@
 
 namespace Promise\Tests;
 
-use Promise\Deferred;
 use Promise\RejectedPromise;
 use Promise\ResolvedPromise;
 use Promise\Util;
@@ -50,7 +49,7 @@ class UtilResolveTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldRejectARejectedPromise()
     {

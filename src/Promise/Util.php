@@ -11,11 +11,11 @@ class Util
 
     public static function resolve($promiseOrValue)
     {
-        if ($promiseOrValue instanceof Promise) {
+        if ($promiseOrValue instanceof PromiseInterface) {
             return $promiseOrValue;
         }
 
-        if (static::isPromise($promiseOrValue)) {
+        if (static::seemsPromise($promiseOrValue)) {
             $deferred = new Deferred();
 
             $promiseOrValue->then(
@@ -27,48 +27,18 @@ class Util
             return $deferred->promise();
         }
 
-        return self::resolved($promiseOrValue);
+        return new ResolvedPromise($promiseOrValue);
     }
 
     public static function reject($promiseOrValue)
     {
         return static::normalize($promiseOrValue, function($value = null) {
-            return Util::rejected($value);
+            return new RejectedPromise($value);
         });
     }
 
-    public static function resolved($value)
+    public static function seemsPromise($promiseOrValue)
     {
-        return new Promise(function($fulfilledHandler = null) use ($value) {
-            try {
-                if (is_callable($value)) {
-                    $value = call_user_func($value);
-                }
-
-                return Util::resolve($fulfilledHandler ? call_user_func($fulfilledHandler, $value) : $value);
-            } catch (\Exception $e) {
-                return Util::rejected($e);
-            }
-        });
-    }
-
-    public static function rejected($reason)
-    {
-        return new Promise(function($fulfilledHandler = null, $errorHandler = null) use ($reason) {
-            try {
-                return $errorHandler ? Util::resolve(call_user_func($errorHandler, $reason)) : Util::rejected($reason);
-            } catch (\Exception $e) {
-                return Util::rejected($e);
-            }
-        });
-    }
-
-    public static function isPromise($promiseOrValue)
-    {
-        if ($promiseOrValue instanceof PromiseInterface) {
-            return true;
-        }
-
         return is_object($promiseOrValue) && method_exists($promiseOrValue, 'then');
     }
 }

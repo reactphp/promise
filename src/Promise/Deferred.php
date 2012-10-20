@@ -41,7 +41,7 @@ class Deferred implements PromiseInterface
 
     public function reject($err = null)
     {
-        return call_user_func($this->resolveCallback, Util::rejected($err));
+        return call_user_func($this->resolveCallback, new RejectedPromise($err));
     }
 
     public function progress($update = null)

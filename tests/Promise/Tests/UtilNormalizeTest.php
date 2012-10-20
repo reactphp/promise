@@ -16,14 +16,14 @@ class UtilNormalizeTest extends TestCase
     public function shouldReturnAPromiseForAValue()
     {
         $result = Util::normalize(1);
-        $this->assertInstanceOf('Promise\\Promise', $result);
+        $this->assertInstanceOf('Promise\\ResolvedPromise', $result);
     }
 
     /** @test */
     public function shouldReturnAPromiseForAPromise()
     {
         $result = Util::normalize(new FakePromise());
-        $this->assertInstanceOf('Promise\\Promise', $result);
+        $this->assertInstanceOf('Promise\\ResolvedPromise', $result);
     }
 
     /** @test */
@@ -33,7 +33,7 @@ class UtilNormalizeTest extends TestCase
 
         $result = Util::normalize($fake, $this->identity());
 
-        $this->assertInstanceOf('Promise\\Promise', $result);
+        $this->assertInstanceOf('Promise\\ResolvedPromise', $result);
         $this->assertNotSame($result, $fake);
     }
 
@@ -42,7 +42,7 @@ class UtilNormalizeTest extends TestCase
     {
         $result = Util::normalize(1, $this->constant(2));
 
-        $this->assertInstanceOf('Promise\\Promise', $result);
+        $this->assertInstanceOf('Promise\\ResolvedPromise', $result);
 
         $mock = $this->createCallableMock();
         $mock
@@ -83,20 +83,6 @@ class UtilNormalizeTest extends TestCase
     public function shouldReturnAResolvedPromiseForAResolvedInputPromise()
     {
         $result = Util::normalize(Util::resolve(true));
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(true));
-
-        $result->then($mock);
-    }
-
-    /** @test */
-    public function shouldReturnAResolvedPromiseForAResolvedFunctionPromise()
-    {
-        $result = Util::normalize(Util::resolve($this->constant(true)));
 
         $mock = $this->createCallableMock();
         $mock
