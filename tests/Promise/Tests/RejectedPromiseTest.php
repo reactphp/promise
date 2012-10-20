@@ -24,7 +24,7 @@ class RejectedPromiseTest extends TestCase
         $p = new RejectedPromise();
         $this->assertInstanceOf('Promise\\PromiseInterface', $p->then(null, null, null));
     }
-    
+
     /** @test */
     public function shouldForwardUndefinedRejectionValue()
     {
@@ -50,7 +50,7 @@ class RejectedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackDoesNotExplicitlyPropagate()
     {
@@ -73,7 +73,7 @@ class RejectedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackReturnsAResolution()
     {
@@ -96,18 +96,18 @@ class RejectedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldPropagateRejectionsWhenErrbackThrows()
     {
         $exception = new \Exception();
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
             ->will($this->throwException($exception));
-        
+
         $mock2 = $this->createCallableMock();
         $mock2
             ->expects($this->once())
@@ -125,7 +125,7 @@ class RejectedPromiseTest extends TestCase
                 $mock2
             );
     }
-    
+
     /** @test */
     public function shouldPropagateRejectionsWhenErrbackReturnsARejection()
     {

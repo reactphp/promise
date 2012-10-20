@@ -63,7 +63,7 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * @param mixed $val
+     * @param  mixed   $val
      * @return Promise
      */
     public function resolve($val = null)
@@ -71,7 +71,7 @@ class Deferred implements PromiseInterface
         if (null !== $this->completed) {
             return Util::resolve($val);
         }
-        
+
         $this->completed = Util::resolve($val);
 
         foreach ($this->handlers as $handler) {
@@ -84,7 +84,7 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * @param mixed $err
+     * @param  mixed   $err
      * @return Promise
      */
     public function reject($err = null)

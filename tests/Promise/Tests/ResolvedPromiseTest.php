@@ -45,7 +45,7 @@ class ResolvedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldForwardCallbackResultToNextCallback()
     {
@@ -68,7 +68,7 @@ class ResolvedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldForwardPromisedCallbackResultValueToNextCallback()
     {
@@ -91,7 +91,7 @@ class ResolvedPromiseTest extends TestCase
                 $this->expectCallableNever()
             );
     }
-    
+
     /** @test */
     public function shouldSwitchFromCallbacksToErrbacksWhenCallbackReturnsARejection()
     {
@@ -114,18 +114,18 @@ class ResolvedPromiseTest extends TestCase
                 $mock
             );
     }
-    
+
     /** @test */
     public function shouldSwitchFromCallbacksToErrbacksWhenCallbackThrows()
     {
         $exception = new \Exception();
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
             ->will($this->throwException($exception));
-        
+
         $mock2 = $this->createCallableMock();
         $mock2
             ->expects($this->once())
