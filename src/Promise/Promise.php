@@ -5,21 +5,17 @@ namespace Promise;
 class Promise implements PromiseInterface
 {
     /**
-     * @var callable
+     * @var Deferred
      */
-    private $thenCallback;
+    private $deferred;
 
-    public function __construct($thenCallback)
+    public function __construct(Deferred $deferred)
     {
-        if (!is_callable($thenCallback)) {
-            throw new \InvalidArgumentException('$thenCallback is not a callable');
-        }
-
-        $this->thenCallback = $thenCallback;
+        $this->deferred = $deferred;
     }
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return call_user_func($this->thenCallback, $fulfilledHandler, $errorHandler, $progressHandler);
+        return $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
 }

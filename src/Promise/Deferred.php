@@ -7,6 +7,11 @@ class Deferred implements PromiseInterface
     /**
      * @var Promise
      */
+    private $completed;
+
+    /**
+     * @var Promise
+     */
     private $promise;
 
     /**
@@ -19,50 +24,15 @@ class Deferred implements PromiseInterface
      */
     private $progressHandlers = array();
 
-    public function __construct()
-    {
-        $this->thenCallback     = array($this, 'replaceableThen');
-        $this->resolveCallback  = array($this, 'replaceableResolve');
-        $this->progressCallback = array($this, 'replaceableProgress');
-    }
-
     /**
      * {@inheritDoc}
      */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return call_user_func($this->thenCallback, $fulfilledHandler, $errorHandler, $progressHandler);
-    }
-
-    public function resolve($val = null)
-    {
-        return call_user_func($this->resolveCallback, $val);
-    }
-
-    public function reject($err = null)
-    {
-        return call_user_func($this->resolveCallback, new RejectedPromise($err));
-    }
-
-    public function progress($update = null)
-    {
-        return call_user_func($this->progressCallback, $update);
-    }
-
-    /**
-     * @return Promise
-     */
-    public function promise()
-    {
-        if (null === $this->promise) {
-            $this->promise = new Promise(array($this, 'then'));
+        if (null !== $this->completed) {
+            return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
         }
 
-        return $this->promise;
-    }
-
-    private function replaceableThen($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
-    {
         $deferred = new self();
 
         if ($progressHandler) {
@@ -92,27 +62,59 @@ class Deferred implements PromiseInterface
         return $deferred->promise();
     }
 
-    private function replaceableProgress($update = null)
+    /**
+     * @param mixed $val
+     * @return Promise
+     */
+    public function resolve($val = null)
     {
+        if (null !== $this->completed) {
+            return Util::resolve($val);
+        }
+        
+        $this->completed = Util::resolve($val);
+
+        foreach ($this->handlers as $handler) {
+            call_user_func($handler, $this->completed);
+        }
+
+        $this->progressHandlers = $this->handlers = array();
+
+        return $this->completed;
+    }
+
+    /**
+     * @param mixed $err
+     * @return Promise
+     */
+    public function reject($err = null)
+    {
+        return $this->resolve(new RejectedPromise($err));
+    }
+
+    /**
+     * @param mixed $update
+     */
+    public function progress($update = null)
+    {
+        if (null !== $this->completed) {
+            return;
+        }
+
         foreach ($this->progressHandlers as $handler) {
             call_user_func($handler, $update);
         }
     }
 
-    private function replaceableResolve($completed = null)
+    /**
+     * @return Promise
+     */
+    public function promise()
     {
-        $completed = Util::resolve($completed);
-
-        $this->thenCallback     = array($completed, 'then');
-        $this->resolveCallback  = array('Promise\Util', 'resolve');
-        $this->progressCallback = function () {};
-
-        foreach ($this->handlers as $handler) {
-            call_user_func($handler, $completed);
+        if (null === $this->promise) {
+            $this->promise = new Promise($this);
         }
 
-        $this->progressHandlers = $this->handlers = array();
-
-        return $completed;
+        return $this->promise;
     }
 }
