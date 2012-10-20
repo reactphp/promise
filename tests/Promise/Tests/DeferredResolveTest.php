@@ -77,7 +77,7 @@ class DeferredResolveTest extends TestCase
 
         $d
             ->resolve(1)
-            ->then(function($returnedPromiseVal) use ($d, $self) {
+            ->then(function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
                 $mock
                     ->expects($self->once())
@@ -97,7 +97,7 @@ class DeferredResolveTest extends TestCase
 
         $d
             ->resolve(Util::normalize(1))
-            ->then(function($returnedPromiseVal) use ($d, $self) {
+            ->then(function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
                 $mock
                     ->expects($self->once())
@@ -117,7 +117,7 @@ class DeferredResolveTest extends TestCase
 
         $d
             ->resolve(Util::reject(1))
-            ->then($this->expectCallableNever(), function($returnedPromiseVal) use ($d, $self) {
+            ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
                 $mock
                     ->expects($self->once())

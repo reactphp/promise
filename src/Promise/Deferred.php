@@ -66,7 +66,7 @@ class Deferred implements PromiseInterface
         $deferred = new self();
 
         if ($progressHandler) {
-            $progHandler = function($update) use ($deferred, $progressHandler) {
+            $progHandler = function ($update) use ($deferred, $progressHandler) {
                 try {
                     $deferred->progress(call_user_func($progressHandler, $update));
                 } catch (\Exception $e) {
@@ -105,7 +105,7 @@ class Deferred implements PromiseInterface
 
         $this->thenCallback     = array($completed, 'then');
         $this->resolveCallback  = array('Promise\Util', 'resolve');
-        $this->progressCallback = function() {};
+        $this->progressCallback = function () {};
 
         foreach ($this->handlers as $handler) {
             call_user_func($handler, $completed);

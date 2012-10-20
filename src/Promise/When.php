@@ -24,7 +24,7 @@ class When
 
     public static function some($promisesOrValues, $howMany, $fulfilledHandler, $errorHandler, $progressHandler)
     {
-        return Util::normalize($promisesOrValues, function($promisesOrValues) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+        return Util::normalize($promisesOrValues, function ($promisesOrValues) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
             $len       = count($promisesOrValues);
             $toResolve = max(0, min($howMany, $len));
             $results   = array();
@@ -37,11 +37,11 @@ class When
                 $progress = array($deferred, 'progress');
 
                 foreach ($promisesOrValues as $i => $promisOrValue) {
-                    $resolve = function($val) use ($i, &$results, &$toResolve, &$resolve, $deferred) {
+                    $resolve = function ($val) use ($i, &$results, &$toResolve, &$resolve, $deferred) {
                         $results[$i] = $val;
 
                         if (!--$toResolve) {
-                            $resolve = function() {};
+                            $resolve = function () {};
                             $deferred->resolve($results);
                         }
                     };
@@ -56,7 +56,7 @@ class When
 
     public static function map($promise, $mapFunc)
     {
-        return Util::normalize($promise, function($array) use ($mapFunc) {
+        return Util::normalize($promise, function ($array) use ($mapFunc) {
             $toResolve = count($array);
             $results   = array();
             $deferred  = new Deferred();
@@ -66,7 +66,7 @@ class When
             } else {
                 $resolve = function ($item, $i) use ($mapFunc, &$results, &$toResolve, $deferred) {
                     $promise = Util::normalize($item, $mapFunc);
-                    $promise->then(function($mapped) use (&$results, $i, &$toResolve, $deferred) {
+                    $promise->then(function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
                         $results[$i] = $mapped;
 
                         if (!--$toResolve) {

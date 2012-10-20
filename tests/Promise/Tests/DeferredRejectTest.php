@@ -37,7 +37,7 @@ class DeferredRejectTest extends TestCase
 
         $d
             ->reject(1)
-            ->then($this->expectCallableNever(), function($returnedPromiseVal) use ($d, $self) {
+            ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
                 $mock
                     ->expects($self->once())

@@ -32,7 +32,7 @@ class Util
 
     public static function reject($promiseOrValue)
     {
-        return static::normalize($promiseOrValue, function($value = null) {
+        return static::normalize($promiseOrValue, function ($value = null) {
             return new RejectedPromise($value);
         });
     }

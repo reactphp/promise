@@ -154,7 +154,7 @@ class DeferredProgressTest extends TestCase
 
         $d
             ->promise()
-            ->then(function() use ($d2) {
+            ->then(function () use ($d2) {
                 return $d2->promise();
             })
             ->then(
@@ -182,7 +182,7 @@ class DeferredProgressTest extends TestCase
 
         $d
             ->promise()
-            ->then(function() use ($d2) {
+            ->then(function () use ($d2) {
                 return $d2->promise();
             })
             ->then(

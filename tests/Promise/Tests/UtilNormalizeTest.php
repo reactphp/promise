@@ -59,7 +59,7 @@ class UtilNormalizeTest extends TestCase
         $d = new Deferred();
         $d->resolve(false);
 
-        $result = Util::normalize(Util::normalize($d->then(function($val) {
+        $result = Util::normalize(Util::normalize($d->then(function ($val) {
             $d = new Deferred();
             $d->resolve($val);
 
