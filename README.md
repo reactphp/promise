@@ -1,9 +1,9 @@
 Promise
 =======
 
-A simple and lightweight implementation of [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
+A lightweight implementation of [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
-If you never heard about Promises before, [read this first](https://gist.github.com/3889970).
+If you've never heard about Promises before, [read this first](https://gist.github.com/3889970).
 
 Example
 -------
@@ -14,7 +14,13 @@ Example
 function getRedisClient() {
     $deferred = new Promise\Deferred();
 
-    $client = new Predis\Async\Client('tcp://127.0.0.1:6379');
+    $options = array(
+        'on_error' => function ($client, $exception, $connection) use ($deferred) {
+            $deferred->reject($exception);
+        }
+    );
+
+    $client = new Predis\Async\Client('tcp://127.0.0.1:6379', $options);
 
     $client->connect(function ($client) use ($deferred) {
         $deferred->resolve($client);
@@ -27,7 +33,9 @@ function getRedisClient() {
 
 getRedisClient()
     ->then(function($client) {
-        // Do something with $client
+        // Sucessfully connected, do something with $client
+    }, function($exception) {
+        // Exception thrown, do something with $exception
     });
 ```
 
