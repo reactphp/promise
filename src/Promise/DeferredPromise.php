@@ -2,7 +2,7 @@
 
 namespace Promise;
 
-class Promise implements PromiseInterface
+class DeferredPromise implements PromiseInterface
 {
     /**
      * @var Deferred

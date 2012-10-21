@@ -112,7 +112,7 @@ class Deferred implements PromiseInterface
     public function promise()
     {
         if (null === $this->promise) {
-            $this->promise = new Promise($this);
+            $this->promise = new DeferredPromise($this);
         }
 
         return $this->promise;
