@@ -7,7 +7,7 @@ namespace Promise;
  * completed yet. Typically (but not always), that computation will be something
  * that executes asynchronously and completes at some point in the future.
  */
-class Deferred implements PromiseInterface
+class Deferred implements PromiseInterface, ResolverInterface
 {
     /**
      * @var Promise
@@ -68,13 +68,7 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * Resolve this Deferred.
-     *
-     * All consumers are notified by having their $fulfilledHandler (which they
-     * registered via then()) called with the result.
-     *
-     * @param  mixed   $result
-     * @return Promise
+     * {@inheritDoc}
      */
     public function resolve($result = null)
     {
@@ -94,13 +88,7 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * Reject this Deferred, signalling that the Deferred's computation failed.
-     *
-     * All consumers are notified by having their $errorHandler (which they
-     * registered via then()) called with the error.
-     *
-     * @param  mixed   $error
-     * @return Promise
+     * {@inheritDoc}
      */
     public function reject($error = null)
     {
@@ -108,13 +96,7 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * Trigger progress notifications, to indicate to consumers that the
-     * computation is making progress toward its result.
-     *
-     * All consumers are notified by having their $progressHandler (which they
-     * registered via then()) called with the update.
-     *
-     * @param mixed $update
+     * {@inheritDoc}
      */
     public function progress($update = null)
     {
@@ -142,5 +124,22 @@ class Deferred implements PromiseInterface
         }
 
         return $this->promise;
+    }
+
+    /**
+     * Return a Resolver for this Deferred.
+     *
+     * This can be given safely to components to produce a result but not to
+     * know any details about consumers.
+     *
+     * @return Promise
+     */
+    public function resolver()
+    {
+        if (null === $this->resolver) {
+            $this->resolver = new DeferredResolver($this);
+        }
+
+        return $this->resolver;
     }
 }
