@@ -61,7 +61,7 @@ class When
      */
     public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return Util::normalize($promisesOrValues, function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+        return Util::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -87,7 +87,7 @@ class When
                         }
                     };
 
-                    Util::normalize($promiseOrValue, $resolve, $reject, $progress);
+                    Util::resolve($promiseOrValue)->then($resolve, $reject, $progress);
                 }
             }
 
@@ -111,7 +111,7 @@ class When
      */
     public static function map($promisesOrValues, $mapFunc)
     {
-        return Util::normalize($promisesOrValues, function ($array) use ($mapFunc) {
+        return Util::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -124,14 +124,18 @@ class When
                 $deferred->resolve($results);
             } else {
                 $resolve = function ($item, $i) use ($mapFunc, &$results, &$toResolve, $deferred) {
-                    $promise = Util::normalize($item, $mapFunc);
-                    $promise->then(function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
-                        $results[$i] = $mapped;
+                    Util::resolve($item)
+                        ->then($mapFunc)
+                        ->then(
+                            function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
+                                $results[$i] = $mapped;
 
-                        if (!--$toResolve) {
-                            $deferred->resolve($results);
-                        }
-                    }, array($deferred, 'reject'));
+                                if (!--$toResolve) {
+                                    $deferred->resolve($results);
+                                }
+                            },
+                            array($deferred, 'reject')
+                        );
                 };
 
                 foreach ($array as $i => $item) {

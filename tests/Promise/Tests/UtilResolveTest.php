@@ -2,6 +2,7 @@
 
 namespace Promise\Tests;
 
+use Promise\Deferred;
 use Promise\RejectedPromise;
 use Promise\ResolvedPromise;
 use Promise\Util;
@@ -68,5 +69,31 @@ class UtilResolveTest extends TestCase
                 $this->expectCallableNever(),
                 $mock
             );
+    }
+
+    /** @test */
+    public function shouldSupportDeepNestingInPromiseChains()
+    {
+        $d = new Deferred();
+        $d->resolve(false);
+
+        $result = Util::resolve(Util::resolve($d->then(function ($val) {
+            $d = new Deferred();
+            $d->resolve($val);
+
+            return Util::resolve($d->then($this->identity()))->then(
+                function ($val) {
+                    return !$val;
+                }
+            );
+        })));
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(true));
+
+        $result->then($mock);
     }
 }

@@ -3,10 +3,9 @@
 namespace Promise\Tests;
 
 use Promise\Deferred;
+use Promise\RejectedPromise;
+use Promise\ResolvedPromise;
 use Promise\Util;
-
-use Promise\Tests\Stub\FakeResolvedPromise;
-use Promise\Tests\Stub\FakeRejectedPromise;
 
 /**
  * @group Deferred
@@ -47,7 +46,7 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($mock);
 
-        $d->resolve(new FakeResolvedPromise(1));
+        $d->resolve(new ResolvedPromise(1));
     }
 
     /** @test */
@@ -65,7 +64,7 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $d->resolve(new FakeRejectedPromise(1));
+        $d->resolve(new RejectedPromise(1));
     }
 
     /** @test */
@@ -96,7 +95,7 @@ class DeferredResolveTest extends TestCase
         $self = $this;
 
         $d
-            ->resolve(Util::normalize(1))
+            ->resolve(Util::resolve(1))
             ->then(function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
                 $mock
