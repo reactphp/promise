@@ -10,14 +10,19 @@ namespace Promise;
 class Deferred implements PromiseInterface, ResolverInterface
 {
     /**
-     * @var Promise
+     * @var PromiseInterface
      */
     private $completed;
 
     /**
-     * @var Promise
+     * @var DeferredPromise
      */
     private $promise;
+
+    /**
+     * @var DeferredResolver
+     */
+    private $resolver;
 
     /**
      * @var array
