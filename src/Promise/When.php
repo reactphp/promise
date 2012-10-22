@@ -4,7 +4,7 @@ namespace Promise;
 
 class When
 {
-    public static function all(array $promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
             return $val;
@@ -13,19 +13,25 @@ class When
         return $promise->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
 
-    public function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public static function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $unwrapSingleResult = function ($val) use ($fulfilledHandler) {
-            return $fulfilledHandler ? $fulfilledHandler($val[0]) : $val[0];
+            $val = isset($val[0]) ? $val[0] : null;
+
+            return $fulfilledHandler ? $fulfilledHandler($val) : $val;
         };
 
         return static::some($promisesOrValues, 1, $unwrapSingleResult, $errorHandler, $progressHandler);
     }
 
-    public static function some($promisesOrValues, $howMany, $fulfilledHandler, $errorHandler, $progressHandler)
+    public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return Util::normalize($promisesOrValues, function ($promisesOrValues) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
-            $len       = count($promisesOrValues);
+        return Util::normalize($promisesOrValues, function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+            if (!is_array($array)) {
+                $array = array();
+            }
+
+            $len       = count($array);
             $toResolve = max(0, min($howMany, $len));
             $results   = array();
             $deferred  = new Deferred();
@@ -36,7 +42,7 @@ class When
                 $reject   = array($deferred, 'reject');
                 $progress = array($deferred, 'progress');
 
-                foreach ($promisesOrValues as $i => $promisOrValue) {
+                foreach ($array as $i => $promiseOrValue) {
                     $resolve = function ($val) use ($i, &$results, &$toResolve, &$resolve, $deferred) {
                         $results[$i] = $val;
 
@@ -46,7 +52,7 @@ class When
                         }
                     };
 
-                    Util::normalize($promisOrValue, $resolve, $reject, $progress);
+                    Util::normalize($promiseOrValue, $resolve, $reject, $progress);
                 }
             }
 
@@ -57,6 +63,10 @@ class When
     public static function map($promise, $mapFunc)
     {
         return Util::normalize($promise, function ($array) use ($mapFunc) {
+            if (!is_array($array)) {
+                $array = array();
+            }
+
             $toResolve = count($array);
             $results   = array();
             $deferred  = new Deferred();
