@@ -115,7 +115,7 @@ class Deferred implements PromiseInterface, ResolverInterface
      * This can be given safely to consumers so that they can't modify the
      * Deferred (such as calling resolve or reject on it).
      *
-     * @return Promise
+     * @return DeferredPromise
      */
     public function promise()
     {
@@ -132,7 +132,7 @@ class Deferred implements PromiseInterface, ResolverInterface
      * This can be given safely to components to produce a result but not to
      * know any details about consumers.
      *
-     * @return Promise
+     * @return DeferredResolver
      */
     public function resolver()
     {
