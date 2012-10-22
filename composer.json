@@ -1,5 +1,6 @@
 {
-    "description": "The simple and lightweight implementation of CommonJS Promises/A for PHP",
+    "name": "jsor/promise",
+    "description": "A lightweight implementation of CommonJS Promises/A for PHP",
     "type": "library",
     "license": "MIT",
     "authors": [
