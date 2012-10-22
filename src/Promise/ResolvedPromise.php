@@ -2,29 +2,40 @@
 
 namespace Promise;
 
+/**
+ * A Promise in resolved state.
+ */
 class ResolvedPromise implements PromiseInterface
 {
     /**
      * @var mixed
      */
-    private $value;
+    private $result;
 
-    public function __construct($value = null)
+    /**
+     * Constructor
+     *
+     * @param mixed $result
+     */
+    public function __construct($result = null)
     {
-        $this->value = $value;
+        $this->result = $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         try {
-            $value = $this->value;
+            $result = $this->result;
             if ($fulfilledHandler) {
-                $value = call_user_func($fulfilledHandler, $value);
+                $result = call_user_func($fulfilledHandler, $result);
             }
 
-            return Util::resolve($value);
-        } catch (\Exception $e) {
-            return new RejectedPromise($e);
+            return Util::resolve($result);
+        } catch (\Exception $exception) {
+            return new RejectedPromise($exception);
         }
     }
 }

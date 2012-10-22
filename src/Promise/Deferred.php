@@ -2,6 +2,11 @@
 
 namespace Promise;
 
+/**
+ * A Deferred represents a computation or unit of work that may not have
+ * completed yet. Typically (but not always), that computation will be something
+ * that executes asynchronously and completes at some point in the future.
+ */
 class Deferred implements PromiseInterface
 {
     /**
@@ -63,16 +68,21 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * @param  mixed   $val
+     * Resolve this Deferred.
+     *
+     * All consumers are notified by having their $fulfilledHandler (which they
+     * registered via then()) called with the result.
+     *
+     * @param  mixed   $result
      * @return Promise
      */
-    public function resolve($val = null)
+    public function resolve($result = null)
     {
         if (null !== $this->completed) {
-            return Util::resolve($val);
+            return Util::resolve($result);
         }
 
-        $this->completed = Util::resolve($val);
+        $this->completed = Util::resolve($result);
 
         foreach ($this->handlers as $handler) {
             call_user_func($handler, $this->completed);
@@ -84,15 +94,26 @@ class Deferred implements PromiseInterface
     }
 
     /**
-     * @param  mixed   $err
+     * Reject this Deferred, signalling that the Deferred's computation failed.
+     *
+     * All consumers are notified by having their $errorHandler (which they
+     * registered via then()) called with the error.
+     *
+     * @param  mixed   $error
      * @return Promise
      */
-    public function reject($err = null)
+    public function reject($error = null)
     {
-        return $this->resolve(new RejectedPromise($err));
+        return $this->resolve(new RejectedPromise($error));
     }
 
     /**
+     * Trigger progress notifications, to indicate to consumers that the
+     * computation is making progress toward its result.
+     *
+     * All consumers are notified by having their $progressHandler (which they
+     * registered via then()) called with the update.
+     *
      * @param mixed $update
      */
     public function progress($update = null)
@@ -107,6 +128,11 @@ class Deferred implements PromiseInterface
     }
 
     /**
+     * Return a Promise for this Deferred.
+     *
+     * This can be given safely to consumers so that they can't modify the
+     * Deferred (such as calling resolve or reject on it).
+     *
      * @return Promise
      */
     public function promise()
