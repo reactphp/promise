@@ -14,7 +14,7 @@ Table of Contents
 -----------------
 
 1. [Introduction](#introduction)
-2. [Concepts](#promise)
+2. [Concepts](#concepts)
    * [Deferred](#deferred)
    * [Promise](#promise-1)
    * [Resolver](#resolver)
