@@ -21,7 +21,7 @@ class DeferredProgressTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         $d
             ->promise()
@@ -47,7 +47,7 @@ class DeferredProgressTest extends TestCase
         $mock2
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         $d
             ->promise()
@@ -82,7 +82,7 @@ class DeferredProgressTest extends TestCase
         $mock2
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         $d
             ->promise()
@@ -147,7 +147,7 @@ class DeferredProgressTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         // resolve $d BEFORE calling attaching progress handler
         $d->resolve();
@@ -178,7 +178,7 @@ class DeferredProgressTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         $d
             ->promise()
@@ -214,7 +214,7 @@ class DeferredProgressTest extends TestCase
         $mock2
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($sentinel));
+            ->with($sentinel);
 
         $d
             ->promise()
