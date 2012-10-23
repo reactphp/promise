@@ -228,7 +228,7 @@ value.
 
 ### Util
 
-The `Promise\Util` class provides usefull methods for creating promises.
+The `Promise\Util` class provides useful methods for creating promises.
 
 #### Util::resolve()
 
@@ -404,8 +404,8 @@ Credits
 Promise is a port of [when.js](https://github.com/cujojs/when)
 by [Brian Cavalier](https://github.com/briancavalier).
 
-Also, large parts of the documentation have been ported from the
-[when.js Wiki](https://github.com/cujojs/when/wiki) and the
+Also, large parts of the documentation have been ported from the when.js 
+[Wiki](https://github.com/cujojs/when/wiki) and the
 [API docs](https://github.com/cujojs/when/blob/master/docs/api.md).
 
 License
