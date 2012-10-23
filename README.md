@@ -4,12 +4,6 @@ Promise
 A lightweight implementation of
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
-Promise is a port of [when.js](https://github.com/cujojs/when)
-by [Brian Cavalier](https://github.com/briancavalier).
-
-Also, large parts of the documentation have been ported from the
-[when.js Wiki](https://github.com/cujojs/when/wiki).
-
 Table of Contents
 -----------------
 
@@ -37,7 +31,8 @@ Table of Contents
      * [Example 1](#example-1)
      * [Example 2](#example-2)
      * [Example 3](#example-3)
-5. [License](#license)
+5. [Credits](#credits)
+6. [License](#license)
 
 Introduction
 ------------
@@ -402,6 +397,16 @@ $deferred->promise()
     
 $deferred->resolve(1);  // Mixed "Resolve 4"
 ```
+
+Credits
+-------
+
+Promise is a port of [when.js](https://github.com/cujojs/when)
+by [Brian Cavalier](https://github.com/briancavalier).
+
+Also, large parts of the documentation have been ported from the
+[when.js Wiki](https://github.com/cujojs/when/wiki) and the
+[API docs](https://github.com/cujojs/when/blob/master/docs/api.md).
 
 License
 -------
