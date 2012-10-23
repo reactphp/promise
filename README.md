@@ -10,6 +10,32 @@ by [Brian Cavalier](https://github.com/briancavalier).
 Also, large parts of the documentation have been ported from the
 [when.js Wiki](https://github.com/cujojs/when/wiki).
 
+1. [Introduction](#introduction)
+2. [Concepts](#promise)
+   * [Deferred](#deferred)
+   * [Promise](#promise-1)
+   * [Resolver](#resolver)
+3. [API](#api)
+   * [Deferred](#deferred-1)
+   * [Promise](#promise-2)
+   * [Resolver](#resolver-1)
+   * [When](#when)
+     * [When::all()](#whenall)
+     * [When::any()](#whenany)
+     * [When::some()](#whensome)
+     * [When::map()](#whenmap)
+     * [When::reduce()](#whenreduce)
+   * [Util](#util)
+     * [Util::resolve()](#utilresolve)
+     * [Util::reject()](#utilreject)
+4. [Examples](#examples)
+   * [How to use Deferred](#how-to-use-deferred)
+   * [How Promise forwarding works](#how-promise-forwarding-works)
+     * [Example 1](#example-1)
+     * [Example 2](#example-2)
+     * [Example 3](#example-3)
+5. [License](#license)
+
 Introduction
 ------------
 
