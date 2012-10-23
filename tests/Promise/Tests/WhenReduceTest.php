@@ -272,6 +272,7 @@ class WhenReduceTest extends TestCase
     {
         $insertIntoArray = function ($arr, $val, $i) {
             $arr[$i] = $val;
+
             return $arr;
         };
 
