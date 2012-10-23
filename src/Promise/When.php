@@ -146,4 +146,38 @@ class When
             return $deferred->promise();
         });
     }
+
+    /**
+     * Traditional reduce function, similar to array_reduce, but input may
+     * contain Promises and/or values, and $reduceFunc may return either a value
+     * or a Promise, *and* initialValue may be a Promise for the starting value.
+     *
+     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
+     * @param  callable               $reduceFunc       Reduce function reduce($currentValue, $nextValue, $index, $total), where total is the total number of items being reduced, and will be the same in each call to reduceFunc.
+     * @param  mixed                  $initialValue     Starting value, or a Promise for the starting value
+     * @return PromiseInterface       A Promise that will resolve to the final reduced value
+     */
+    public static function reduce($promisesOrValues, $reduceFunc , $initialValue = null)
+    {
+        return Util::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {
+            if (!is_array($array)) {
+                $array = array();
+            }
+
+            $total = count($array);
+            $i = 0;
+
+            // Wrap the supplied $reduceFunc with one that handles promises and then
+            // delegates to the supplied.
+            $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $total, &$i) {
+                return Util::resolve($current)->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
+                    return Util::resolve($val)->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
+                        return call_user_func($reduceFunc, $c, $value, $i++, $total);
+                    });
+                });
+            };
+
+            return array_reduce($array, $wrappedReduceFunc, $initialValue);
+        });
+    }
 }
