@@ -28,7 +28,9 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($mock);
 
-        $d->resolve(1);
+        $d
+            ->resolver()
+            ->resolve(1);
     }
 
     /** @test */
@@ -46,7 +48,9 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($mock);
 
-        $d->resolve(new ResolvedPromise(1));
+        $d
+            ->resolver()
+            ->resolve(new ResolvedPromise(1));
     }
 
     /** @test */
@@ -64,7 +68,9 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $d->resolve(new RejectedPromise(1));
+        $d
+            ->resolver()
+            ->resolve(new RejectedPromise(1));
     }
 
     /** @test */
@@ -75,6 +81,7 @@ class DeferredResolveTest extends TestCase
         $self = $this;
 
         $d
+            ->resolver()
             ->resolve(1)
             ->then(function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
@@ -95,6 +102,7 @@ class DeferredResolveTest extends TestCase
         $self = $this;
 
         $d
+            ->resolver()
             ->resolve(Util::resolve(1))
             ->then(function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
@@ -115,6 +123,7 @@ class DeferredResolveTest extends TestCase
         $self = $this;
 
         $d
+            ->resolver()
             ->resolve(Util::reject(1))
             ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
@@ -131,7 +140,9 @@ class DeferredResolveTest extends TestCase
     public function shouldInvokeNewlyAddedCallbackWhenAlreadyResolved()
     {
         $d = new Deferred();
-        $d->resolve(1);
+        $d
+            ->resolver()
+            ->resolve(1);
 
         $mock = $this->createCallableMock();
         $mock

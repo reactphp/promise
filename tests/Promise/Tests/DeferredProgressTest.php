@@ -27,7 +27,9 @@ class DeferredProgressTest extends TestCase
             ->promise()
             ->then($this->expectCallableNever(), $this->expectCallableNever(), $mock);
 
-        $d->progress($sentinel);
+        $d
+            ->resolver()
+            ->progress($sentinel);
     }
 
     /** @test */
@@ -62,7 +64,9 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d->progress($sentinel);
+        $d
+            ->resolver()
+            ->progress($sentinel);
     }
 
     /** @test */
@@ -97,7 +101,9 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d->progress(1);
+        $d
+            ->resolver()
+            ->progress(1);
     }
 
     /** @test */
@@ -132,7 +138,9 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d->progress(1);
+        $d
+            ->resolver()
+            ->progress(1);
     }
 
     /** @test */
@@ -150,7 +158,9 @@ class DeferredProgressTest extends TestCase
             ->with($sentinel);
 
         // resolve $d BEFORE calling attaching progress handler
-        $d->resolve();
+        $d
+            ->resolver()
+            ->resolve();
 
         $d
             ->promise()
@@ -163,7 +173,9 @@ class DeferredProgressTest extends TestCase
                 $mock
             );
 
-        $d2->progress($sentinel);
+        $d2
+            ->resolver()
+            ->progress($sentinel);
     }
 
     /** @test */
@@ -192,8 +204,12 @@ class DeferredProgressTest extends TestCase
             );
 
         // resolve $d AFTER calling attaching progress handler
-        $d->resolve();
-        $d2->progress($sentinel);
+        $d
+            ->resolver()
+            ->resolve();
+        $d2
+            ->resolver()
+            ->progress($sentinel);
     }
 
     /** @test */
@@ -229,8 +245,12 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d->resolve($d2->promise());
-        $d2->progress($sentinel);
+        $d
+            ->resolver()
+            ->resolve($d2->promise());
+        $d2
+            ->resolver()
+            ->progress($sentinel);
     }
 
     /** @test */
@@ -256,8 +276,12 @@ class DeferredProgressTest extends TestCase
                 $mock
             );
 
-        $d->progress(1);
-        $d->resolve(2);
+        $d
+            ->resolver()
+            ->progress(1);
+        $d
+            ->resolver()
+            ->resolve(2);
     }
 
     /** @test */
@@ -283,7 +307,11 @@ class DeferredProgressTest extends TestCase
                 $mock
             );
 
-        $d->progress(1);
-        $d->reject(2);
+        $d
+            ->resolver()
+            ->progress(1);
+        $d
+            ->resolver()
+            ->reject(2);
     }
 }

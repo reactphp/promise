@@ -25,7 +25,9 @@ class DeferredRejectTest extends TestCase
             ->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $d->reject(1);
+        $d
+            ->resolver()
+            ->reject(1);
     }
 
     /** @test */
@@ -36,6 +38,7 @@ class DeferredRejectTest extends TestCase
         $self = $this;
 
         $d
+            ->resolver()
             ->reject(1)
             ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
                 $mock = $self->createCallableMock();
@@ -52,7 +55,9 @@ class DeferredRejectTest extends TestCase
     public function shouldInvokeNewlyAddedErrbackWhenAlreadyRejected()
     {
         $d = new Deferred();
-        $d->reject(1);
+        $d
+            ->resolver()
+            ->reject(1);
 
         $mock = $this->createCallableMock();
         $mock
