@@ -11,13 +11,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         };
     }
 
-    protected function constant($val)
-    {
-        return function () use ($val) {
-            return $val;
-        };
-    }
-
     protected function expectCallableExactly($amount)
     {
         $mock = $this->createCallableMock();
