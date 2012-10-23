@@ -4,7 +4,7 @@ namespace Promise\Tests;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    protected function expectCallableExactly($amount)
+    public function expectCallableExactly($amount)
     {
         $mock = $this->createCallableMock();
         $mock
@@ -14,7 +14,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $mock;
     }
 
-    protected function expectCallableOnce()
+    public function expectCallableOnce()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -24,7 +24,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $mock;
     }
 
-    protected function expectCallableNever()
+    public function expectCallableNever()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -34,7 +34,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $mock;
     }
 
-    protected function createCallableMock()
+    public function createCallableMock()
     {
         return $this->getMock('Promise\Tests\Stub\CallableStub');
     }
