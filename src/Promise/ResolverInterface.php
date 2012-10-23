@@ -5,7 +5,7 @@ namespace Promise;
 /**
  * A Resolver can resolve, reject or trigger progress notification on behalf of
  * a Deferred without knowing any details about consumers.
- * 
+ *
  * Sometimes it can be useful to hand out a resolver and allow another
  * (possibly untrusted) party to provide the resolution value for a promise.
  */
