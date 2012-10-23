@@ -10,6 +10,9 @@ by [Brian Cavalier](https://github.com/briancavalier).
 Also, large parts of the documentation have been ported from the
 [when.js Wiki](https://github.com/cujojs/when/wiki).
 
+Table of Contents
+-----------------
+
 1. [Introduction](#introduction)
 2. [Concepts](#promise)
    * [Deferred](#deferred)
