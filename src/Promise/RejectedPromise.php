@@ -2,29 +2,15 @@
 
 namespace Promise;
 
-/**
- * A Promise in rejected state.
- */
 class RejectedPromise implements PromiseInterface
 {
-    /**
-     * @var mixed
-     */
     private $error;
 
-    /**
-     * Constructor
-     *
-     * @param mixed $error
-     */
     public function __construct($error = null)
     {
         $this->error = $error;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         try {

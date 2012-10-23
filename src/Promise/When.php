@@ -4,18 +4,6 @@ namespace Promise;
 
 class When
 {
-    /**
-     * Return a Promise that will resolve only once all the items in
-     * $promisesOrValues have resolved. The resolution value of the returned
-     * Promise will be an array containing the resolution values of each of
-     * the input array.
-     *
-     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
-     * @param  callable               $fulfilledHandler
-     * @param  callable               $errorHandler
-     * @param  callable               $progressHandler
-     * @return PromiseInterface
-     */
     public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
@@ -25,17 +13,6 @@ class When
         return $promise->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
 
-    /**
-     * Return a Promise that will resolve when any one of the items in
-     * $promisesOrValues has resolved. The resolution value of the returned
-     * Promise will be the resolution value of the triggering item.
-     *
-     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
-     * @param  callable               $fulfilledHandler
-     * @param  callable               $errorHandler
-     * @param  callable               $progressHandler
-     * @return PromiseInterface
-     */
     public static function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $unwrapSingleResult = function ($val) use ($fulfilledHandler) {
@@ -47,18 +24,6 @@ class When
         return static::some($promisesOrValues, 1, $unwrapSingleResult, $errorHandler, $progressHandler);
     }
 
-    /**
-     * Return a Promise that will resolve when $howMany of the supplied items
-     * in $promisesOrValues have resolved. The resolution value of the returned
-     * Promise will be an array of length $howMany containing the resolutions
-     * values of the triggering items.
-     *
-     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
-     * @param  callable               $fulfilledHandler
-     * @param  callable               $errorHandler
-     * @param  callable               $progressHandler
-     * @return PromiseInterface
-     */
     public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         return Util::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
@@ -95,20 +60,6 @@ class When
         });
     }
 
-    /**
-     * Traditional map function, similar to array_map, but allows input to
-     * contain Promises and/or values, and $mapFunc may return either a value
-     * or a Promise.
-     *
-     * The map function receives each item as argument, where item is a fully
-     * resolved value of a Promise or value in $promisesOrValues.
-     *
-     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
-     * @param  callable               $fulfilledHandler
-     * @param  callable               $errorHandler
-     * @param  callable               $progressHandler
-     * @return PromiseInterface
-     */
     public static function map($promisesOrValues, $mapFunc)
     {
         return Util::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
@@ -147,16 +98,6 @@ class When
         });
     }
 
-    /**
-     * Traditional reduce function, similar to array_reduce, but input may
-     * contain Promises and/or values, and $reduceFunc may return either a value
-     * or a Promise, *and* initialValue may be a Promise for the starting value.
-     *
-     * @param  array|PromiseInterface $promisesOrValues Array or a Promise for an array, which may contain Promises and/or values.
-     * @param  callable               $reduceFunc       Reduce function reduce($currentValue, $nextValue, $index, $total), where total is the total number of items being reduced, and will be the same in each call to reduceFunc.
-     * @param  mixed                  $initialValue     Starting value, or a Promise for the starting value
-     * @return PromiseInterface       A Promise that will resolve to the final reduced value
-     */
     public static function reduce($promisesOrValues, $reduceFunc , $initialValue = null)
     {
         return Util::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {

@@ -2,41 +2,18 @@
 
 namespace Promise;
 
-/**
- * A Deferred represents a computation or unit of work that may not have
- * completed yet. Typically (but not always), that computation will be something
- * that executes asynchronously and completes at some point in the future.
- */
 class Deferred implements PromiseInterface, ResolverInterface
 {
-    /**
-     * @var PromiseInterface
-     */
     private $completed;
 
-    /**
-     * @var DeferredPromise
-     */
     private $promise;
 
-    /**
-     * @var DeferredResolver
-     */
     private $resolver;
 
-    /**
-     * @var array
-     */
     private $handlers = array();
 
-    /**
-     * @var array
-     */
     private $progressHandlers = array();
 
-    /**
-     * {@inheritDoc}
-     */
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         if (null !== $this->completed) {
@@ -72,9 +49,6 @@ class Deferred implements PromiseInterface, ResolverInterface
         return $deferred->promise();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function resolve($result = null)
     {
         if (null !== $this->completed) {
@@ -92,17 +66,11 @@ class Deferred implements PromiseInterface, ResolverInterface
         return $this->completed;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function reject($error = null)
     {
         return $this->resolve(new RejectedPromise($error));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function progress($update = null)
     {
         if (null !== $this->completed) {
@@ -114,14 +82,6 @@ class Deferred implements PromiseInterface, ResolverInterface
         }
     }
 
-    /**
-     * Return a Promise for this Deferred.
-     *
-     * This can be given safely to consumers so that they can't modify the
-     * Deferred (such as calling resolve or reject on it).
-     *
-     * @return DeferredPromise
-     */
     public function promise()
     {
         if (null === $this->promise) {
@@ -131,14 +91,6 @@ class Deferred implements PromiseInterface, ResolverInterface
         return $this->promise;
     }
 
-    /**
-     * Return a Resolver for this Deferred.
-     *
-     * This can be given safely to components to produce a result but not to
-     * know any details about consumers.
-     *
-     * @return DeferredResolver
-     */
     public function resolver()
     {
         if (null === $this->resolver) {
