@@ -81,7 +81,11 @@ class UtilResolveTest extends TestCase
             $d = new Deferred();
             $d->resolve($val);
 
-            return Util::resolve($d->then($this->identity()))->then(
+            $identity = function ($val) {
+                return $val;
+            };
+
+            return Util::resolve($d->then($identity))->then(
                 function ($val) {
                     return !$val;
                 }

@@ -4,13 +4,6 @@ namespace Promise\Tests;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    protected function identity()
-    {
-        return function ($val) {
-            return $val;
-        };
-    }
-
     protected function expectCallableExactly($amount)
     {
         $mock = $this->createCallableMock();
