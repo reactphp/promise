@@ -279,8 +279,8 @@ your application architecture.
 #### Example 1
 
 Resolved promises chain and forward values to next promise.
-The first promise, `$deferred->promise(), will resolve with the value passed
-to `$deferred->resolve() below.
+The first promise, `$deferred->promise()`, will resolve with the value passed
+to `$deferred->resolve()` below.
 
 Each call to `then()` returns a new promise that will resolve with the return
 value of the previous handler. This creates a promise "pipeline".
