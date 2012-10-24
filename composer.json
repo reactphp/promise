@@ -1,20 +1,16 @@
 {
-    "name": "jsor/promise",
+    "name": "react/promise",
     "description": "A lightweight implementation of CommonJS Promises/A for PHP",
-    "type": "library",
     "license": "MIT",
     "authors": [
         {"name": "Jan Sorgalla", "email": "jsorgalla@googlemail.com"}
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3"
     },
-    "require-dev": {
-    },
     "autoload": {
         "psr-0": {
-            "Promise": "src/"
+            "React\\Promise": "src/"
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Promise;
+namespace React\Promise;
 
 class RejectedPromise implements PromiseInterface
 {

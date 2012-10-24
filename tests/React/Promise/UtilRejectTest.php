@@ -1,10 +1,6 @@
 <?php
 
-namespace Promise\Tests;
-
-use Promise\RejectedPromise;
-use Promise\ResolvedPromise;
-use Promise\Util;
+namespace React\Promise;
 
 /**
  * @group Util

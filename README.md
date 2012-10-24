@@ -1,5 +1,5 @@
-Promise
-=======
+React/Promise
+=============
 
 A lightweight implementation of
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
@@ -77,7 +77,7 @@ API
 A Deferred has the full Promise + Resolver API:
 
 ``` php
-$deferred = new Promise\Deferred();
+$deferred = new React\Promise\Deferred();
 
 $deferred->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 $deferred->resolve(mixed $promiseOrValue = null);
@@ -89,7 +89,7 @@ It can also hand out separate Promise and Resolver parts that can be safely
 given out to calling code:
 
 ``` php
-$deferred = new Promise\Deferred();
+$deferred = new React\Promise\Deferred();
 
 $promise  = $deferred->promise();
 $resolver = $deferred->resolver();
@@ -169,13 +169,13 @@ registered via `$promise->then()`) called with `$update`.
 
 ### When
 
-The `Promise\When` class provides useful methods for joining, mapping and
+The `React\Promise\When` class provides useful methods for joining, mapping and
 reducing collections of promises.
 
 #### When::all()
 
 ``` php
-$promise = Promise\When::all(array|Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::all(array|React\Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 ```
 
 Returns a Promise that will resolve only once all the items in
@@ -185,7 +185,7 @@ will be an array containing the resolution values of each of the input array.
 #### When::any()
 
 ``` php
-$promise = Promise\When::any(array|Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::any(array|React\Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 ```
 
 Returns a Promise that will resolve when any one of the items in
@@ -195,7 +195,7 @@ will be the resolution value of the triggering item.
 #### When::some()
 
 ``` php
-$promise = Promise\When::some(array|Promise\PromiseInterface $promisesOrValues, integer $howMany, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 ```
 
 Returns a Promise that will resolve when `$howMany` of the supplied items in
@@ -206,7 +206,7 @@ triggering items.
 #### When::map()
 
 ``` php
-$promise = Promise\When::map(array|Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
+$promise = React\Promise\When::map(array|React\Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
 ```
 
 Traditional map function, similar to `array_map()`, but allows input to contain
@@ -218,7 +218,7 @@ value of a Promise or value in `$promisesOrValues`.
 #### When::reduce()
 
 ``` php
-$promise = Promise\When::reduce(array|Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
+$promise = React\Promise\When::reduce(array|React\Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
 ```
 
 Traditional reduce function, similar to `array_reduce()`, but input may contain
@@ -228,12 +228,12 @@ value.
 
 ### Util
 
-The `Promise\Util` class provides useful methods for creating promises.
+The `React\Promise\Util` class provides useful methods for creating promises.
 
 #### Util::resolve()
 
 ``` php
-$promise = Promise\Util::resolve(mixed $promiseOrValue);
+$promise = React\Promise\Util::resolve(mixed $promiseOrValue);
 ```
 
 Creates a resolved Promise for the supplied `$promiseOrValue`.
@@ -246,7 +246,7 @@ If `$promiseOrValue` is a Promise, it will simply be returned.
 #### Util::reject()
 
 ``` php
-$promise = Promise\Util::reject(mixed $promiseOrValue);
+$promise = React\Promise\Util::reject(mixed $promiseOrValue);
 ```
 
 Creates a rejected Promise for the supplied `$promiseOrValue`.
@@ -269,7 +269,7 @@ Examples
 ``` php
 function getAwesomeResultPromise()
 {
-    $deferred = new Promise\Deferred();
+    $deferred = new React\Promise\Deferred();
 
     // Pass only the Resolver, to provide the resolution value for the Promise
     computeAwesomeResultAsynchronously($deferred->resolver());
@@ -310,7 +310,7 @@ Each call to `then()` returns a new promise that will resolve with the return
 value of the previous handler. This creates a promise "pipeline".
 
 ``` php
-$deferred = new Promise\Deferred();
+$deferred = new React\Promise\Deferred();
 
 $deferred->promise()
     ->then(function ($x) {
@@ -350,7 +350,7 @@ Similarly, when you handle a rejected promise, to propagate the rejection,
 (since Promise translates thrown exceptions into rejections)
 
 ``` php
-$deferred = new Promise\Deferred();
+$deferred = new React\Promise\Deferred();
 
 $deferred->promise()
     ->then(function ($x) {
@@ -362,12 +362,12 @@ $deferred->promise()
     })
     ->then(null, function ($x) {
         // Can also propagate by returning another rejection
-        return Promise\Util::reject(($x + 1);
+        return React\Promise\Util::reject(($x + 1);
     })
     ->then(null, function ($x) {
         echo 'Reject ' . $x; // 4
     });
-    
+
 $deferred->resolve(1);  // Prints "Reject 4"
 ```
 
@@ -377,7 +377,7 @@ Just like try/catch, you can choose to propagate or not. Mixing resolutions and
 rejections will still forward handler results in a predictable way.
 
 ``` php
-$deferred = new Promise\Deferred();
+$deferred = new React\Promise\Deferred();
 
 $deferred->promise()
     ->then(function ($x) {
@@ -394,21 +394,21 @@ $deferred->promise()
     ->then(function ($x) {
         echo 'Mixed ' . $x; // 4
     });
-    
+
 $deferred->resolve(1);  // Prints "Mixed 4"
 ```
 
 Credits
 -------
 
-Promise is a port of [when.js](https://github.com/cujojs/when)
+React/Promise is a port of [when.js](https://github.com/cujojs/when)
 by [Brian Cavalier](https://github.com/briancavalier).
 
-Also, large parts of the documentation have been ported from the when.js 
+Also, large parts of the documentation have been ported from the when.js
 [Wiki](https://github.com/cujojs/when/wiki) and the
 [API docs](https://github.com/cujojs/when/blob/master/docs/api.md).
 
 License
 -------
 
-Promise is released under the [MIT](https://github.com/jsor/promise/blob/master/LICENSE) license.
+React/Promise is released under the [MIT](https://github.com/react-php/promise/blob/master/LICENSE) license.

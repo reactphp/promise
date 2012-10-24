@@ -1,6 +1,6 @@
 <?php
 
-namespace Promise\Tests\Stub;
+namespace React\Promise\Stub;
 
 class CallableStub
 {

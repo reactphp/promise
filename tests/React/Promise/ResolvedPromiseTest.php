@@ -1,9 +1,6 @@
 <?php
 
-namespace Promise\Tests;
-
-use Promise\ResolvedPromise;
-use Promise\RejectedPromise;
+namespace React\Promise;
 
 /**
  * @group Promise
@@ -15,14 +12,14 @@ class ResolvedPromiseTest extends TestCase
     public function shouldReturnAPromise()
     {
         $p = new ResolvedPromise();
-        $this->assertInstanceOf('Promise\\PromiseInterface', $p->then());
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then());
     }
 
     /** @test */
     public function shouldReturnAllowNull()
     {
         $p = new ResolvedPromise();
-        $this->assertInstanceOf('Promise\\PromiseInterface', $p->then(null, null, null));
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then(null, null, null));
     }
 
     /** @test */

@@ -1,8 +1,6 @@
 <?php
 
-namespace Promise\Tests;
-
-use Promise\DeferredPromise;
+namespace React\Promise;
 
 /**
  * @group Promise
@@ -13,7 +11,7 @@ class DeferredPromiseTest extends TestCase
     /** @test */
     public function shouldForwardToDeferred()
     {
-        $mock = $this->getMock('Promise\\Deferred');
+        $mock = $this->getMock('React\\Promise\\Deferred');
         $mock
             ->expects($this->once())
             ->method('then')

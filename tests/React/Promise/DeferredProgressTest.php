@@ -1,8 +1,6 @@
 <?php
 
-namespace Promise\Tests;
-
-use Promise\Deferred;
+namespace React\Promise;
 
 /**
  * @group Deferred
