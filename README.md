@@ -368,7 +368,7 @@ $deferred->promise()
         echo 'Reject ' . $x; // 4
     });
     
-$deferred->resolve(1);  // Reject "Resolve 4"
+$deferred->resolve(1);  // Prints "Reject 4"
 ```
 
 #### Mixed resolution and rejection forwarding
@@ -395,7 +395,7 @@ $deferred->promise()
         echo 'Mixed ' . $x; // 4
     });
     
-$deferred->resolve(1);  // Mixed "Resolve 4"
+$deferred->resolve(1);  // Prints "Mixed 4"
 ```
 
 Credits
