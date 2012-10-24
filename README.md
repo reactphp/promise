@@ -37,7 +37,7 @@ Table of Contents
 Introduction
 ------------
 
-Promise is a library implementing
+React/Promise is a library implementing
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
 It also provides several other useful Promise-related concepts, such as joining
