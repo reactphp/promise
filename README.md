@@ -28,9 +28,9 @@ Table of Contents
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How Promise forwarding works](#how-promise-forwarding-works)
-     * [Example 1](#example-1)
-     * [Example 2](#example-2)
-     * [Example 3](#example-3)
+     * [Resolution forwarding](#resolution-forwarding)
+     * [Rejection forwarding](#rejection-forwarding)
+     * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
 5. [Credits](#credits)
 6. [License](#license)
 
@@ -169,7 +169,7 @@ registered via `$promise->then()`) called with `$update`.
 
 ### When
 
-The `Promise\When` class provides useful methods for as joining, mapping and
+The `Promise\When` class provides useful methods for joining, mapping and
 reducing collections of promises.
 
 #### When::all()
@@ -200,7 +200,7 @@ $promise = Promise\When::some(array|Promise\PromiseInterface $promisesOrValues, 
 
 Returns a Promise that will resolve when `$howMany` of the supplied items in
 `$promisesOrValues` have resolved. The resolution value of the returned Promise
-will be an array of length $howMany containing the resolutionsnvalues of the
+will be an array of length `$howMany` containing the resolution values of the
 triggering items.
 
 #### When::map()
@@ -300,9 +300,9 @@ These examples are contrived, of course, and in real usage, promise chains will
 typically be spread across several function calls, or even several levels of
 your application architecture.
 
-#### Example 1
+#### Resolution forwarding
 
-Resolved promises chain and forward values to next promise.
+Resolved promises forward resolution values to the next promise.
 The first promise, `$deferred->promise()`, will resolve with the value passed
 to `$deferred->resolve()` below.
 
@@ -340,7 +340,7 @@ $deferred->promise()
 $deferred->resolve(1); // Prints "Resolve 4"
 ```
 
-#### Example 2
+#### Rejection forwarding
 
 Rejected promises behave similarly, and also work similarly to try/catch:
 When you catch an exception, you must rethrow for it to propagate.
@@ -371,7 +371,7 @@ $deferred->promise()
 $deferred->resolve(1);  // Reject "Resolve 4"
 ```
 
-#### Example 3
+#### Mixed resolution and rejection forwarding
 
 Just like try/catch, you can choose to propagate or not. Mixing resolutions and
 rejections will still forward handler results in a predictable way.
