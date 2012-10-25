@@ -358,11 +358,11 @@ $deferred->promise()
     })
     ->then(null, function ($x) {
         // Propagate the rejection
-        throw $x + 1;
+        throw new \Exception($x + 1);
     })
-    ->then(null, function ($x) {
+    ->then(null, function (\Exception $x) {
         // Can also propagate by returning another rejection
-        return React\Promise\Util::reject(($x + 1);
+        return React\Promise\Util::reject((integer) $x->getMessage() + 1);
     })
     ->then(null, function ($x) {
         echo 'Reject ' . $x; // 4
@@ -389,7 +389,7 @@ $deferred->promise()
     ->then(null, function (\Exception $x) {
         // Handle the rejection, and don't propagate.
         // This is like catch without a rethrow
-        return $x->getMessage() + 1;
+        return (integer) $x->getMessage() + 1;
     })
     ->then(function ($x) {
         echo 'Mixed ' . $x; // 4
