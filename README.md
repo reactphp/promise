@@ -411,4 +411,4 @@ Also, large parts of the documentation have been ported from the when.js
 License
 -------
 
-React/Promise is released under the [MIT](https://github.com/react-php/promise/blob/master/LICENSE) license.
+React/Promise is released under the [MIT](https://github.com/reactphp/promise/blob/master/LICENSE) license.
