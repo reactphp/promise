@@ -33,6 +33,7 @@ Table of Contents
      * [Resolution forwarding](#resolution-forwarding)
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
+     * [Progress event forwarding](#progress-event-forwarding)
 5. [Credits](#credits)
 6. [License](#license)
 
@@ -398,6 +399,38 @@ $deferred->promise()
     });
 
 $deferred->resolve(1);  // Prints "Mixed 4"
+```
+
+#### Progress event forwarding
+
+In the same way as resolution and rejection handlers, your progress handler
+**MUST** return a progress event to be propagated to the next link in the chain.
+If you return nothing, `null` will be propagated.
+
+Also in the same way as resolutions and rejections, if you don't register a
+progress handler, the update will be propagated through.
+
+If your progress handler throws an exception, the exception will be propagated
+to the next link in the chain. The best thing to do is to ensure your progress
+handlers do not throw exceptions.
+
+This gives you the opportunity to transform progress events at each step in the
+chain so that they are meaningful to the next step. It also allows you to choose
+not to transform them, and simply let them propagate untransformed, by not
+registering a progress handler.
+
+``` php
+$deferred = new React\Promise\Deferred();
+
+$deferred->promise()
+    ->then(null, null, function ($update) {
+        return $update + 1;
+    })
+    ->then(null, null, function ($update) {
+        echo 'Progress ' . $update; // 2
+    });
+
+$deferred->progress(1);  // Prints "Progress 2"
 ```
 
 Credits
