@@ -1,4 +1,4 @@
-dReact/Promise
+React/Promise
 =============
 
 A lightweight implementation of
