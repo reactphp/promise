@@ -1,4 +1,4 @@
-React/Promise
+dReact/Promise
 =============
 
 A lightweight implementation of
@@ -44,7 +44,7 @@ React/Promise is a library implementing
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
 It also provides several other useful Promise-related concepts, such as joining
-multiple promises and mapping and reducing collections of promises.
+multiple Promises and mapping and reducing collections of Promises.
 
 If you've never heard about Promises before,
 [read this first](https://gist.github.com/3889970).
@@ -70,7 +70,7 @@ A **Resolver** can resolve, reject or trigger progress notifications on behalf
 of a Deferred without knowing any details about consumers.
 
 Sometimes it can be useful to hand out a resolver and allow another
-(possibly untrusted) party to provide the resolution value for a promise.
+(possibly untrusted) party to provide the resolution value for a Promise.
 
 API
 ---
@@ -173,7 +173,7 @@ registered via `$promise->then()`) called with `$update`.
 ### When
 
 The `React\Promise\When` class provides useful methods for joining, mapping and
-reducing collections of promises.
+reducing collections of Promises.
 
 #### When::all()
 
@@ -231,7 +231,7 @@ value.
 
 ### Util
 
-The `React\Promise\Util` class provides useful methods for creating promises.
+The `React\Promise\Util` class provides useful methods for creating Promises.
 
 #### Util::resolve()
 
@@ -299,18 +299,18 @@ getAwesomeResultPromise()
 ### How Promise forwarding works
 
 A few simple examples to show how the mechanics of Promises/A forwarding works.
-These examples are contrived, of course, and in real usage, promise chains will
+These examples are contrived, of course, and in real usage, Promise chains will
 typically be spread across several function calls, or even several levels of
 your application architecture.
 
 #### Resolution forwarding
 
-Resolved promises forward resolution values to the next promise.
-The first promise, `$deferred->promise()`, will resolve with the value passed
+Resolved Promises forward resolution values to the next Promise.
+The first Promise, `$deferred->promise()`, will resolve with the value passed
 to `$deferred->resolve()` below.
 
-Each call to `then()` returns a new promise that will resolve with the return
-value of the previous handler. This creates a promise "pipeline".
+Each call to `then()` returns a new Promise that will resolve with the return
+value of the previous handler. This creates a Promise "pipeline".
 
 ``` php
 $deferred = new React\Promise\Deferred();
@@ -318,7 +318,7 @@ $deferred = new React\Promise\Deferred();
 $deferred->promise()
     ->then(function ($x) {
         // $x will be the value passed to $deferred->resolve() below
-        // and returns a *new promise* for $x + 1
+        // and returns a *new Promise* for $x + 1
         return $x + 1;
     })
     ->then(function ($x) {
@@ -345,11 +345,11 @@ $deferred->resolve(1); // Prints "Resolve 4"
 
 #### Rejection forwarding
 
-Rejected promises behave similarly, and also work similarly to try/catch:
+Rejected Promises behave similarly, and also work similarly to try/catch:
 When you catch an exception, you must rethrow for it to propagate.
 
-Similarly, when you handle a rejected promise, to propagate the rejection,
-"rethrow" it by either returning a rejected promise, or actually throwing
+Similarly, when you handle a rejected Promise, to propagate the rejection,
+"rethrow" it by either returning a rejected Promise, or actually throwing
 (since Promise translates thrown exceptions into rejections)
 
 ``` php
