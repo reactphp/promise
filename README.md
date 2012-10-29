@@ -192,8 +192,11 @@ $promise = React\Promise\When::any(array|React\Promise\PromiseInterface $promise
 ```
 
 Returns a Promise that will resolve when any one of the items in
-`$promisesOrValues` has resolved. The resolution value of the returned Promise
+`$promisesOrValues` resolves. The resolution value of the returned Promise
 will be the resolution value of the triggering item.
+
+The returned Promise will only reject if *all* items in `$promisesOrValues` are
+rejected. The rejection value will be an array of all rejection reasons.
 
 #### When::some()
 
@@ -202,9 +205,14 @@ $promise = React\Promise\When::some(array|React\Promise\PromiseInterface $promis
 ```
 
 Returns a Promise that will resolve when `$howMany` of the supplied items in
-`$promisesOrValues` have resolved. The resolution value of the returned Promise
+`$promisesOrValues` resolve. The resolution value of the returned Promise
 will be an array of length `$howMany` containing the resolution values of the
 triggering items.
+
+The returned Promise will reject if it becomes impossible for `$howMany` items
+to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
+reject). The rejection value will be an array of
+`(count($promisesOrValues) - $howMany) + 1` rejection reasons.
 
 #### When::map()
 

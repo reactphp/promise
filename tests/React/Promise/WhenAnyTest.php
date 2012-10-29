@@ -51,16 +51,16 @@ class WhenAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithARejectedInputValue()
+    public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected()
     {
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo(array(0 => 1, 1 => 2, 2 => 3)));
 
-        When::all(
-            array(new RejectedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+        When::any(
+            array(new RejectedPromise(1), new RejectedPromise(2), new RejectedPromise(3)),
             $this->expectCallableNever(),
             $mock
         );
