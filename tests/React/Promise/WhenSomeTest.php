@@ -75,10 +75,10 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo(array(1 => 2, 2 => 3)));
 
         When::some(
-            array(new ResolvedPromise(1), new RejectedPromise(2), new ResolvedPromise(3)),
+            array(new ResolvedPromise(1), new RejectedPromise(2), new RejectedPromise(3)),
             2,
             $this->expectCallableNever(),
             $mock
