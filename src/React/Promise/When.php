@@ -33,22 +33,49 @@ class When
 
             $len       = count($array);
             $toResolve = max(0, min($howMany, $len));
-            $results   = array();
+            $values    = array();
             $deferred  = new Deferred();
 
             if (!$toResolve) {
-                $deferred->resolve($results);
+                $deferred->resolve($values);
             } else {
-                $reject   = array($deferred, 'reject');
+                $toReject = ($len - $toResolve) + 1;
+                $reasons  = array();
+
                 $progress = array($deferred, 'progress');
 
-                foreach ($array as $i => $promiseOrValue) {
-                    $resolve = function ($val) use ($i, &$results, &$toResolve, &$resolve, $deferred) {
-                        $results[$i] = $val;
+                $resolveOne = function ($val, $i) use (&$values, &$toResolve, &$resolveOne, &$rejectOne, $deferred) {
+                    $values[$i] = $val;
 
-                        if (0 === --$toResolve) {
-                            $resolve = function () {};
-                            $deferred->resolve($results);
+                    if (0 === --$toResolve) {
+                        $deferred->resolve($values);
+                        return true;
+                    }
+                };
+
+                $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, &$resolveOne, &$rejectOne, $deferred) {
+                    $reasons[$i] = $reason;
+
+                    if (0 === --$toReject) {
+                        $deferred->reject($reasons);
+                        return true;
+                    }
+                };
+
+                foreach ($array as $i => $promiseOrValue) {
+                    $resolve = function ($val) use ($i, &$resolveOne, &$rejectOne) {
+                        $reset = $resolveOne($val, $i);
+
+                        if (true === $reset) {
+                            $resolveOne = $rejectOne = function () {};
+                        }
+                    };
+
+                    $reject = function ($val) use ($i, &$resolveOne, &$rejectOne) {
+                        $reset = $rejectOne($val, $i);
+
+                        if (true === $reset) {
+                            $resolveOne = $rejectOne = function () {};
                         }
                     };
 
