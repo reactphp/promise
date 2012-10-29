@@ -46,7 +46,7 @@ class When
                     $resolve = function ($val) use ($i, &$results, &$toResolve, &$resolve, $deferred) {
                         $results[$i] = $val;
 
-                        if (!--$toResolve) {
+                        if (0 === --$toResolve) {
                             $resolve = function () {};
                             $deferred->resolve($results);
                         }
@@ -81,7 +81,7 @@ class When
                             function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
                                 $results[$i] = $mapped;
 
-                                if (!--$toResolve) {
+                                if (0 === --$toResolve) {
                                     $deferred->resolve($results);
                                 }
                             },
