@@ -45,7 +45,7 @@ class WhenAnyTest extends TestCase
             ->with($this->identicalTo(1));
 
         When::any(
-            array(new ResolvedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new FulfilledPromise(2), new FulfilledPromise(3)),
             $mock
         );
     }
@@ -76,7 +76,7 @@ class WhenAnyTest extends TestCase
             ->with($this->identicalTo(1));
 
         When::any(
-            array(new ResolvedPromise(1), new RejectedPromise(2), new RejectedPromise(3)),
+            array(new FulfilledPromise(1), new RejectedPromise(2), new RejectedPromise(3)),
             $mock
         );
     }
@@ -91,7 +91,7 @@ class WhenAnyTest extends TestCase
             ->with($this->identicalTo(1));
 
         When::any(
-            new ResolvedPromise(array(1, 2, 3)),
+            new FulfilledPromise(array(1, 2, 3)),
             $mock
         );
     }
@@ -106,7 +106,7 @@ class WhenAnyTest extends TestCase
             ->with($this->identicalTo(null));
 
         When::any(
-            new ResolvedPromise(1),
+            new FulfilledPromise(1),
             $mock
         );
     }

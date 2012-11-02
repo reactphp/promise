@@ -4,21 +4,21 @@ namespace React\Promise;
 
 /**
  * @group Promise
- * @group ResolvedPromise
+ * @group FulfilledPromise
  */
-class ResolvedPromiseTest extends TestCase
+class FulfilledPromiseTest extends TestCase
 {
     /** @test */
     public function shouldReturnAPromise()
     {
-        $p = new ResolvedPromise();
+        $p = new FulfilledPromise();
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then());
     }
 
     /** @test */
     public function shouldReturnAllowNull()
     {
-        $p = new ResolvedPromise();
+        $p = new FulfilledPromise();
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then(null, null, null));
     }
 
@@ -31,7 +31,7 @@ class ResolvedPromiseTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $p = new ResolvedPromise(1);
+        $p = new FulfilledPromise(1);
         $p
             ->then(
                 null,
@@ -52,7 +52,7 @@ class ResolvedPromiseTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $p = new ResolvedPromise(1);
+        $p = new FulfilledPromise(1);
         $p
             ->then(
                 function ($val) {
@@ -75,11 +75,11 @@ class ResolvedPromiseTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $p = new ResolvedPromise(1);
+        $p = new FulfilledPromise(1);
         $p
             ->then(
                 function ($val) {
-                    return new ResolvedPromise($val + 1);
+                    return new FulfilledPromise($val + 1);
                 },
                 $this->expectCallableNever()
             )
@@ -98,7 +98,7 @@ class ResolvedPromiseTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $p = new ResolvedPromise(1);
+        $p = new FulfilledPromise(1);
         $p
             ->then(
                 function ($val) {
@@ -129,7 +129,7 @@ class ResolvedPromiseTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
-        $p = new ResolvedPromise(1);
+        $p = new FulfilledPromise(1);
         $p
             ->then(
                 $mock,

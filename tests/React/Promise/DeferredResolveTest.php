@@ -45,7 +45,7 @@ class DeferredResolveTest extends TestCase
 
         $d
             ->resolver()
-            ->resolve(new ResolvedPromise(1));
+            ->resolve(new FulfilledPromise(1));
     }
 
     /** @test */

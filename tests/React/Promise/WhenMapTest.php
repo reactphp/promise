@@ -18,7 +18,7 @@ class WhenMapTest extends TestCase
     protected function promiseMapper()
     {
         return function ($val) {
-            return new ResolvedPromise($val * 2);
+            return new FulfilledPromise($val * 2);
         };
     }
 
@@ -47,7 +47,7 @@ class WhenMapTest extends TestCase
             ->with($this->identicalTo(array(2, 4, 6)));
 
         When::map(
-            array(new ResolvedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new FulfilledPromise(2), new FulfilledPromise(3)),
             $this->mapper()
         )->then($mock);
     }
@@ -62,7 +62,7 @@ class WhenMapTest extends TestCase
             ->with($this->identicalTo(array(2, 4, 6)));
 
         When::map(
-            array(1, new ResolvedPromise(2), 3),
+            array(1, new FulfilledPromise(2), 3),
             $this->mapper()
         )->then($mock);
     }
@@ -92,7 +92,7 @@ class WhenMapTest extends TestCase
             ->with($this->identicalTo(array(2, 4, 6)));
 
         When::map(
-            new ResolvedPromise(array(1, new ResolvedPromise(2), 3)),
+            new FulfilledPromise(array(1, new FulfilledPromise(2), 3)),
             $this->mapper()
         )->then($mock);
     }
@@ -107,7 +107,7 @@ class WhenMapTest extends TestCase
             ->with($this->identicalTo(array()));
 
         When::map(
-            new ResolvedPromise(1),
+            new FulfilledPromise(1),
             $this->mapper()
         )->then($mock);
     }
@@ -122,7 +122,7 @@ class WhenMapTest extends TestCase
             ->with($this->identicalTo(2));
 
         When::map(
-            array(new ResolvedPromise(1), new RejectedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new RejectedPromise(2), new FulfilledPromise(3)),
             $this->mapper()
         )->then($this->expectCallableNever(), $mock);
     }
