@@ -27,11 +27,11 @@ class UtilResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveAResolvedPromise()
+    public function shouldResolveAFulfilledPromise()
     {
         $expected = 123;
 
-        $resolved = new ResolvedPromise($expected);
+        $resolved = new FulfilledPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock

@@ -10,7 +10,7 @@ class Util
             return $promiseOrValue;
         }
 
-        return new ResolvedPromise($promiseOrValue);
+        return new FulfilledPromise($promiseOrValue);
     }
 
     public static function reject($promiseOrValue)
