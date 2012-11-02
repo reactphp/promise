@@ -24,9 +24,8 @@ Table of Contents
      * [When::some()](#whensome)
      * [When::map()](#whenmap)
      * [When::reduce()](#whenreduce)
-   * [Util](#util)
-     * [Util::resolve()](#utilresolve)
-     * [Util::reject()](#utilreject)
+     * [When::resolve()](#whenresolve)
+     * [When::reject()](#whenreject)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How Promise forwarding works](#how-promise-forwarding-works)
@@ -237,14 +236,10 @@ Promises and/or values, and `$reduceFunc` may return either a value or a
 Promise, *and* `$initialValue` may be a Promise or a value for the starting
 value.
 
-### Util
-
-The `React\Promise\Util` class provides useful methods for creating Promises.
-
-#### Util::resolve()
+#### When::resolve()
 
 ``` php
-$promise = React\Promise\Util::resolve(mixed $promiseOrValue);
+$promise = React\Promise\When::resolve(mixed $promiseOrValue);
 ```
 
 Creates a resolved Promise for the supplied `$promiseOrValue`.
@@ -254,10 +249,10 @@ returned Promise.
 
 If `$promiseOrValue` is a Promise, it will simply be returned.
 
-#### Util::reject()
+#### When::reject()
 
 ``` php
-$promise = React\Promise\Util::reject(mixed $promiseOrValue);
+$promise = React\Promise\When::reject(mixed $promiseOrValue);
 ```
 
 Creates a rejected Promise for the supplied `$promiseOrValue`.
