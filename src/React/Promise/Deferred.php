@@ -16,7 +16,7 @@ class Deferred implements PromiseInterface, ResolverInterface
             return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
         }
 
-        $deferred = new self();
+        $deferred = new static();
 
         if ($progressHandler) {
             $progHandler = function ($update) use ($deferred, $progressHandler) {
