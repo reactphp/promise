@@ -44,7 +44,7 @@ class When
 
                 $progress = array($deferred, 'progress');
 
-                $resolveOne = function ($val, $i) use (&$values, &$toResolve, &$resolveOne, &$rejectOne, $deferred) {
+                $resolveOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
                     $values[$i] = $val;
 
                     if (0 === --$toResolve) {
@@ -53,7 +53,7 @@ class When
                     }
                 };
 
-                $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, &$resolveOne, &$rejectOne, $deferred) {
+                $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, $deferred) {
                     $reasons[$i] = $reason;
 
                     if (0 === --$toReject) {
