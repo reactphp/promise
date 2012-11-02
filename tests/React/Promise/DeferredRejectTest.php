@@ -33,20 +33,16 @@ class DeferredRejectTest extends TestCase
     {
         $d = new Deferred();
 
-        $self = $this;
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
 
         $d
             ->resolver()
             ->reject(1)
-            ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
-                $mock = $self->createCallableMock();
-                $mock
-                    ->expects($self->once())
-                    ->method('__invoke')
-                    ->with($self->identicalTo($returnedPromiseVal));
-
-                $d->then($self->expectCallableNever(), $mock);
-            });
+            ->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
