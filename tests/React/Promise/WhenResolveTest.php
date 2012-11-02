@@ -27,11 +27,12 @@ class WhenResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveAFulfilledPromise()
+    public function shouldResolveAResolvedPromise()
     {
         $expected = 123;
 
-        $resolved = new FulfilledPromise($expected);
+        $d = new Deferred();
+        $d->resolve($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -39,7 +40,7 @@ class WhenResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::resolve($resolved)
+        When::resolve($d->promise())
             ->then(
                 $mock,
                 $this->expectCallableNever()
@@ -51,7 +52,8 @@ class WhenResolveTest extends TestCase
     {
         $expected = 123;
 
-        $resolved = new RejectedPromise($expected);
+        $d = new Deferred();
+        $d->reject($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -59,7 +61,7 @@ class WhenResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::resolve($resolved)
+        When::resolve($d->promise())
             ->then(
                 $this->expectCallableNever(),
                 $mock

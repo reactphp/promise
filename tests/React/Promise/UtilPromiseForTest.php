@@ -65,34 +65,4 @@ class UtilPromiseForTest extends TestCase
                 $mock
             );
     }
-
-    /** @test */
-    public function shouldSupportDeepNestingInPromiseChains()
-    {
-        $d = new Deferred();
-        $d->resolve(false);
-
-        $result = Util::promiseFor(Util::promiseFor($d->then(function ($val) {
-            $d = new Deferred();
-            $d->resolve($val);
-
-            $identity = function ($val) {
-                return $val;
-            };
-
-            return Util::promiseFor($d->then($identity))->then(
-                function ($val) {
-                    return !$val;
-                }
-            );
-        })));
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(true));
-
-        $result->then($mock);
-    }
 }
