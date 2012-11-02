@@ -65,7 +65,7 @@ class WhenReduceTest extends TestCase
         When::reduce(
             array(1, 2, 3),
             $this->plus(),
-            new ResolvedPromise(1)
+            new FulfilledPromise(1)
         )->then($mock);
     }
 
@@ -79,7 +79,7 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo(6));
 
         When::reduce(
-            array(new ResolvedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new FulfilledPromise(2), new FulfilledPromise(3)),
             $this->plus()
         )->then($mock);
     }
@@ -94,7 +94,7 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         When::reduce(
-            array(new ResolvedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new FulfilledPromise(2), new FulfilledPromise(3)),
             $this->plus(),
             1
         )->then($mock);
@@ -110,9 +110,9 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         When::reduce(
-            array(new ResolvedPromise(1), new ResolvedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new FulfilledPromise(2), new FulfilledPromise(3)),
             $this->plus(),
-            new ResolvedPromise(1)
+            new FulfilledPromise(1)
         )->then($mock);
     }
 
@@ -144,7 +144,7 @@ class WhenReduceTest extends TestCase
         When::reduce(
             array(),
             $this->plus(),
-            new ResolvedPromise(1)
+            new FulfilledPromise(1)
         )->then($mock);
     }
 
@@ -158,9 +158,9 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo(2));
 
         When::reduce(
-            array(new ResolvedPromise(1), new RejectedPromise(2), new ResolvedPromise(3)),
+            array(new FulfilledPromise(1), new RejectedPromise(2), new FulfilledPromise(3)),
             $this->plus(),
-            new ResolvedPromise(1)
+            new FulfilledPromise(1)
         )->then($this->expectCallableNever(), $mock);
     }
 
@@ -240,7 +240,7 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo('123'));
 
         When::reduce(
-            new ResolvedPromise(array(1, 2, 3)),
+            new FulfilledPromise(array(1, 2, 3)),
             $this->append(),
             ''
         )->then($mock);
@@ -256,7 +256,7 @@ class WhenReduceTest extends TestCase
             ->with($this->identicalTo(1));
 
         When::reduce(
-            new ResolvedPromise(1),
+            new FulfilledPromise(1),
             $this->plus(),
             1
         )->then($mock);

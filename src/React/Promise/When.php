@@ -44,7 +44,7 @@ class When
 
                 $progress = array($deferred, 'progress');
 
-                $resolveOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
+                $fulfillOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
                     $values[$i] = $val;
 
                     if (0 === --$toResolve) {
@@ -63,23 +63,23 @@ class When
                 };
 
                 foreach ($array as $i => $promiseOrValue) {
-                    $resolve = function ($val) use ($i, &$resolveOne, &$rejectOne) {
-                        $reset = $resolveOne($val, $i);
+                    $fulfiller = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
+                        $reset = $fulfillOne($val, $i);
 
                         if (true === $reset) {
-                            $resolveOne = $rejectOne = function () {};
+                            $fulfillOne = $rejectOne = function () {};
                         }
                     };
 
-                    $reject = function ($val) use ($i, &$resolveOne, &$rejectOne) {
+                    $rejecter = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
                         $reset = $rejectOne($val, $i);
 
                         if (true === $reset) {
-                            $resolveOne = $rejectOne = function () {};
+                            $fulfillOne = $rejectOne = function () {};
                         }
                     };
 
-                    Util::resolve($promiseOrValue)->then($resolve, $reject, $progress);
+                    Util::resolve($promiseOrValue)->then($fulfiller, $rejecter, $progress);
                 }
             }
 

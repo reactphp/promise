@@ -85,7 +85,7 @@ class RejectedPromiseTest extends TestCase
             ->then(
                 $this->expectCallableNever(),
                 function ($val) {
-                    return new ResolvedPromise($val + 1);
+                    return new FulfilledPromise($val + 1);
                 }
             )
             ->then(

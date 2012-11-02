@@ -27,11 +27,11 @@ class UtilRejectTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectAResolvedPromise()
+    public function shouldRejectAFulfilledPromise()
     {
         $expected = 123;
 
-        $resolved = new ResolvedPromise($expected);
+        $resolved = new FulfilledPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock
