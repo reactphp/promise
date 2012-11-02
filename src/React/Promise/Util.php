@@ -4,19 +4,12 @@ namespace React\Promise;
 
 class Util
 {
-    public static function resolve($promiseOrValue)
+    public static function promiseFor($promiseOrValue)
     {
         if ($promiseOrValue instanceof PromiseInterface) {
             return $promiseOrValue;
         }
 
         return new FulfilledPromise($promiseOrValue);
-    }
-
-    public static function reject($promiseOrValue)
-    {
-        return static::resolve($promiseOrValue)->then(function ($value = null) {
-            return new RejectedPromise($value);
-        });
     }
 }

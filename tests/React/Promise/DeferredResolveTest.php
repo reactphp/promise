@@ -73,20 +73,16 @@ class DeferredResolveTest extends TestCase
     {
         $d = new Deferred();
 
-        $self = $this;
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
 
         $d
             ->resolver()
             ->resolve(1)
-            ->then(function ($returnedPromiseVal) use ($d, $self) {
-                $mock = $self->createCallableMock();
-                $mock
-                    ->expects($self->once())
-                    ->method('__invoke')
-                    ->with($self->identicalTo($returnedPromiseVal));
-
-                $d->then($mock);
-            });
+            ->then($mock);
     }
 
     /** @test */
@@ -94,20 +90,16 @@ class DeferredResolveTest extends TestCase
     {
         $d = new Deferred();
 
-        $self = $this;
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
 
         $d
             ->resolver()
-            ->resolve(Util::resolve(1))
-            ->then(function ($returnedPromiseVal) use ($d, $self) {
-                $mock = $self->createCallableMock();
-                $mock
-                    ->expects($self->once())
-                    ->method('__invoke')
-                    ->with($self->identicalTo($returnedPromiseVal));
-
-                $d->then($mock);
-            });
+            ->resolve(When::resolve(1))
+            ->then($mock);
     }
 
     /** @test */
@@ -115,20 +107,18 @@ class DeferredResolveTest extends TestCase
     {
         $d = new Deferred();
 
-        $self = $this;
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
 
+        // Both the returned promise, and the deferred's own promise should
+        // be rejected with the same value
         $d
             ->resolver()
-            ->resolve(Util::reject(1))
-            ->then($this->expectCallableNever(), function ($returnedPromiseVal) use ($d, $self) {
-                $mock = $self->createCallableMock();
-                $mock
-                    ->expects($self->once())
-                    ->method('__invoke')
-                    ->with($self->identicalTo($returnedPromiseVal));
-
-                $d->then($self->expectCallableNever(), $mock);
-            });
+            ->resolve(When::reject(1))
+            ->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */

@@ -3,10 +3,10 @@
 namespace React\Promise;
 
 /**
- * @group Util
- * @group UtilResolve
+ * @group When
+ * @group WhenResolve
  */
-class UtilResolveTest extends TestCase
+class WhenResolveTest extends TestCase
 {
     /** @test */
     public function shouldResolveAnImmediateValue()
@@ -19,7 +19,7 @@ class UtilResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::resolve($expected)
+        When::resolve($expected)
             ->then(
                 $mock,
                 $this->expectCallableNever()
@@ -39,7 +39,7 @@ class UtilResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::resolve($resolved)
+        When::resolve($resolved)
             ->then(
                 $mock,
                 $this->expectCallableNever()
@@ -59,7 +59,7 @@ class UtilResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::resolve($resolved)
+        When::resolve($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -72,7 +72,7 @@ class UtilResolveTest extends TestCase
         $d = new Deferred();
         $d->resolve(false);
 
-        $result = Util::resolve(Util::resolve($d->then(function ($val) {
+        $result = When::resolve(When::resolve($d->then(function ($val) {
             $d = new Deferred();
             $d->resolve($val);
 
@@ -80,7 +80,7 @@ class UtilResolveTest extends TestCase
                 return $val;
             };
 
-            return Util::resolve($d->then($identity))->then(
+            return When::resolve($d->then($identity))->then(
                 function ($val) {
                     return !$val;
                 }

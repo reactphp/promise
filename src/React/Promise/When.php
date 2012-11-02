@@ -4,6 +4,21 @@ namespace React\Promise;
 
 class When
 {
+    public static function resolve($promiseOrValue)
+    {
+        $deferred = new Deferred();
+        $deferred->resolve($promiseOrValue);
+
+        return $deferred->promise();
+    }
+
+    public static function reject($promiseOrValue)
+    {
+        return static::resolve($promiseOrValue)->then(function ($value = null) {
+            return new RejectedPromise($value);
+        });
+    }
+
     public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
@@ -26,7 +41,7 @@ class When
 
     public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return Util::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+        return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -79,7 +94,7 @@ class When
                         }
                     };
 
-                    Util::resolve($promiseOrValue)->then($fulfiller, $rejecter, $progress);
+                    When::resolve($promiseOrValue)->then($fulfiller, $rejecter, $progress);
                 }
             }
 
@@ -89,7 +104,7 @@ class When
 
     public static function map($promisesOrValues, $mapFunc)
     {
-        return Util::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
+        return When::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -102,7 +117,7 @@ class When
                 $deferred->resolve($results);
             } else {
                 $resolve = function ($item, $i) use ($mapFunc, &$results, &$toResolve, $deferred) {
-                    Util::resolve($item)
+                    When::resolve($item)
                         ->then($mapFunc)
                         ->then(
                             function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
@@ -127,7 +142,7 @@ class When
 
     public static function reduce($promisesOrValues, $reduceFunc , $initialValue = null)
     {
-        return Util::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {
+        return When::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -138,8 +153,8 @@ class When
             // Wrap the supplied $reduceFunc with one that handles promises and then
             // delegates to the supplied.
             $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $total, &$i) {
-                return Util::resolve($current)->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
-                    return Util::resolve($val)->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
+                return When::resolve($current)->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
+                    return When::resolve($val)->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
                         return call_user_func($reduceFunc, $c, $value, $i++, $total);
                     });
                 });

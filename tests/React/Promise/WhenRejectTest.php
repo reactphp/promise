@@ -3,10 +3,10 @@
 namespace React\Promise;
 
 /**
- * @group Util
- * @group UtilReject
+ * @group When
+ * @group WhenReject
  */
-class UtilRejectTest extends TestCase
+class WhenRejectTest extends TestCase
 {
     /** @test */
     public function shouldRejectAnImmediateValue()
@@ -19,7 +19,7 @@ class UtilRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::reject($expected)
+        When::reject($expected)
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -39,7 +39,7 @@ class UtilRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::reject($resolved)
+        When::reject($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -59,7 +59,7 @@ class UtilRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        Util::reject($resolved)
+        When::reject($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock
