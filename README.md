@@ -171,8 +171,8 @@ registered via `$promise->then()`) called with `$update`.
 
 ### When
 
-The `React\Promise\When` class provides useful methods for joining, mapping and
-reducing collections of Promises.
+The `React\Promise\When` class provides useful methods for creating, joining,
+mapping and reducing collections of Promises.
 
 #### When::all()
 
