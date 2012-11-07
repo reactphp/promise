@@ -12,5 +12,10 @@
         "psr-0": {
             "React\\Promise": "src/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
     }
 }
