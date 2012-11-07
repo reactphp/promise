@@ -63,4 +63,26 @@ class DeferredRejectTest extends TestCase
             ->promise()
             ->then($this->expectCallableNever(), $mock);
     }
+
+    /** @test */
+    public function shouldForwardReasonWhenCallbackIsNull()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d = new Deferred();
+        $d
+            ->then(
+                $this->expectCallableNever()
+            )
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+
+        $d->reject(1);
+    }
 }

@@ -139,4 +139,27 @@ class DeferredResolveTest extends TestCase
             ->promise()
             ->then($mock, $this->expectCallableNever());
     }
+
+    /** @test */
+    public function shouldForwardValueWhenCallbackIsNull()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d = new Deferred();
+        $d
+            ->then(
+                null,
+                $this->expectCallableNever()
+            )
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+
+        $d->resolve(1);
+    }
 }
