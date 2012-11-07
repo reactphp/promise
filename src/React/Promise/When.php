@@ -64,6 +64,7 @@ class When
 
                     if (0 === --$toResolve) {
                         $deferred->resolve($values);
+
                         return true;
                     }
                 };
@@ -73,6 +74,7 @@ class When
 
                     if (0 === --$toReject) {
                         $deferred->reject($reasons);
+
                         return true;
                     }
                 };
