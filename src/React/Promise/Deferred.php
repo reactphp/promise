@@ -83,9 +83,9 @@ class Deferred implements PromiseInterface, ResolverInterface
         return $this->promise();
     }
 
-    public function reject($error = null)
+    public function reject($reason = null)
     {
-        return $this->resolve(new RejectedPromise($error));
+        return $this->resolve(new RejectedPromise($reason));
     }
 
     public function progress($update = null)

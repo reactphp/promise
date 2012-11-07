@@ -83,7 +83,7 @@ $deferred = new React\Promise\Deferred();
 
 $deferred->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 $deferred->resolve(mixed $promiseOrValue = null);
-$deferred->reject(mixed $error = null);
+$deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
 ```
 
@@ -152,12 +152,12 @@ Resolves a Deferred. All consumers are notified by having their
 `$result`.
 
 ``` php
-$resolver->reject(mixed $error = null);
+$resolver->reject(mixed $reason = null);
 ```
 
 Rejects a Deferred, signalling that the Deferred's computation failed.
 All consumers are notified by having their `$errorHandler` (which they
-registered via `$promise->then()`) called with `$error`.
+registered via `$promise->then()`) called with `$reason`.
 
 ``` php
 $resolver->progress(mixed $update = null);
@@ -290,8 +290,8 @@ getAwesomeResultPromise()
         function ($result) {
             // Deferred resolved, do something with $result
         },
-        function ($error) {
-            // Deferred rejected, do something with $error
+        function ($reason) {
+            // Deferred rejected, do something with $reason
         },
         function ($update) {
             // Progress notification triggered, do something with $update

@@ -4,21 +4,21 @@ namespace React\Promise;
 
 class RejectedPromise implements PromiseInterface
 {
-    private $error;
+    private $reason;
 
-    public function __construct($error = null)
+    public function __construct($reason = null)
     {
-        $this->error = $error;
+        $this->reason = $reason;
     }
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         try {
             if (!$errorHandler) {
-                return new RejectedPromise($this->error);
+                return new RejectedPromise($this->reason);
             }
 
-            return Util::promiseFor(call_user_func($errorHandler, $this->error));
+            return Util::promiseFor(call_user_func($errorHandler, $this->reason));
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }

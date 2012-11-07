@@ -16,9 +16,9 @@ class DeferredResolver implements ResolverInterface
         return $this->deferred->resolve($result);
     }
 
-    public function reject($error = null)
+    public function reject($reason = null)
     {
-        return $this->deferred->reject($error);
+        return $this->deferred->reject($reason);
     }
 
     public function progress($update = null)
