@@ -118,15 +118,12 @@ class Deferred implements PromiseInterface, ResolverInterface
     protected function processQueue($queue, $value)
     {
         foreach ($queue as $handler) {
-            $this->executeCallback($handler, $value);
+            $this->executeCallback($handler, array($value));
         }
     }
 
-    protected function executeCallback($callback/*, $args ... */)
+    protected function executeCallback($callback, array $args = array())
     {
-        $args = func_get_args();
-        array_shift($args);
-
         call_user_func_array($callback, $args);
     }
 }
