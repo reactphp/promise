@@ -4,9 +4,14 @@ namespace React\Promise;
 
 class When
 {
+    public static function defer()
+    {
+        return new Deferred();
+    }
+
     public static function resolve($promiseOrValue)
     {
-        $deferred = new Deferred();
+        $deferred = static::defer();
         $deferred->resolve($promiseOrValue);
 
         return $deferred->promise();
@@ -41,7 +46,9 @@ class When
 
     public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+        $deferredFactory = array(get_called_class(), 'defer');
+
+        return When::resolve($promisesOrValues)->then(function ($array) use ($deferredFactory, $howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -49,7 +56,7 @@ class When
             $len       = count($array);
             $toResolve = max(0, min($howMany, $len));
             $values    = array();
-            $deferred  = new Deferred();
+            $deferred  = call_user_func($deferredFactory);
 
             if (!$toResolve) {
                 $deferred->resolve($values);
@@ -106,14 +113,16 @@ class When
 
     public static function map($promisesOrValues, $mapFunc)
     {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
+        $deferredFactory = array(get_called_class(), 'defer');
+
+        return When::resolve($promisesOrValues)->then(function ($array) use ($deferredFactory, $mapFunc) {
             if (!is_array($array)) {
                 $array = array();
             }
 
             $toResolve = count($array);
             $results   = array();
-            $deferred  = new Deferred();
+            $deferred  = call_user_func($deferredFactory);
 
             if (!$toResolve) {
                 $deferred->resolve($results);
