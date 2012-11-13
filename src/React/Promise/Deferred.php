@@ -48,10 +48,7 @@ class Deferred implements PromiseInterface, ResolverInterface
     public function resolve($result = null)
     {
         if (null !== $this->completed) {
-            $deferred = new static();
-            $deferred->resolve($result);
-
-            return $deferred->promise();
+            return Util::promiseFor($result);
         }
 
         $this->completed = Util::promiseFor($result);

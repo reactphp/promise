@@ -6,10 +6,7 @@ class When
 {
     public static function resolve($promiseOrValue)
     {
-        $deferred = new Deferred();
-        $deferred->resolve($promiseOrValue);
-
-        return $deferred->promise();
+        return Util::promiseFor($promiseOrValue);
     }
 
     public static function reject($promiseOrValue)
