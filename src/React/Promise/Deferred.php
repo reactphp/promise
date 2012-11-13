@@ -12,55 +12,35 @@ class Deferred implements PromiseInterface, ResolverInterface
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
+        if (null !== $this->completed) {
+            return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
+        }
+
         $deferred = new static();
 
-        if (null !== $this->completed) {
-            $completed = $this->completed;
-
-            $this->executeCallback(function () use ($completed, $fulfilledHandler, $errorHandler, $deferred) {
-                $completed
-                    ->then($fulfilledHandler, $errorHandler)
-                    ->then(
-                        function ($value) use ($deferred) {
-                            $deferred->resolve($value);
-                        },
-                        function ($reason) use ($deferred) {
-                            $deferred->reject($reason);
-                        },
-                        function ($update) use ($deferred) {
-                            $deferred->progress($update);
-                        }
-                    );
-            });
-        } else {
-            if ($progressHandler) {
-                $progHandler = function ($update) use ($deferred, $progressHandler) {
-                    try {
-                        $deferred->progress(call_user_func($progressHandler, $update));
-                    } catch (\Exception $e) {
-                        $deferred->progress($e);
-                    }
-                };
-            } else {
-                $progHandler = array($deferred, 'progress');
-            }
-
-            $this->handlers[] = function ($promise) use ($fulfilledHandler, $errorHandler, $deferred, $progHandler) {
-                $promise
-                    ->then($fulfilledHandler, $errorHandler)
-                    ->then(
-                        function ($value) use ($deferred) {
-                            $deferred->resolve($value);
-                        },
-                        function ($reason) use ($deferred) {
-                            $deferred->reject($reason);
-                        },
-                        $progHandler
-                    );
+        if ($progressHandler) {
+            $progHandler = function ($update) use ($deferred, $progressHandler) {
+                try {
+                    $deferred->progress(call_user_func($progressHandler, $update));
+                } catch (\Exception $e) {
+                    $deferred->progress($e);
+                }
             };
-
-            $this->progressHandlers[] = $progHandler;
+        } else {
+            $progHandler = array($deferred, 'progress');
         }
+
+        $this->handlers[] = function ($promise) use ($fulfilledHandler, $errorHandler, $deferred, $progHandler) {
+            $promise
+                ->then($fulfilledHandler, $errorHandler)
+                ->then(
+                    array($deferred, 'resolve'),
+                    array($deferred, 'reject'),
+                    $progHandler
+                );
+        };
+
+        $this->progressHandlers[] = $progHandler;
 
         return $deferred->promise();
     }
@@ -68,10 +48,7 @@ class Deferred implements PromiseInterface, ResolverInterface
     public function resolve($result = null)
     {
         if (null !== $this->completed) {
-            $deferred = new static();
-            $deferred->resolve($result);
-
-            return $deferred->promise();
+            return Util::promiseFor($result);
         }
 
         $this->completed = Util::promiseFor($result);
@@ -80,7 +57,7 @@ class Deferred implements PromiseInterface, ResolverInterface
 
         $this->progressHandlers = $this->handlers = array();
 
-        return $this->promise();
+        return $this->completed;
     }
 
     public function reject($reason = null)
@@ -118,12 +95,7 @@ class Deferred implements PromiseInterface, ResolverInterface
     protected function processQueue($queue, $value)
     {
         foreach ($queue as $handler) {
-            $this->executeCallback($handler, array($value));
+            call_user_func($handler, $value);
         }
-    }
-
-    protected function executeCallback($callback, array $args = array())
-    {
-        call_user_func_array($callback, $args);
     }
 }
