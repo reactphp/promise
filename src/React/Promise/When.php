@@ -4,12 +4,12 @@ namespace React\Promise;
 
 class When
 {
-    public static function resolve($promiseOrValue)
+    public static function resolve($promiseOrValue = null)
     {
         return Util::promiseFor($promiseOrValue);
     }
 
-    public static function reject($promiseOrValue)
+    public static function reject($promiseOrValue = null)
     {
         return static::resolve($promiseOrValue)->then(function ($value = null) {
             return new RejectedPromise($value);
