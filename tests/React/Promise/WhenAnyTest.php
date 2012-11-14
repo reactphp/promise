@@ -110,4 +110,25 @@ class WhenAnyTest extends TestCase
             $mock
         );
     }
+
+    /** @test */
+    public function shouldNotRelyOnArryIndexesWhenUnwrappingToASingleResolutionValue()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
+
+        $d1 = new Deferred();
+        $d2 = new Deferred();
+
+        When::any(
+            array('abc' => $d1->promise(), 1 => $d2->promise()),
+            $mock
+        );
+
+        $d2->resolve(2);
+        $d1->resolve(1);
+    }
 }

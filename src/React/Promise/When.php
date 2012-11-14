@@ -28,7 +28,7 @@ class When
     public static function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $unwrapSingleResult = function ($val) use ($fulfilledHandler) {
-            $val = isset($val[0]) ? $val[0] : null;
+            $val = array_shift($val);
 
             return $fulfilledHandler ? $fulfilledHandler($val) : $val;
         };
