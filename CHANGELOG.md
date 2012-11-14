@@ -2,7 +2,7 @@ CHANGELOG
 =========
 
 
-* 1.0.2 (xxxx-xx-xx)
+* 1.0.2 (2012-11-14)
 
   * Fix bug in When::any() not correctly unwrapping to a single result value
   * $promiseOrValue argument of When::resolve() and When::reject() is now optional
