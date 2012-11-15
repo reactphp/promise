@@ -76,7 +76,20 @@ API
 
 ### Deferred
 
-A Deferred has the full Promise + Resolver API:
+A deferred represents an operation whose resolution is pending. It has separate
+Promise and Resolver parts that can be safely given out to separate groups of
+consumers and producers to allow safe, one-way communication.
+
+``` php
+$deferred = new React\Promise\Deferred();
+
+$promise  = $deferred->promise();
+$resolver = $deferred->resolver();
+```
+
+Although a Deferred has the full Promise + Resolver API, this should be used for
+convenience only by the creator of the deferred. Only the promise and resolver
+should be given to consumers and producers.
 
 ``` php
 $deferred = new React\Promise\Deferred();
@@ -87,17 +100,12 @@ $deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
 ```
 
-It can also hand out separate Promise and Resolver parts that can be safely
-given out to calling code:
-
-``` php
-$deferred = new React\Promise\Deferred();
-
-$promise  = $deferred->promise();
-$resolver = $deferred->resolver();
-```
-
 ### Promise
+
+The Promise represents the eventual outcome, which is either fulfillment
+(success) and an associated value, or rejection (failure) and an associated
+reason. The Promise provides mechanisms for arranging to call a function on its
+value or reason, and produces a new promise for the result.
 
 A Promise has a single method `then()` which registers new fulfilled, error and
 progress handlers with this Promise (all parameters are optional):
@@ -139,7 +147,15 @@ the same call to `then()`:
      than once.
   3. `$progressHandler` may be called multiple times.
 
+#### See also
+
+* [When::resolve()](#whenresolve) - Creating a resolved Promise
+* [When::reject()](#whenreject) - Creating a rejected Promise
+
 ### Resolver
+
+The Resolver represents the responsibility of fulfilling, rejecting and
+notifying the associated Promise.
 
 A Resolver has 3 methods: `resolve()`, `reject()` and `progress()`:
 
@@ -182,7 +198,8 @@ $promise = React\Promise\When::all(array|React\Promise\PromiseInterface $promise
 
 Returns a Promise that will resolve only once all the items in
 `$promisesOrValues` have resolved. The resolution value of the returned Promise
-will be an array containing the resolution values of each of the input array.
+will be an array containing the resolution values of each of the items in
+`$promisesOrValues`.
 
 #### When::any()
 
