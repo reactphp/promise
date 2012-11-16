@@ -88,7 +88,7 @@ $resolver = $deferred->resolver();
 ```
 
 Although a Deferred has the full Promise + Resolver API, this should be used for
-convenience only by the creator of the deferred. Only the promise and resolver
+convenience only by the creator of the deferred. Only the Promise and Resolver
 should be given to consumers and producers.
 
 ``` php
@@ -105,37 +105,28 @@ $deferred->progress(mixed $update = null);
 The Promise represents the eventual outcome, which is either fulfillment
 (success) and an associated value, or rejection (failure) and an associated
 reason. The Promise provides mechanisms for arranging to call a function on its
-value or reason, and produces a new promise for the result.
+value or reason, and produces a new Promise for the result.
 
 A Promise has a single method `then()` which registers new fulfilled, error and
 progress handlers with this Promise (all parameters are optional):
 
 ``` php
-$promise->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$newPromise = $promise->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
 ```
 
-As per the Promises/A spec, `then()` returns a new Promise that will be resolved
-with the return value of `$fulfilledHandler` if Promise is fulfilled, or with
-the return value of `$errorHandler` if Promise is rejected.
+  * `$fulfilledHandler` will be invoked once the Promise is fulfilled and passed
+    the result as the first argument.
+  * `$errorHandler` will be invoked once the Promise is rejected and passed the
+    reason as the first argument.
+  * `$progressHandler` will be invoked whenever the producer of the Promise
+    triggers progress notifications and passed a single argument (whatever it
+    wants) to indicate progress.
 
-A Promise starts in an unresolved state. At some point the computation will
-either complete successfully, thus producing a result, or fail, either
-generating some sort of error why it could not complete.
+Returns a new Promise that will fulfill with the return value of either
+`$fulfilledHandler` or `$errorHandler`, whichever is called, or will reject with
+the thrown exception if either throws.
 
-If the computation completes successfully, the Promise will transition to the
-resolved state and the `$fulfilledHandler` will be invoked and passed the
-result as the first argument.
-
-If the computation fails, the Promise will transition to the rejected
-state and `$errorHandler` will be invoked and passed the error as the first
-argument.
-
-The producer of this Promise may trigger progress notifications to
-indicate that the computation is making progress toward its result.
-For each progress notification, `$progressHandler` will be invoked and
-passed a single argument (whatever it wants) to indicate progress.
-
-Once in the resolved or rejected state, a Promise becomes immutable.
+Once in the fulfilled or rejected state, a Promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
 
 A Promise makes the following guarantees about handlers registered in
