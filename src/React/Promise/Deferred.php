@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class Deferred implements PromiseInterface, ResolverInterface
+class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
 {
     private $completed;
     private $promise;
