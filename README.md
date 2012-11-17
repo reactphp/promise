@@ -26,6 +26,7 @@ Table of Contents
      * [When::reduce()](#whenreduce)
      * [When::resolve()](#whenresolve)
      * [When::reject()](#whenreject)
+   * [Promisor](#promisor)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How Promise forwarding works](#how-promise-forwarding-works)
@@ -274,6 +275,12 @@ value of the returned Promise.
 This can be useful in situations where you need to reject a Promise without
 throwing an exception. For example, it allows you to propagate a rejection with
 the value of another Promise.
+
+### Promisor
+
+The `React\Promise\PromisorInterface` provides a common interface for objects
+that provide a promise. `React\Promise\Deferred` implements it, but since it
+is part of the public API anyone can implement it.
 
 Examples
 --------
