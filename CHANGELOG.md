@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+* 1.0.3 (2012-11-17)
+
+  * Add `PromisorInterface` for objects that have a `promise()` method.
 
 * 1.0.2 (2012-11-14)
 
