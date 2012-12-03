@@ -383,7 +383,7 @@ $deferred->promise()
     })
     ->then(null, function (\Exception $x) {
         // Can also propagate by returning another rejection
-        return React\Promise\Util::reject((integer) $x->getMessage() + 1);
+        return React\Promise\When::reject((integer) $x->getMessage() + 1);
     })
     ->then(null, function ($x) {
         echo 'Reject ' . $x; // 4
