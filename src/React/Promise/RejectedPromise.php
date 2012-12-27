@@ -14,7 +14,7 @@ class RejectedPromise implements PromiseInterface
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         try {
-            if (!$errorHandler) {
+            if (!is_callable($errorHandler)) {
                 return new RejectedPromise($this->reason);
             }
 

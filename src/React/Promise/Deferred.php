@@ -18,7 +18,7 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
 
         $deferred = new static();
 
-        if ($progressHandler) {
+        if (is_callable($progressHandler)) {
             $progHandler = function ($update) use ($deferred, $progressHandler) {
                 try {
                     $deferred->progress(call_user_func($progressHandler, $update));

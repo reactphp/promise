@@ -15,7 +15,8 @@ class FulfilledPromise implements PromiseInterface
     {
         try {
             $result = $this->result;
-            if ($fulfilledHandler) {
+
+            if (is_callable($fulfilledHandler)) {
                 $result = call_user_func($fulfilledHandler, $result);
             }
 

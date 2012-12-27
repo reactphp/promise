@@ -162,4 +162,29 @@ class DeferredResolveTest extends TestCase
 
         $d->resolve(1);
     }
+
+    /**
+     * @test
+     * @dataProvider typesDataProvider
+     **/
+    public function shouldIgnoreNonFunctions($var, $desc)
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d = new Deferred();
+        $d
+            ->then(
+                $var
+            )
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+
+        $d->resolve(1);
+    }
 }

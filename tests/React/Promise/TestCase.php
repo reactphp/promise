@@ -38,4 +38,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->getMock('React\\Promise\Stub\CallableStub');
     }
+
+    public function typesDataProvider()
+    {
+        return array(
+            array('',            'empty string'),
+            array(true,          'true'),
+            array(false,         'false'),
+            array(new \stdClass, 'object'),
+            array(1,             'truthy'),
+            array(0,             'falsey')
+        );
+    }
 }

@@ -312,4 +312,32 @@ class DeferredProgressTest extends TestCase
             ->resolver()
             ->reject(2);
     }
+
+    /**
+     * @test
+     * @dataProvider typesDataProvider
+     **/
+    public function shouldIgnoreNonFunctions($var, $desc)
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d = new Deferred();
+        $d
+            ->then(
+                null,
+                null,
+                $var
+            )
+            ->then(
+                $this->expectCallableNever(),
+                $this->expectCallableNever(),
+                $mock
+            );
+
+        $d->progress(1);
+    }
 }
