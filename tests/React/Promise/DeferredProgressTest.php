@@ -317,8 +317,10 @@ class DeferredProgressTest extends TestCase
      * @test
      * @dataProvider typesDataProvider
      **/
-    public function shouldIgnoreNonFunctions($var, $desc)
+    public function shouldIgnoreNonFunctionsAndTriggerPHPNotice($var, $desc)
     {
+        $this->setErrorHandler();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -339,5 +341,8 @@ class DeferredProgressTest extends TestCase
             );
 
         $d->progress(1);
+
+        $this->assertError('Invalid $progressHandler argument passed to then(), must be null or callable.', \E_USER_NOTICE);
+        $this->restoreErrorHandler();
     }
 }

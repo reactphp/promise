@@ -4,7 +4,7 @@
          backupStaticAttributes="false"
          colors="true"
          convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
+         convertNoticesToExceptions="false"
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"

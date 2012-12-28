@@ -27,6 +27,10 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
                 }
             };
         } else {
+            if (null !== $progressHandler) {
+                trigger_error('Invalid $progressHandler argument passed to then(), must be null or callable.', \E_USER_NOTICE);
+            }
+
             $progHandler = array($deferred, 'progress');
         }
 

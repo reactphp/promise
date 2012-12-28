@@ -90,8 +90,10 @@ class DeferredRejectTest extends TestCase
      * @test
      * @dataProvider typesDataProvider
      **/
-    public function shouldIgnoreNonFunctions($var, $desc)
+    public function shouldIgnoreNonFunctionsAndTriggerPHPNotice($var, $desc)
     {
+        $this->setErrorHandler();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -110,5 +112,8 @@ class DeferredRejectTest extends TestCase
             );
 
         $d->reject(1);
+
+        $this->assertError('Invalid $errorHandler argument passed to then(), must be null or callable.', \E_USER_NOTICE);
+        $this->restoreErrorHandler();
     }
 }

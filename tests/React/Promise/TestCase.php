@@ -4,6 +4,8 @@ namespace React\Promise;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    private $errors = array();
+
     public function expectCallableExactly($amount)
     {
         $mock = $this->createCallableMock();
@@ -49,5 +51,33 @@ class TestCase extends \PHPUnit_Framework_TestCase
             array(1,             'truthy'),
             array(0,             'falsey')
         );
+    }
+
+    public function setErrorHandler()
+    {
+        $errors = array();
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) use (&$errors) {
+            $errors[] = compact('errno', 'errstr', 'errfile', 'errline', 'errcontext');
+        });
+
+        $this->errors = &$errors;
+    }
+
+    public function restoreErrorHandler()
+    {
+        $this->errors = array();
+        restore_error_handler();
+    }
+
+    public function assertError($errstr, $errno)
+    {
+        foreach ($this->errors as $error) {
+            if ($error['errstr'] === $errstr && $error['errno'] === $errno) {
+                return;
+            }
+        }
+
+        $this->fail('Error with level ' . $errno . ' and message "' . $errstr . '" not found in ',  var_export($this->errors, true));
     }
 }
