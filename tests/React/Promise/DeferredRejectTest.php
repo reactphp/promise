@@ -85,4 +85,36 @@ class DeferredRejectTest extends TestCase
 
         $d->reject(1);
     }
+
+    /**
+     * @test
+     * @dataProvider invalidCallbackDataProvider
+     **/
+    public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
+    {
+        $errorCollector = new ErrorCollector();
+        $errorCollector->register();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d = new Deferred();
+        $d
+            ->then(
+                null,
+                $var
+            )
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+
+        $d->reject(1);
+
+        $errorCollector->assertCollectedError('Invalid $errorHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->unregister();
+    }
 }
