@@ -319,7 +319,8 @@ class DeferredProgressTest extends TestCase
      **/
     public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
     {
-        $this->setErrorHandler();
+        $errorCollector = new ErrorCollector();
+        $errorCollector->register();
 
         $mock = $this->createCallableMock();
         $mock
@@ -342,7 +343,7 @@ class DeferredProgressTest extends TestCase
 
         $d->progress(1);
 
-        $this->assertError('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
-        $this->restoreErrorHandler();
+        $errorCollector->assertCollectedError('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->unregister();
     }
 }

@@ -169,7 +169,8 @@ class DeferredResolveTest extends TestCase
      **/
     public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
     {
-        $this->setErrorHandler();
+        $errorCollector = new ErrorCollector();
+        $errorCollector->register();
 
         $mock = $this->createCallableMock();
         $mock
@@ -189,7 +190,7 @@ class DeferredResolveTest extends TestCase
 
         $d->resolve(1);
 
-        $this->assertError('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
-        $this->restoreErrorHandler();
+        $errorCollector->assertCollectedError('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->unregister();
     }
 }
