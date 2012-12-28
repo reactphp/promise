@@ -16,7 +16,7 @@ class RejectedPromise implements PromiseInterface
         try {
             if (!is_callable($errorHandler)) {
                 if (null !== $errorHandler) {
-                    trigger_error('Invalid $errorHandler argument passed to then(), must be null or callable.', \E_USER_NOTICE);
+                    trigger_error('Invalid $errorHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
                 }
 
                 return new RejectedPromise($this->reason);

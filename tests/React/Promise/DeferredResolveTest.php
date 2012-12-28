@@ -165,9 +165,9 @@ class DeferredResolveTest extends TestCase
 
     /**
      * @test
-     * @dataProvider typesDataProvider
+     * @dataProvider invalidCallbackDataProvider
      **/
-    public function shouldIgnoreNonFunctionsAndTriggerPHPNotice($var)
+    public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
     {
         $this->setErrorHandler();
 
@@ -189,7 +189,7 @@ class DeferredResolveTest extends TestCase
 
         $d->resolve(1);
 
-        $this->assertError('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', \E_USER_NOTICE);
+        $this->assertError('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
         $this->restoreErrorHandler();
     }
 }
