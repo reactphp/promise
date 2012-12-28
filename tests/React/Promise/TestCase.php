@@ -44,12 +44,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
     public function typesDataProvider()
     {
         return array(
-            array('',            'empty string'),
-            array(true,          'true'),
-            array(false,         'false'),
-            array(new \stdClass, 'object'),
-            array(1,             'truthy'),
-            array(0,             'falsey')
+            'empty string' => array(''),
+            'true'         => array(true),
+            'false'        => array(false),
+            'object'       => array(new \stdClass),
+            'truthy'       => array(1),
+            'falsey'       => array(0)
         );
     }
 

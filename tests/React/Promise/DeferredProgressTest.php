@@ -317,7 +317,7 @@ class DeferredProgressTest extends TestCase
      * @test
      * @dataProvider typesDataProvider
      **/
-    public function shouldIgnoreNonFunctionsAndTriggerPHPNotice($var, $desc)
+    public function shouldIgnoreNonFunctionsAndTriggerPHPNotice($var)
     {
         $this->setErrorHandler();
 
