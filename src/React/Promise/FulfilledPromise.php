@@ -15,8 +15,11 @@ class FulfilledPromise implements PromiseInterface
     {
         try {
             $result = $this->result;
-            if ($fulfilledHandler) {
+
+            if (is_callable($fulfilledHandler)) {
                 $result = call_user_func($fulfilledHandler, $result);
+            } elseif (null !== $fulfilledHandler) {
+                trigger_error('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
             }
 
             return Util::promiseFor($result);
