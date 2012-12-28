@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+* 1.0.4 (201x-xx-xx)
+
+  * Trigger PHP errors when invalid callback is passed.
+
 * 1.0.3 (2012-11-17)
 
   * Add `PromisorInterface` for objects that have a `promise()` method.
