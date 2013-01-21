@@ -159,6 +159,9 @@ Resolves a Deferred. All consumers are notified by having their
 `$fulfilledHandler` (which they registered via `$promise->then()`) called with
 `$result`.
 
+If `$result` itself is a promise, the Deferred will transition to the state of
+this promise once it is resolved.
+
 ``` php
 $resolver->reject(mixed $reason = null);
 ```
@@ -166,6 +169,9 @@ $resolver->reject(mixed $reason = null);
 Rejects a Deferred, signalling that the Deferred's computation failed.
 All consumers are notified by having their `$errorHandler` (which they
 registered via `$promise->then()`) called with `$reason`.
+
+If `$reason` itself is a promise, the Deferred will be rejected with the outcome
+of this promise regardless whether it fulfills or rejects.
 
 ``` php
 $resolver->progress(mixed $update = null);
