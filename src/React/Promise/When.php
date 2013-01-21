@@ -11,9 +11,7 @@ class When
 
     public static function reject($promiseOrValue = null)
     {
-        return static::resolve($promiseOrValue)->then(function ($value = null) {
-            return new RejectedPromise($value);
-        });
+        return Util::rejectedPromiseFor($promiseOrValue);
     }
 
     public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)

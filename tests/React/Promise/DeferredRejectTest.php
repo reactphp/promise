@@ -9,7 +9,7 @@ namespace React\Promise;
 class DeferredRejectTest extends TestCase
 {
     /** @test */
-    public function shouldReject()
+    public function shouldRejectWithAnImmediateValue()
     {
         $d = new Deferred();
 
@@ -26,6 +26,46 @@ class DeferredRejectTest extends TestCase
         $d
             ->resolver()
             ->reject(1);
+    }
+
+    /** @test */
+    public function shouldRejectWithFulfilledPromise()
+    {
+        $d = new Deferred();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d
+            ->promise()
+            ->then($this->expectCallableNever(), $mock);
+
+        $d
+            ->resolver()
+            ->reject(new FulfilledPromise(1));
+    }
+
+    /** @test */
+    public function shouldRejectWithRejectedPromise()
+    {
+        $d = new Deferred();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $d
+            ->promise()
+            ->then($this->expectCallableNever(), $mock);
+
+        $d
+            ->resolver()
+            ->reject(new RejectedPromise(1));
     }
 
     /** @test */
