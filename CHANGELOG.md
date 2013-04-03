@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-* 1.0.4 (201x-xx-xx)
+* 1.0.4 (2013-04-03)
 
   * Trigger PHP errors when invalid callback is passed.
   * Fully resolve rejection value before calling rejection handler.
