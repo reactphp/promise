@@ -381,21 +381,21 @@ $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
     ->then(function ($x) {
-        throw $x + 1;
-    })
-    ->then(null, function ($x) {
-        // Propagate the rejection
         throw new \Exception($x + 1);
+    })
+    ->then(null, function (\Exception $x) {
+        // Propagate the rejection
+        throw $x;
     })
     ->then(null, function (\Exception $x) {
         // Can also propagate by returning another rejection
         return React\Promise\When::reject((integer) $x->getMessage() + 1);
     })
     ->then(null, function ($x) {
-        echo 'Reject ' . $x; // 4
+        echo 'Reject ' . $x; // 3
     });
 
-$deferred->resolve(1);  // Prints "Reject 4"
+$deferred->resolve(1);  // Prints "Reject 3"
 ```
 
 #### Mixed resolution and rejection forwarding
