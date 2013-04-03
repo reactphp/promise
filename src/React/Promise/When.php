@@ -14,6 +14,11 @@ class When
         return Util::rejectedPromiseFor($promiseOrValue);
     }
 
+    public static function lazy($factory)
+    {
+        return new LazyPromise($factory);
+    }
+
     public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
