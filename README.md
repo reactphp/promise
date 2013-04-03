@@ -26,6 +26,7 @@ Table of Contents
      * [When::reduce()](#whenreduce)
      * [When::resolve()](#whenresolve)
      * [When::reject()](#whenreject)
+     * [When::lazy()](#whenlazy)
    * [Promisor](#promisor)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
@@ -281,6 +282,31 @@ value of the returned Promise.
 This can be useful in situations where you need to reject a Promise without
 throwing an exception. For example, it allows you to propagate a rejection with
 the value of another Promise.
+
+#### When::lazy()
+
+``` php
+$promise = React\Promise\When::lazy(callable $factory);
+```
+
+Creates a Promise which will be lazily initialized by `$factory` once a consumer
+calls the `then()` method.
+
+```php
+$factory = function () {
+    $deferred = new React\Promise\Deferred();
+
+    // Do some heavy stuff here and resolve the Deferred once completed
+
+    return $deferred->promise();
+};
+
+$promise = React\Promise\When::lazy($factory);
+
+// $factory will only be executed once we call then()
+$promise->then(function ($value) {
+});
+```
 
 ### Promisor
 
