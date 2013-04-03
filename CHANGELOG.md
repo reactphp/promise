@@ -5,6 +5,8 @@ CHANGELOG
 
   * Trigger PHP errors when invalid callback is passed.
   * Fully resolve rejection value before calling rejection handler.
+  * Add When::lazy() to create lazy promises which will be initialized once a
+    consumer calls the then() method.
 
 * 1.0.3 (2012-11-17)
 
