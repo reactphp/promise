@@ -9,11 +9,18 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
     private $resolver;
     private $handlers = array();
     private $progressHandlers = array();
+    private $progressQueue = array();
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         if (null !== $this->completed) {
-            return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
+            if (is_callable($progressHandler)) {
+                foreach ($this->progressQueue as $update) {
+                    call_user_func($progressHandler, $update);
+                }
+            }
+
+            return $this->completed->then($fulfilledHandler, $errorHandler);
         }
 
         $deferred = new static();
@@ -74,6 +81,8 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
         if (null !== $this->completed) {
             return;
         }
+
+        $this->progressQueue[] = $update;
 
         $this->processQueue($this->progressHandlers, $update);
     }

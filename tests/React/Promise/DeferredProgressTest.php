@@ -346,4 +346,38 @@ class DeferredProgressTest extends TestCase
         $errorCollector->assertCollectedError('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
         $errorCollector->unregister();
     }
+
+    /** @test */
+    public function shouldPropagateQueuedProgressUpdatesBeforeResolution()
+    {
+        $sentinel = new \stdClass();
+
+        $d = new Deferred();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($sentinel);
+
+        $d
+            ->resolver()
+            // This progress call should be queued
+            // because triggered before resolution
+            ->progress($sentinel);
+
+        $d
+            ->resolver()
+            ->resolve();
+
+        $d
+            ->resolver()
+            // This progress call should be ignored
+            // because it is triggered after resolution
+            ->progress();
+
+        $d
+            ->promise()
+            ->then($this->expectCallableOnce(), $this->expectCallableNever(), $mock);
+    }
 }
