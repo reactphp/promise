@@ -96,7 +96,7 @@ should be given to consumers and producers.
 ``` php
 $deferred = new React\Promise\Deferred();
 
-$deferred->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$deferred->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 $deferred->resolve(mixed $promiseOrValue = null);
 $deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
@@ -109,23 +109,23 @@ The Promise represents the eventual outcome, which is either fulfillment
 reason. The Promise provides mechanisms for arranging to call a function on its
 value or reason, and produces a new Promise for the result.
 
-A Promise has a single method `then()` which registers new fulfilled, error and
-progress handlers with this Promise (all parameters are optional):
+A Promise has a single method `then()` which registers new fulfilled, rejection
+and progress handlers with this Promise (all parameters are optional):
 
 ``` php
-$newPromise = $promise->then(callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$newPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
-  * `$fulfilledHandler` will be invoked once the Promise is fulfilled and passed
+  * `$onFulfilled` will be invoked once the Promise is fulfilled and passed
     the result as the first argument.
-  * `$errorHandler` will be invoked once the Promise is rejected and passed the
+  * `$onRejected` will be invoked once the Promise is rejected and passed the
     reason as the first argument.
-  * `$progressHandler` will be invoked whenever the producer of the Promise
+  * `$onProgress` will be invoked whenever the producer of the Promise
     triggers progress notifications and passed a single argument (whatever it
     wants) to indicate progress.
 
 Returns a new Promise that will fulfill with the return value of either
-`$fulfilledHandler` or `$errorHandler`, whichever is called, or will reject with
+`$onFulfilled` or `$onRejected`, whichever is called, or will reject with
 the thrown exception if either throws.
 
 Once in the fulfilled or rejected state, a Promise becomes immutable.
@@ -134,11 +134,11 @@ Neither its state nor its result (or error) can be modified.
 A Promise makes the following guarantees about handlers registered in
 the same call to `then()`:
 
-  1. Only one of `$fulfilledHandler` or `$errorHandler` will be called,
+  1. Only one of `$onFulfilled` or `$onRejected` will be called,
      never both.
-  2. `$fulfilledHandler` and `$errorHandler` will never be called more
+  2. `$onFulfilled` and `$onRejected` will never be called more
      than once.
-  3. `$progressHandler` may be called multiple times.
+  3. `$onProgress` may be called multiple times.
 
 #### See also
 
@@ -148,19 +148,18 @@ the same call to `then()`:
 ### Resolver
 
 The Resolver represents the responsibility of fulfilling, rejecting and
-notifying the associated Promise.
+progressing the associated Promise.
 
 A Resolver has 3 methods: `resolve()`, `reject()` and `progress()`:
 
 ``` php
-$resolver->resolve(mixed $result = null);
+$resolver->resolve(mixed $value = null);
 ```
 
-Resolves a Deferred. All consumers are notified by having their
-`$fulfilledHandler` (which they registered via `$promise->then()`) called with
-`$result`.
+Resolves a Deferred. All consumers are notified by having  `$onFulfilled`
+(which they registered via `$promise->then()`) called with `$value`.
 
-If `$result` itself is a promise, the Deferred will transition to the state of
+If `$value` itself is a promise, the Deferred will transition to the state of
 this promise once it is resolved.
 
 ``` php
@@ -168,8 +167,8 @@ $resolver->reject(mixed $reason = null);
 ```
 
 Rejects a Deferred, signalling that the Deferred's computation failed.
-All consumers are notified by having their `$errorHandler` (which they
-registered via `$promise->then()`) called with `$reason`.
+All consumers are notified by having `$onRejected` (which they registered via
+`$promise->then()`) called with `$reason`.
 
 If `$reason` itself is a promise, the Deferred will be rejected with the outcome
 of this promise regardless whether it fulfills or rejects.
@@ -181,8 +180,8 @@ $resolver->progress(mixed $update = null);
 Triggers progress notifications, to indicate to consumers that the computation
 is making progress toward its result.
 
-All consumers are notified by having their `$progressHandler` (which they
-registered via `$promise->then()`) called with `$update`.
+All consumers are notified by having `$onProgress` (which they registered via
+`$promise->then()`) called with `$update`.
 
 ### When
 
@@ -192,7 +191,7 @@ mapping and reducing collections of Promises.
 #### When::all()
 
 ``` php
-$promise = React\Promise\When::all(array|React\Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::all(array|React\Promise\PromiseInterface $promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
 Returns a Promise that will resolve only once all the items in
@@ -203,7 +202,7 @@ will be an array containing the resolution values of each of the items in
 #### When::any()
 
 ``` php
-$promise = React\Promise\When::any(array|React\Promise\PromiseInterface $promisesOrValues, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::any(array|React\Promise\PromiseInterface $promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
 Returns a Promise that will resolve when any one of the items in
@@ -216,7 +215,7 @@ rejected. The rejection value will be an array of all rejection reasons.
 #### When::some()
 
 ``` php
-$promise = React\Promise\When::some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany, callable $fulfilledHandler = null, callable $errorHandler = null, callable $progressHandler = null);
+$promise = React\Promise\When::some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
 Returns a Promise that will resolve when `$howMany` of the supplied items in
@@ -334,8 +333,8 @@ function getAwesomeResultPromise()
 
 getAwesomeResultPromise()
     ->then(
-        function ($result) {
-            // Deferred resolved, do something with $result
+        function ($value) {
+            // Deferred resolved, do something with $value
         },
         function ($reason) {
             // Deferred rejected, do something with $reason

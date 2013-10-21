@@ -11,8 +11,8 @@ class DeferredPromise implements PromiseInterface
         $this->deferred = $deferred;
     }
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
     {
-        return $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
+        return $this->deferred->then($onFulfilled, $onRejected, $onProgress);
     }
 }

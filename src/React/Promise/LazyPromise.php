@@ -12,7 +12,7 @@ class LazyPromise implements PromiseInterface
         $this->factory = $factory;
     }
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
     {
         if (null === $this->promise) {
             try {
@@ -22,6 +22,6 @@ class LazyPromise implements PromiseInterface
             }
         }
 
-        return $this->promise->then($fulfilledHandler, $errorHandler, $progressHandler);
+        return $this->promise->then($onFulfilled, $onRejected, $onProgress);
     }
 }

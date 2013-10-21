@@ -19,29 +19,29 @@ class When
         return new LazyPromise($factory);
     }
 
-    public static function all($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public static function all($promisesOrValues, $onFulfilled = null, $onRejected = null, $onProgress = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
             return $val;
         });
 
-        return $promise->then($fulfilledHandler, $errorHandler, $progressHandler);
+        return $promise->then($onFulfilled, $onRejected, $onProgress);
     }
 
-    public static function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public static function any($promisesOrValues, $onFulfilled = null, $onRejected = null, $onProgress = null)
     {
-        $unwrapSingleResult = function ($val) use ($fulfilledHandler) {
+        $unwrapSingleResult = function ($val) use ($onFulfilled) {
             $val = array_shift($val);
 
-            return $fulfilledHandler ? $fulfilledHandler($val) : $val;
+            return $onFulfilled ? $onFulfilled($val) : $val;
         };
 
-        return static::some($promisesOrValues, 1, $unwrapSingleResult, $errorHandler, $progressHandler);
+        return static::some($promisesOrValues, 1, $unwrapSingleResult, $onRejected, $onProgress);
     }
 
-    public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public static function some($promisesOrValues, $howMany, $onFulfilled = null, $onRejected = null, $onProgress = null)
     {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $fulfilledHandler, $errorHandler, $progressHandler) {
+        return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $onFulfilled, $onRejected, $onProgress) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -100,7 +100,7 @@ class When
                 }
             }
 
-            return $deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
+            return $deferred->then($onFulfilled, $onRejected, $onProgress);
         });
     }
 
@@ -112,21 +112,21 @@ class When
             }
 
             $toResolve = count($array);
-            $results   = array();
+            $values    = array();
             $deferred  = new Deferred();
 
             if (!$toResolve) {
-                $deferred->resolve($results);
+                $deferred->resolve($values);
             } else {
-                $resolve = function ($item, $i) use ($mapFunc, &$results, &$toResolve, $deferred) {
+                $resolve = function ($item, $i) use ($mapFunc, &$values, &$toResolve, $deferred) {
                     When::resolve($item)
                         ->then($mapFunc)
                         ->then(
-                            function ($mapped) use (&$results, $i, &$toResolve, $deferred) {
-                                $results[$i] = $mapped;
+                            function ($mapped) use (&$values, $i, &$toResolve, $deferred) {
+                                $values[$i] = $mapped;
 
                                 if (0 === --$toResolve) {
-                                    $deferred->resolve($results);
+                                    $deferred->resolve($values);
                                 }
                             },
                             array($deferred, 'reject')

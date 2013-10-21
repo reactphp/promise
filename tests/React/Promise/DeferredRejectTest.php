@@ -154,7 +154,7 @@ class DeferredRejectTest extends TestCase
 
         $d->reject(1);
 
-        $errorCollector->assertCollectedError('Invalid $errorHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->assertCollectedError('Invalid $onRejected argument passed to then(), must be null or callable.', E_USER_NOTICE);
         $errorCollector->unregister();
     }
 }

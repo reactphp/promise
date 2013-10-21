@@ -4,5 +4,5 @@ namespace React\Promise;
 
 interface PromiseInterface
 {
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null);
+    public function then($onFulfilled = null, $onRejected = null, $onProgress = null);
 }

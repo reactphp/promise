@@ -10,33 +10,33 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
     private $handlers = array();
     private $progressHandlers = array();
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
     {
         if (null !== $this->completed) {
-            return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
+            return $this->completed->then($onFulfilled, $onRejected, $onProgress);
         }
 
         $deferred = new static();
 
-        if (is_callable($progressHandler)) {
-            $progHandler = function ($update) use ($deferred, $progressHandler) {
+        if (is_callable($onProgress)) {
+            $progHandler = function ($update) use ($deferred, $onProgress) {
                 try {
-                    $deferred->progress(call_user_func($progressHandler, $update));
+                    $deferred->progress(call_user_func($onProgress, $update));
                 } catch (\Exception $e) {
                     $deferred->progress($e);
                 }
             };
         } else {
-            if (null !== $progressHandler) {
-                trigger_error('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+            if (null !== $onProgress) {
+                trigger_error('Invalid $onProgress argument passed to then(), must be null or callable.', E_USER_NOTICE);
             }
 
             $progHandler = array($deferred, 'progress');
         }
 
-        $this->handlers[] = function ($promise) use ($fulfilledHandler, $errorHandler, $deferred, $progHandler) {
+        $this->handlers[] = function ($promise) use ($onFulfilled, $onRejected, $deferred, $progHandler) {
             $promise
-                ->then($fulfilledHandler, $errorHandler)
+                ->then($onFulfilled, $onRejected)
                 ->then(
                     array($deferred, 'resolve'),
                     array($deferred, 'reject'),
@@ -49,13 +49,13 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
         return $deferred->promise();
     }
 
-    public function resolve($result = null)
+    public function resolve($value = null)
     {
         if (null !== $this->completed) {
-            return Util::promiseFor($result);
+            return Util::promiseFor($value);
         }
 
-        $this->completed = Util::promiseFor($result);
+        $this->completed = Util::promiseFor($value);
 
         $this->processQueue($this->handlers, $this->completed);
 

@@ -343,7 +343,7 @@ class DeferredProgressTest extends TestCase
 
         $d->progress(1);
 
-        $errorCollector->assertCollectedError('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->assertCollectedError('Invalid $onProgress argument passed to then(), must be null or callable.', E_USER_NOTICE);
         $errorCollector->unregister();
     }
 }

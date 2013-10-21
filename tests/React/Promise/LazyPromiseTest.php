@@ -40,15 +40,15 @@ class LazyPromiseTest extends TestCase
             ->method('__invoke')
             ->will($this->returnValue(new FulfilledPromise(1)));
 
-        $fulfilledHandler = $this->createCallableMock();
-        $fulfilledHandler
+        $onFulfilled = $this->createCallableMock();
+        $onFulfilled
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
         $p = new LazyPromise($factory);
 
-        $p->then($fulfilledHandler);
+        $p->then($onFulfilled);
     }
 
     /** @test */
@@ -75,14 +75,14 @@ class LazyPromiseTest extends TestCase
             ->method('__invoke')
             ->will($this->throwException($exception));
 
-        $errorHandler = $this->createCallableMock();
-        $errorHandler
+        $onRejected = $this->createCallableMock();
+        $onRejected
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
         $p = new LazyPromise($factory);
 
-        $p->then($this->expectCallableNever(), $errorHandler);
+        $p->then($this->expectCallableNever(), $onRejected);
     }
 }

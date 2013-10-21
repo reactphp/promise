@@ -190,7 +190,7 @@ class DeferredResolveTest extends TestCase
 
         $d->resolve(1);
 
-        $errorCollector->assertCollectedError('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+        $errorCollector->assertCollectedError('Invalid $onFulfilled argument passed to then(), must be null or callable.', E_USER_NOTICE);
         $errorCollector->unregister();
     }
 }
