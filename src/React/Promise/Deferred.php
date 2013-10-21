@@ -10,7 +10,7 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
     private $handlers = array();
     private $progressHandlers = array();
 
-    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null !== $this->completed) {
             return $this->completed->then($onFulfilled, $onRejected, $onProgress);
@@ -27,10 +27,6 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
                 }
             };
         } else {
-            if (null !== $onProgress) {
-                trigger_error('Invalid $onProgress argument passed to then(), must be null or callable.', E_USER_NOTICE);
-            }
-
             $progHandler = array($deferred, 'progress');
         }
 

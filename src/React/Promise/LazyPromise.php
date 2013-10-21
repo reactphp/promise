@@ -7,12 +7,12 @@ class LazyPromise implements PromiseInterface
     private $factory;
     private $promise;
 
-    public function __construct($factory)
+    public function __construct(callable $factory)
     {
         $this->factory = $factory;
     }
 
-    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null === $this->promise) {
             try {

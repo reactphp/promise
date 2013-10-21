@@ -11,13 +11,15 @@ class DeferredPromiseTest extends TestCase
     /** @test */
     public function shouldForwardToDeferred()
     {
+        $callable = $this->createCallableMock();
+
         $mock = $this->getMock('React\\Promise\\Deferred');
         $mock
             ->expects($this->once())
             ->method('then')
-            ->with(1, 2, 3);
+            ->with($callable, $callable, $callable);
 
         $p = new DeferredPromise($mock);
-        $p->then(1, 2, 3);
+        $p->then($callable, $callable, $callable);
     }
 }

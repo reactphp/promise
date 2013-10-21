@@ -11,14 +11,10 @@ class RejectedPromise implements PromiseInterface
         $this->reason = $reason;
     }
 
-    public function then($onFulfilled = null, $onRejected = null, $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         try {
-            if (!is_callable($onRejected)) {
-                if (null !== $onRejected) {
-                    trigger_error('Invalid $onRejected argument passed to then(), must be null or callable.', E_USER_NOTICE);
-                }
-
+            if (null === $onRejected) {
                 return new RejectedPromise($this->reason);
             }
 

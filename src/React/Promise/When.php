@@ -19,7 +19,7 @@ class When
         return new LazyPromise($factory);
     }
 
-    public static function all($promisesOrValues, $onFulfilled = null, $onRejected = null, $onProgress = null)
+    public static function all($promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         $promise = static::map($promisesOrValues, function ($val) {
             return $val;
@@ -28,7 +28,7 @@ class When
         return $promise->then($onFulfilled, $onRejected, $onProgress);
     }
 
-    public static function any($promisesOrValues, $onFulfilled = null, $onRejected = null, $onProgress = null)
+    public static function any($promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         $unwrapSingleResult = function ($val) use ($onFulfilled) {
             $val = array_shift($val);
@@ -39,7 +39,7 @@ class When
         return static::some($promisesOrValues, 1, $unwrapSingleResult, $onRejected, $onProgress);
     }
 
-    public static function some($promisesOrValues, $howMany, $onFulfilled = null, $onRejected = null, $onProgress = null)
+    public static function some($promisesOrValues, $howMany, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $onFulfilled, $onRejected, $onProgress) {
             if (!is_array($array)) {
@@ -104,7 +104,7 @@ class When
         });
     }
 
-    public static function map($promisesOrValues, $mapFunc)
+    public static function map($promisesOrValues, callable $mapFunc)
     {
         return When::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
             if (!is_array($array)) {
@@ -142,7 +142,7 @@ class When
         });
     }
 
-    public static function reduce($promisesOrValues, $reduceFunc , $initialValue = null)
+    public static function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
     {
         return When::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {
             if (!is_array($array)) {

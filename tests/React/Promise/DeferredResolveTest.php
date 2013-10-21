@@ -162,35 +162,4 @@ class DeferredResolveTest extends TestCase
 
         $d->resolve(1);
     }
-
-    /**
-     * @test
-     * @dataProvider invalidCallbackDataProvider
-     **/
-    public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->register();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        $d = new Deferred();
-        $d
-            ->then(
-                $var
-            )
-            ->then(
-                $mock,
-                $this->expectCallableNever()
-            );
-
-        $d->resolve(1);
-
-        $errorCollector->assertCollectedError('Invalid $onFulfilled argument passed to then(), must be null or callable.', E_USER_NOTICE);
-        $errorCollector->unregister();
-    }
 }
