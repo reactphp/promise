@@ -20,6 +20,7 @@ Table of Contents
      * [Deferred::reject()](#deferredreject)
      * [Deferred::progress()](#deferredprogress)
    * [Promise](#promise-1)
+     * [Promise::then()](#promisethen)
    * [LazyPromise](#lazypromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
@@ -32,7 +33,7 @@ Table of Contents
    * [Promisor](#promisor)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
-   * [How Promise forwarding works](#how-promise-forwarding-works)
+   * [How promise forwarding works](#how-promise-forwarding-works)
      * [Resolution forwarding](#resolution-forwarding)
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
@@ -46,10 +47,10 @@ Introduction
 React/Promise is a library implementing
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
-It also provides several other useful Promise-related concepts, such as joining
-multiple Promises and mapping and reducing collections of Promises.
+It also provides several other useful promise-related concepts, such as joining
+multiple promises and mapping and reducing collections of promises.
 
-If you've never heard about Promises before,
+If you've never heard about promises before,
 [read this first](https://gist.github.com/3889970).
 
 Concepts
@@ -63,8 +64,8 @@ that executes asynchronously and completes at some point in the future.
 
 ### Promise
 
-While a Deferred represents the computation itself, a **Promise** represents
-the result of that computation. Thus, each Deferred has a Promise that acts as
+While a deferred represents the computation itself, a **Promise** represents
+the result of that computation. Thus, each deferred has a promise that acts as
 a placeholder for its actual result.
 
 API
@@ -119,7 +120,7 @@ this promise once it is resolved.
 $resolver->reject(mixed $reason = null);
 ```
 
-Rejects the promise returned by `promise()`, signalling that the Deferred's
+Rejects the promise returned by `promise()`, signalling that the deferred's
 computation failed.
 All consumers are notified by having `$onRejected` (which they registered via
 `$promise->then()`) called with `$reason`.
@@ -141,13 +142,48 @@ All consumers are notified by having `$onProgress` (which they registered via
 
 ### Promise
 
-The Promise represents the eventual outcome, which is either fulfillment
+The promise represents an eventual outcome, which is either fulfillment
 (success) and an associated value, or rejection (failure) and an associated
-reason. The Promise provides mechanisms for arranging to call a function on its
-value or reason, and produces a new Promise for the result.
+reason.
 
-A Promise has a single method `then()` which registers new fulfilled, rejection
-and progress handlers with this Promise (all parameters are optional):
+``` php
+$promise = new React\Promise\Promise(function (callable $resolve, callable $reject, callable $progress) {
+    // Do some work, possibly asynchronously, and then
+    // resolve or reject. You can notify of progress events
+    // along the way if you want/need.
+
+    $resolve($awesomeResult);
+    // or $resolve($anotherPromise);
+    // or $reject($nastyError);
+    // or $progress($progressNotification);
+});
+
+$promise->then(
+    function ($value) {
+        // Promise resolved, do something with $value
+    },
+    function ($reason) {
+        // Promise rejected, do something with $reason
+    },
+    function ($update) {
+        // Progress notification triggered, do something with $update
+    }
+);
+```
+
+The promise constructor receives a resolver function which will be called
+with 3 arguments:
+
+  * `$resolve($value)` - Primary function that seals the fate of the
+    returned promise. Accepts either a non-promise value, or another promise.
+    When called with a non-promise value, fulfills promise with that value.
+    When called with another promise, e.g. `$resolve($otherPromise)`, promise's
+    fate will be equivalent to that of `$otherPromise`.
+  * `$reject($reason)` - Function that rejects the promise.
+  * `$progress($update)` - Function that issues progress events for the promise.
+
+If the resolver throws an exception, the promise will be rejected with that
+thrown exception as the rejection reason.
 
 #### Promise::then()
 
@@ -155,22 +191,25 @@ and progress handlers with this Promise (all parameters are optional):
 $newPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
-  * `$onFulfilled` will be invoked once the Promise is fulfilled and passed
+The `then()` method registers new fulfilled, rejection and progress handlers
+with this promise (all parameters are optional):
+
+  * `$onFulfilled` will be invoked once the promise is fulfilled and passed
     the result as the first argument.
-  * `$onRejected` will be invoked once the Promise is rejected and passed the
+  * `$onRejected` will be invoked once the promise is rejected and passed the
     reason as the first argument.
-  * `$onProgress` will be invoked whenever the producer of the Promise
+  * `$onProgress` will be invoked whenever the producer of the promise
     triggers progress notifications and passed a single argument (whatever it
     wants) to indicate progress.
 
-Returns a new Promise that will fulfill with the return value of either
+Returns a new promise that will fulfill with the return value of either
 `$onFulfilled` or `$onRejected`, whichever is called, or will reject with
 the thrown exception if either throws.
 
-Once in the fulfilled or rejected state, a Promise becomes immutable.
+Once in the fulfilled or rejected state, a promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
 
-A Promise makes the following guarantees about handlers registered in
+A promise makes the following guarantees about handlers registered in
 the same call to `then()`:
 
   1. Only one of `$onFulfilled` or `$onRejected` will be called,
@@ -181,19 +220,19 @@ the same call to `then()`:
 
 #### See also
 
-* [resolve()](#resolve) - Creating a resolved Promise
-* [reject()](#reject) - Creating a rejected Promise
+* [resolve()](#resolve) - Creating a resolved promise
+* [reject()](#reject) - Creating a rejected promise
 
 ### LazyPromise
 
-Creates a Promise which will be lazily initialized by `$factory` once a consumer
+Creates a promise which will be lazily initialized by `$factory` once a consumer
 calls the `then()` method.
 
 ```php
 $factory = function () {
     $deferred = new React\Promise\Deferred();
 
-    // Do some heavy stuff here and resolve the Deferred once completed
+    // Do some heavy stuff here and resolve the deferred once completed
 
     return $deferred->promise();
 };
@@ -208,7 +247,7 @@ $promise->then(function ($value) {
 ### Functions
 
 Useful functions for creating, joining, mapping and reducing collections of
-Promises.
+promises.
 
 #### resolve()
 
@@ -216,12 +255,12 @@ Promises.
 $promise = React\Promise\resolve(mixed $promiseOrValue);
 ```
 
-Creates a resolved Promise for the supplied `$promiseOrValue`.
+Creates a resolved promise for the supplied `$promiseOrValue`.
 
 If `$promiseOrValue` is a value, it will be the resolution value of the
-returned Promise.
+returned promise.
 
-If `$promiseOrValue` is a Promise, it will simply be returned.
+If `$promiseOrValue` is a promise, it will simply be returned.
 
 #### reject()
 
@@ -229,17 +268,17 @@ If `$promiseOrValue` is a Promise, it will simply be returned.
 $promise = React\Promise\reject(mixed $promiseOrValue);
 ```
 
-Creates a rejected Promise for the supplied `$promiseOrValue`.
+Creates a rejected promise for the supplied `$promiseOrValue`.
 
 If `$promiseOrValue` is a value, it will be the rejection value of the
-returned Promise.
+returned promise.
 
-If `$promiseOrValue` is a Promise, its completion value will be the rejected
-value of the returned Promise.
+If `$promiseOrValue` is a promise, its completion value will be the rejected
+value of the returned promise.
 
-This can be useful in situations where you need to reject a Promise without
+This can be useful in situations where you need to reject a promise without
 throwing an exception. For example, it allows you to propagate a rejection with
-the value of another Promise.
+the value of another promise.
 
 #### all()
 
@@ -247,8 +286,8 @@ the value of another Promise.
 $promise = React\Promise\all(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
-Returns a Promise that will resolve only once all the items in
-`$promisesOrValues` have resolved. The resolution value of the returned Promise
+Returns a promise that will resolve only once all the items in
+`$promisesOrValues` have resolved. The resolution value of the returned promise
 will be an array containing the resolution values of each of the items in
 `$promisesOrValues`.
 
@@ -258,11 +297,11 @@ will be an array containing the resolution values of each of the items in
 $promise = React\Promise\any(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
-Returns a Promise that will resolve when any one of the items in
-`$promisesOrValues` resolves. The resolution value of the returned Promise
+Returns a promise that will resolve when any one of the items in
+`$promisesOrValues` resolves. The resolution value of the returned promise
 will be the resolution value of the triggering item.
 
-The returned Promise will only reject if *all* items in `$promisesOrValues` are
+The returned promise will only reject if *all* items in `$promisesOrValues` are
 rejected. The rejection value will be an array of all rejection reasons.
 
 #### some()
@@ -271,12 +310,12 @@ rejected. The rejection value will be an array of all rejection reasons.
 $promise = React\Promise\some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany);
 ```
 
-Returns a Promise that will resolve when `$howMany` of the supplied items in
-`$promisesOrValues` resolve. The resolution value of the returned Promise
+Returns a promise that will resolve when `$howMany` of the supplied items in
+`$promisesOrValues` resolve. The resolution value of the returned promise
 will be an array of length `$howMany` containing the resolution values of the
 triggering items.
 
-The returned Promise will reject if it becomes impossible for `$howMany` items
+The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
 reject). The rejection value will be an array of
 `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
@@ -288,10 +327,10 @@ $promise = React\Promise\map(array|React\Promise\PromiseInterface $promisesOrVal
 ```
 
 Traditional map function, similar to `array_map()`, but allows input to contain
-Promises and/or values, and `$mapFunc` may return either a value or a Promise.
+promises and/or values, and `$mapFunc` may return either a value or a promise.
 
 The map function receives each item as argument, where item is a fully resolved
-value of a Promise or value in `$promisesOrValues`.
+value of a promise or value in `$promisesOrValues`.
 
 #### reduce()
 
@@ -300,8 +339,8 @@ $promise = React\Promise\reduce(array|React\Promise\PromiseInterface $promisesOr
 ```
 
 Traditional reduce function, similar to `array_reduce()`, but input may contain
-Promises and/or values, and `$reduceFunc` may return either a value or a
-Promise, *and* `$initialValue` may be a Promise or a value for the starting
+promises and/or values, and `$reduceFunc` may return either a value or a
+promise, *and* `$initialValue` may be a promise or a value for the starting
 value.
 
 ### Promisor
@@ -320,11 +359,11 @@ function getAwesomeResultPromise()
 {
     $deferred = new React\Promise\Deferred();
 
-    // Pass only the Resolver, to provide the resolution value for the Promise
+    // Pass only the Resolver, to provide the resolution value for the promise
     computeAwesomeResultAsynchronously($deferred->resolver());
 
-    // Return only the Promise, so that the caller cannot
-    // resolve, reject, or otherwise muck with the original Deferred.
+    // Return only the promise, so that the caller cannot
+    // resolve, reject, or otherwise muck with the original deferred.
     return $deferred->promise();
 }
 
@@ -342,21 +381,21 @@ getAwesomeResultPromise()
     );
 ```
 
-### How Promise forwarding works
+### How promise forwarding works
 
 A few simple examples to show how the mechanics of Promises/A forwarding works.
-These examples are contrived, of course, and in real usage, Promise chains will
+These examples are contrived, of course, and in real usage, promise chains will
 typically be spread across several function calls, or even several levels of
 your application architecture.
 
 #### Resolution forwarding
 
-Resolved Promises forward resolution values to the next Promise.
-The first Promise, `$deferred->promise()`, will resolve with the value passed
+Resolved promises forward resolution values to the next promise.
+The first promise, `$deferred->promise()`, will resolve with the value passed
 to `$deferred->resolve()` below.
 
-Each call to `then()` returns a new Promise that will resolve with the return
-value of the previous handler. This creates a Promise "pipeline".
+Each call to `then()` returns a new promise that will resolve with the return
+value of the previous handler. This creates a promise "pipeline".
 
 ``` php
 $deferred = new React\Promise\Deferred();
@@ -364,7 +403,7 @@ $deferred = new React\Promise\Deferred();
 $deferred->promise()
     ->then(function ($x) {
         // $x will be the value passed to $deferred->resolve() below
-        // and returns a *new Promise* for $x + 1
+        // and returns a *new promise* for $x + 1
         return $x + 1;
     })
     ->then(function ($x) {
@@ -391,12 +430,12 @@ $deferred->resolve(1); // Prints "Resolve 4"
 
 #### Rejection forwarding
 
-Rejected Promises behave similarly, and also work similarly to try/catch:
+Rejected promises behave similarly, and also work similarly to try/catch:
 When you catch an exception, you must rethrow for it to propagate.
 
-Similarly, when you handle a rejected Promise, to propagate the rejection,
-"rethrow" it by either returning a rejected Promise, or actually throwing
-(since Promise translates thrown exceptions into rejections)
+Similarly, when you handle a rejected promise, to propagate the rejection,
+"rethrow" it by either returning a rejected promise, or actually throwing
+(since promise translates thrown exceptions into rejections)
 
 ``` php
 $deferred = new React\Promise\Deferred();
