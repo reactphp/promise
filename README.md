@@ -19,8 +19,9 @@ Table of Contents
      * [Deferred::resolve()](#deferredresolve)
      * [Deferred::reject()](#deferredreject)
      * [Deferred::progress()](#deferredprogress)
+   * [PromiseInterface](#promiseinterface)
+     * [PromiseInterface::then()](#promiseinterfacethen)
    * [Promise](#promise-1)
-     * [Promise::then()](#promisethen)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
    * [LazyPromise](#lazypromise)
@@ -32,7 +33,7 @@ Table of Contents
      * [some()](#some)
      * [map()](#map)
      * [reduce()](#reduce)
-   * [Promisor](#promisor)
+   * [PromisorInterface](#promisorinterface)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -142,52 +143,18 @@ is making progress toward its result.
 All consumers are notified by having `$onProgress` (which they registered via
 `$promise->then()`) called with `$update`.
 
-### Promise
+### PromiseInterface
 
-The promise represents an eventual outcome, which is either fulfillment
-(success) and an associated value, or rejection (failure) and an associated
-reason.
+The promise interface provides the common interface for all promise
+implementations.
 
-``` php
-$promise = new React\Promise\Promise(function (callable $resolve, callable $reject, callable $progress) {
-    // Do some work, possibly asynchronously, and then
-    // resolve or reject. You can notify of progress events
-    // along the way if you want/need.
+A promise represents an eventual outcome, which is either fulfillment (success)
+and an associated value, or rejection (failure) and an associated reason.
 
-    $resolve($awesomeResult);
-    // or $resolve($anotherPromise);
-    // or $reject($nastyError);
-    // or $progress($progressNotification);
-});
+Once in the fulfilled or rejected state, a promise becomes immutable.
+Neither its state nor its result (or error) can be modified.
 
-$promise->then(
-    function ($value) {
-        // Promise resolved, do something with $value
-    },
-    function ($reason) {
-        // Promise rejected, do something with $reason
-    },
-    function ($update) {
-        // Progress notification triggered, do something with $update
-    }
-);
-```
-
-The promise constructor receives a resolver function which will be called
-with 3 arguments:
-
-  * `$resolve($value)` - Primary function that seals the fate of the
-    returned promise. Accepts either a non-promise value, or another promise.
-    When called with a non-promise value, fulfills promise with that value.
-    When called with another promise, e.g. `$resolve($otherPromise)`, promise's
-    fate will be equivalent to that of `$otherPromise`.
-  * `$reject($reason)` - Function that rejects the promise.
-  * `$progress($update)` - Function that issues progress events for the promise.
-
-If the resolver throws an exception, the promise will be rejected with that
-thrown exception as the rejection reason.
-
-#### Promise::then()
+#### PromiseInterface::then()
 
 ``` php
 $newPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
@@ -204,12 +171,9 @@ with this promise (all parameters are optional):
     triggers progress notifications and passed a single argument (whatever it
     wants) to indicate progress.
 
-Returns a new promise that will fulfill with the return value of either
+It returns a new promise that will fulfill with the return value of either
 `$onFulfilled` or `$onRejected`, whichever is called, or will reject with
 the thrown exception if either throws.
-
-Once in the fulfilled or rejected state, a promise becomes immutable.
-Neither its state nor its result (or error) can be modified.
 
 A promise makes the following guarantees about handlers registered in
 the same call to `then()`:
@@ -220,10 +184,52 @@ the same call to `then()`:
      than once.
   3. `$onProgress` may be called multiple times.
 
+#### Implementations
+
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
+
 #### See also
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
+
+### Promise
+
+Creates a promise whose state is controlled by the functions passed to
+`$resolver`.
+
+``` php
+$resolver = function (callable $resolve, callable $reject, callable $progress) {
+    // Do some work, possibly asynchronously, and then
+    // resolve or reject. You can notify of progress events
+    // along the way if you want/need.
+
+    $resolve($awesomeResult);
+    // or $resolve($anotherPromise);
+    // or $reject($nastyError);
+    // or $progress($progressNotification);
+};
+
+$promise = new React\Promise\Promise($resolver);
+```
+
+The promise constructor receives a resolver function which will be called
+with 3 arguments:
+
+  * `$resolve($value)` - Primary function that seals the fate of the
+    returned promise. Accepts either a non-promise value, or another promise.
+    When called with a non-promise value, fulfills promise with that value.
+    When called with another promise, e.g. `$resolve($otherPromise)`, promise's
+    fate will be equivalent to that of `$otherPromise`.
+  * `$reject($reason)` - Function that rejects the promise.
+  * `$progress($update)` - Function that issues progress events for the promise.
+
+If the resolver throws an exception, the promise will be rejected with that
+thrown exception as the rejection reason.
+
 
 ### FulfilledPromise
 
@@ -367,7 +373,7 @@ promises and/or values, and `$reduceFunc` may return either a value or a
 promise, *and* `$initialValue` may be a promise or a value for the starting
 value.
 
-### Promisor
+### PromisorInterface
 
 The `React\Promise\PromisorInterface` provides a common interface for objects
 that provide a promise. `React\Promise\Deferred` implements it, but since it
