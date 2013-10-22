@@ -4,90 +4,42 @@ namespace React\Promise;
 
 class Deferred implements PromisorInterface
 {
-    private $completed;
     private $promise;
-    private $handlers = [];
-    private $progressHandlers = [];
-
-    public function resolve($value = null)
-    {
-        if (null !== $this->completed) {
-            return resolve($value);
-        }
-
-        $this->completed = resolve($value);
-
-        $this->processQueue($this->handlers, $this->completed);
-
-        $this->progressHandlers = $this->handlers = [];
-
-        return $this->completed;
-    }
-
-    public function reject($reason = null)
-    {
-        return $this->resolve(reject($reason));
-    }
-
-    public function progress($update = null)
-    {
-        if (null !== $this->completed) {
-            return;
-        }
-
-        $this->processQueue($this->progressHandlers, $update);
-    }
+    private $resolveCallback;
+    private $rejectCallback;
+    private $progressCallback;
 
     public function promise()
     {
         if (null === $this->promise) {
-            $this->promise = new DeferredPromise($this->getThenCallback());
+            $this->promise = new Promise(function ($resolve, $reject, $progress) {
+                $this->resolveCallback  = $resolve;
+                $this->rejectCallback   = $reject;
+                $this->progressCallback = $progress;
+            });
         }
 
         return $this->promise;
     }
 
-    protected function getThenCallback()
+    public function resolve($value = null)
     {
-        return function (callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null) {
-            if (null !== $this->completed) {
-                return $this->completed->then($onFulfilled, $onRejected, $onProgress);
-            }
+        $this->promise();
 
-            $deferred = new static();
-
-            if (is_callable($onProgress)) {
-                $progHandler = function ($update) use ($deferred, $onProgress) {
-                    try {
-                        $deferred->progress(call_user_func($onProgress, $update));
-                    } catch (\Exception $e) {
-                        $deferred->progress($e);
-                    }
-                };
-            } else {
-                $progHandler = [$deferred, 'progress'];
-            }
-
-            $this->handlers[] = function ($promise) use ($onFulfilled, $onRejected, $deferred, $progHandler) {
-                $promise
-                    ->then($onFulfilled, $onRejected)
-                    ->then(
-                        [$deferred, 'resolve'],
-                        [$deferred, 'reject'],
-                        $progHandler
-                    );
-            };
-
-            $this->progressHandlers[] = $progHandler;
-
-            return $deferred->promise();
-        };
+        return call_user_func($this->resolveCallback, $value);
     }
 
-    protected function processQueue($queue, $value)
+    public function reject($reason = null)
     {
-        foreach ($queue as $handler) {
-            call_user_func($handler, $value);
-        }
+        $this->promise();
+
+        return call_user_func($this->rejectCallback, $reason);
+    }
+
+    public function progress($update = null)
+    {
+        $this->promise();
+
+        return call_user_func($this->progressCallback, $update);
     }
 }
