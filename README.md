@@ -21,6 +21,8 @@ Table of Contents
      * [Deferred::progress()](#deferredprogress)
    * [Promise](#promise-1)
      * [Promise::then()](#promisethen)
+   * [FulfilledPromise](#fulfilledpromise)
+   * [RejectedPromise](#rejectedpromise)
    * [LazyPromise](#lazypromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
@@ -222,6 +224,28 @@ the same call to `then()`:
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
+
+### FulfilledPromise
+
+Creates a already fulfilled promise.
+
+```php
+$promise = React\Promise\FulfilledPromise($value);
+```
+
+Note, that `$value` **cannot** be a promise. It's recommended to use
+[resolve()](#resolve) for creating resolved promises.
+
+### RejectedPromise
+
+Creates a already rejected promise.
+
+```php
+$promise = React\Promise\RejectedPromise($reason);
+```
+
+Note, that `$reason` **cannot** be a promise. It's recommended to use
+[reject()](#reject) for creating rejected promises.
 
 ### LazyPromise
 
