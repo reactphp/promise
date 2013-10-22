@@ -10,7 +10,7 @@ trait PromiseRejectedTestTrait
     public function shouldForwardUndefinedRejectionValue()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -38,7 +38,7 @@ trait PromiseRejectedTestTrait
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackDoesNotExplicitlyPropagate()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -63,7 +63,7 @@ trait PromiseRejectedTestTrait
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackReturnsAResolution()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -88,7 +88,7 @@ trait PromiseRejectedTestTrait
     public function shouldPropagateRejectionsWhenErrbackThrows()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $exception = new \Exception();
 
         $mock = $this->createCallableMock();
@@ -119,7 +119,7 @@ trait PromiseRejectedTestTrait
     public function shouldPropagateRejectionsWhenErrbackReturnsARejection()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())

@@ -18,7 +18,7 @@ class FulfilledPromiseTest extends TestCase
 
                 return new FulfilledPromise($val);
             },
-            'resolve' => function ($value)  use (&$val, &$promiseCalled) {
+            'resolve' => function ($value) use (&$val, &$promiseCalled) {
                 if ($promiseCalled) {
                     throw new \LogicException('You must call resolve() before promise() for React\Promise\FulfilledPromise');
                 }

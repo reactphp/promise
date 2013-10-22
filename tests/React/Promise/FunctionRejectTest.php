@@ -21,7 +21,7 @@ class FunctionRejectTest extends TestCase
                 $mock
             );
     }
-    
+
     /** @test */
     public function shouldRejectAFulfilledPromise()
     {

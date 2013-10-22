@@ -10,7 +10,7 @@ trait PromiseFullfilledTestTrait
     public function thenShouldForwardResultWhenCallbackIsNull()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -33,7 +33,7 @@ trait PromiseFullfilledTestTrait
     public function thenShouldForwardCallbackResultToNextCallback()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -58,7 +58,7 @@ trait PromiseFullfilledTestTrait
     public function thenShouldForwardPromisedCallbackResultValueToNextCallback()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -83,7 +83,7 @@ trait PromiseFullfilledTestTrait
     public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackReturnsARejection()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
@@ -108,7 +108,7 @@ trait PromiseFullfilledTestTrait
     public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackThrows()
     {
         extract($this->getPromiseTestAdapter());
-        
+
         $exception = new \Exception();
 
         $mock = $this->createCallableMock();

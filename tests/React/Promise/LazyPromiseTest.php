@@ -79,12 +79,12 @@ class LazyPromiseTest extends TestCase
         $p = new LazyPromise($factory);
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then());
     }
-    
+
     /** @test */
     public function shouldReturnRejectedPromiseIfFactoryThrowsException()
     {
         $exception = new \Exception();
-        
+
         $factory = $this->createCallableMock();
         $factory
             ->expects($this->once())
