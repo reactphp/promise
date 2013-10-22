@@ -1,17 +1,17 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\PromiseTest;
 
-/**
- * @group Deferred
- * @group DeferredResolve
- */
-class DeferredResolveTest extends TestCase
+use React\Promise;
+
+trait ResolveTestTrait
 {
+    abstract public function getPromiseTestAdapter();
+
     /** @test */
-    public function shouldResolve()
+    public function resolveShouldResolve()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -19,18 +19,16 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->promise()
+        $promise()
             ->then($mock);
 
-        $d
-            ->resolve(1);
+        $resolve(1);
     }
 
     /** @test */
-    public function shouldResolveWithPromisedValue()
+    public function resolveShouldResolveWithPromisedValue()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -38,18 +36,16 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->promise()
+        $promise()
             ->then($mock);
 
-        $d
-            ->resolve(new FulfilledPromise(1));
+        $resolve(Promise\resolve(1));
     }
 
     /** @test */
-    public function shouldRejectWhenResolvedWithRejectedPromise()
+    public function resolveShouldRejectWhenResolvedWithRejectedPromise()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -57,18 +53,16 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->promise()
+        $promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $d
-            ->resolve(new RejectedPromise(1));
+        $resolve(Promise\reject(1));
     }
 
     /** @test */
-    public function shouldReturnAPromiseForTheResolutionValue()
+    public function resolveShouldReturnAPromiseForTheResolutionValue()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -76,15 +70,14 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->resolve(1)
+        $resolve(1)
             ->then($mock);
     }
 
     /** @test */
-    public function shouldReturnAPromiseForAPromisedResolutionValue()
+    public function resolveShouldReturnAPromiseForAPromisedResolutionValue()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -92,15 +85,14 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->resolve(resolve(1))
+        $resolve(Promise\resolve(1))
             ->then($mock);
     }
 
     /** @test */
-    public function shouldReturnAPromiseForAPromisedRejectionValue()
+    public function resolveShouldReturnAPromiseForAPromisedRejectionValue()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -110,17 +102,50 @@ class DeferredResolveTest extends TestCase
 
         // Both the returned promise, and the deferred's own promise should
         // be rejected with the same value
-        $d
-            ->resolve(reject(1))
+        $resolve(Promise\reject(1))
             ->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
-    public function shouldInvokeNewlyAddedCallbackWhenAlreadyResolved()
+    public function resolveShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyResolved()
     {
-        $d = new Deferred();
-        $d
-            ->resolve(1);
+        extract($this->getPromiseTestAdapter());
+
+        $resolve(1);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
+
+        $resolve(2)
+            ->then($mock);
+    }
+
+    /** @test */
+    public function resolveShouldReturnAPromiseForPassedInResolutionValueWhenAlreadyRejected()
+    {
+        extract($this->getPromiseTestAdapter());
+
+        $reject(1);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(2));
+
+        $resolve(2)
+            ->then($mock);
+    }
+
+    /** @test */
+    public function resolveShouldInvokeNewlyAddedCallbackWhenAlreadyResolved()
+    {
+        extract($this->getPromiseTestAdapter());
+
+        $resolve(1);
 
         $mock = $this->createCallableMock();
         $mock
@@ -128,23 +153,22 @@ class DeferredResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d
-            ->promise()
+        $promise()
             ->then($mock, $this->expectCallableNever());
     }
 
     /** @test */
-    public function shouldForwardValueWhenCallbackIsNull()
+    public function resolveShouldForwardValueWhenCallbackIsNull()
     {
+        extract($this->getPromiseTestAdapter());
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $d = new Deferred();
-        $d
-            ->promise()
+        $promise()
             ->then(
                 null,
                 $this->expectCallableNever()
@@ -154,6 +178,6 @@ class DeferredResolveTest extends TestCase
                 $this->expectCallableNever()
             );
 
-        $d->resolve(1);
+        $resolve(1);
     }
 }

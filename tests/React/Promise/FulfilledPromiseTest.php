@@ -2,142 +2,35 @@
 
 namespace React\Promise;
 
-/**
- * @group Promise
- * @group FulfilledPromise
- */
 class FulfilledPromiseTest extends TestCase
 {
-    /** @test */
-    public function shouldReturnAPromise()
+    use PromiseTest\PromiseTestTrait,
+        PromiseTest\PromiseFullfilledTestTrait;
+
+    public function getPromiseTestAdapter()
     {
-        $p = new FulfilledPromise();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then());
-    }
+        $val = null;
+        $promiseCalled = false;
 
-    /** @test */
-    public function shouldReturnAllowNull()
-    {
-        $p = new FulfilledPromise();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $p->then(null, null, null));
-    }
+        return [
+            'promise' => function () use (&$val, &$promiseCalled) {
+                $promiseCalled = true;
 
-    /** @test */
-    public function shouldForwardResultWhenCallbackIsNull()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
+                return new FulfilledPromise($val);
+            },
+            'resolve' => function ($value)  use (&$val, &$promiseCalled) {
+                if ($promiseCalled) {
+                    throw new \LogicException('You must call resolve() before promise() for React\Promise\FulfilledPromise');
+                }
 
-        $p = new FulfilledPromise(1);
-        $p
-            ->then(
-                null,
-                $this->expectCallableNever()
-            )
-            ->then(
-                $mock,
-                $this->expectCallableNever()
-            );
-    }
-
-    /** @test */
-    public function shouldForwardCallbackResultToNextCallback()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
-
-        $p = new FulfilledPromise(1);
-        $p
-            ->then(
-                function ($val) {
-                    return $val + 1;
-                },
-                $this->expectCallableNever()
-            )
-            ->then(
-                $mock,
-                $this->expectCallableNever()
-            );
-    }
-
-    /** @test */
-    public function shouldForwardPromisedCallbackResultValueToNextCallback()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
-
-        $p = new FulfilledPromise(1);
-        $p
-            ->then(
-                function ($val) {
-                    return new FulfilledPromise($val + 1);
-                },
-                $this->expectCallableNever()
-            )
-            ->then(
-                $mock,
-                $this->expectCallableNever()
-            );
-    }
-
-    /** @test */
-    public function shouldSwitchFromCallbacksToErrbacksWhenCallbackReturnsARejection()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
-
-        $p = new FulfilledPromise(1);
-        $p
-            ->then(
-                function ($val) {
-                    return new RejectedPromise($val + 1);
-                },
-                $this->expectCallableNever()
-            )
-            ->then(
-                $this->expectCallableNever(),
-                $mock
-            );
-    }
-
-    /** @test */
-    public function shouldSwitchFromCallbacksToErrbacksWhenCallbackThrows()
-    {
-        $exception = new \Exception();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->will($this->throwException($exception));
-
-        $mock2 = $this->createCallableMock();
-        $mock2
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo($exception));
-
-        $p = new FulfilledPromise(1);
-        $p
-            ->then(
-                $mock,
-                $this->expectCallableNever()
-            )
-            ->then(
-                $this->expectCallableNever(),
-                $mock2
-            );
+                $val = $value;
+            },
+            'reject' => function () {
+                throw new \LogicException('You cannot call reject() for React\Promise\FulfilledPromise');
+            },
+            'progress' => function () {
+                throw new \LogicException('You cannot call progress() for React\Promise\FulfilledPromise');
+            },
+        ];
     }
 }

@@ -2,12 +2,28 @@
 
 namespace React\Promise;
 
-/**
- * @group Promise
- * @group LazyPromise
- */
 class LazyPromiseTest extends TestCase
 {
+    use PromiseTest\FullTestTrait;
+
+    public function getPromiseTestAdapter()
+    {
+        $d = new Deferred();
+
+        $factory = function () use ($d) {
+            return $d->promise();
+        };
+
+        return [
+            'promise'  => function () use ($factory) {
+                return new LazyPromise($factory);
+            },
+            'resolve'  => $this->toClosure(array($d, 'resolve')),
+            'reject'   => $this->toClosure(array($d, 'reject')),
+            'progress' => $this->toClosure(array($d, 'progress')),
+        ];
+    }
+
     /** @test */
     public function shouldNotCallFactoryIfThenIsNotInvoked()
     {
