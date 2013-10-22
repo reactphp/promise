@@ -2,46 +2,45 @@
 
 namespace React\Promise;
 
-class When
+function resolve($promiseOrValue = null)
 {
-    public static function resolve($promiseOrValue = null)
-    {
-        return Util::promiseFor($promiseOrValue);
+    if ($promiseOrValue instanceof PromiseInterface) {
+        return $promiseOrValue;
     }
 
-    public static function reject($promiseOrValue = null)
-    {
-        return Util::rejectedPromiseFor($promiseOrValue);
-    }
+    return new FulfilledPromise($promiseOrValue);
+}
 
-    public static function lazy($factory)
-    {
-        return new LazyPromise($factory);
-    }
-
-    public static function all($promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        $promise = static::map($promisesOrValues, function ($val) {
-            return $val;
+function reject($promiseOrValue = null)
+{
+    if ($promiseOrValue instanceof PromiseInterface) {
+        return $promiseOrValue->then(function ($value) {
+            return new RejectedPromise($value);
         });
-
-        return $promise->then($onFulfilled, $onRejected, $onProgress);
     }
 
-    public static function any($promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        $unwrapSingleResult = function ($val) use ($onFulfilled) {
-            $val = array_shift($val);
+    return new RejectedPromise($promiseOrValue);
+}
 
-            return $onFulfilled ? $onFulfilled($val) : $val;
-        };
+function all($promisesOrValues)
+{
+    return map($promisesOrValues, function ($val) {
+        return $val;
+    });
+}
 
-        return static::some($promisesOrValues, 1, $unwrapSingleResult, $onRejected, $onProgress);
-    }
+function any($promisesOrValues)
+{
+    return some($promisesOrValues, 1)
+        ->then(function ($val) {
+            return array_shift($val);
+        });
+}
 
-    public static function some($promisesOrValues, $howMany, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($howMany, $onFulfilled, $onRejected, $onProgress) {
+function some($promisesOrValues, $howMany)
+{
+    return resolve($promisesOrValues)
+        ->then(function ($array) use ($howMany) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -96,17 +95,19 @@ class When
                         }
                     };
 
-                    When::resolve($promiseOrValue)->then($fulfiller, $rejecter, $progress);
+                    resolve($promiseOrValue)
+                        ->then($fulfiller, $rejecter, $progress);
                 }
             }
 
-            return $deferred->then($onFulfilled, $onRejected, $onProgress);
+            return $deferred->promise();
         });
-    }
+}
 
-    public static function map($promisesOrValues, callable $mapFunc)
-    {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($mapFunc) {
+function map($promisesOrValues, callable $mapFunc)
+{
+    return resolve($promisesOrValues)
+        ->then(function ($array) use ($mapFunc) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -119,7 +120,7 @@ class When
                 $deferred->resolve($values);
             } else {
                 $resolve = function ($item, $i) use ($mapFunc, &$values, &$toResolve, $deferred) {
-                    When::resolve($item)
+                    resolve($item)
                         ->then($mapFunc)
                         ->then(
                             function ($mapped) use (&$values, $i, &$toResolve, $deferred) {
@@ -140,11 +141,12 @@ class When
 
             return $deferred->promise();
         });
-    }
+}
 
-    public static function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
-    {
-        return When::resolve($promisesOrValues)->then(function ($array) use ($reduceFunc, $initialValue) {
+function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
+{
+    return resolve($promisesOrValues)
+        ->then(function ($array) use ($reduceFunc, $initialValue) {
             if (!is_array($array)) {
                 $array = array();
             }
@@ -155,14 +157,15 @@ class When
             // Wrap the supplied $reduceFunc with one that handles promises and then
             // delegates to the supplied.
             $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $total, &$i) {
-                return When::resolve($current)->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
-                    return When::resolve($val)->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
-                        return call_user_func($reduceFunc, $c, $value, $i++, $total);
+                return resolve($current)
+                    ->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
+                        return resolve($val)
+                            ->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
+                                return call_user_func($reduceFunc, $c, $value, $i++, $total);
+                            });
                     });
-                });
             };
 
             return array_reduce($array, $wrappedReduceFunc, $initialValue);
         });
-    }
 }

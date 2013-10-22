@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenMap
- */
-class WhenMapTest extends TestCase
+class FunctionMapTest extends TestCase
 {
     protected function mapper()
     {
@@ -18,7 +14,7 @@ class WhenMapTest extends TestCase
     protected function promiseMapper()
     {
         return function ($val) {
-            return When::resolve($val * 2);
+            return resolve($val * 2);
         };
     }
 
@@ -31,7 +27,7 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array(2, 4, 6)));
 
-        When::map(
+        map(
             array(1, 2, 3),
             $this->mapper()
         )->then($mock);
@@ -46,8 +42,8 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array(2, 4, 6)));
 
-        When::map(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
+        map(
+            array(resolve(1), resolve(2), resolve(3)),
             $this->mapper()
         )->then($mock);
     }
@@ -61,8 +57,8 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array(2, 4, 6)));
 
-        When::map(
-            array(1, When::resolve(2), 3),
+        map(
+            array(1, resolve(2), 3),
             $this->mapper()
         )->then($mock);
     }
@@ -76,7 +72,7 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array(2, 4, 6)));
 
-        When::map(
+        map(
             array(1, 2, 3),
             $this->promiseMapper()
         )->then($mock);
@@ -91,8 +87,8 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array(2, 4, 6)));
 
-        When::map(
-            When::resolve(array(1, When::resolve(2), 3)),
+        map(
+            resolve(array(1, resolve(2), 3)),
             $this->mapper()
         )->then($mock);
     }
@@ -106,8 +102,8 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(array()));
 
-        When::map(
-            When::resolve(1),
+        map(
+            resolve(1),
             $this->mapper()
         )->then($mock);
     }
@@ -121,8 +117,8 @@ class WhenMapTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        When::map(
-            array(When::resolve(1), When::reject(2), When::resolve(3)),
+        map(
+            array(resolve(1), reject(2), resolve(3)),
             $this->mapper()
         )->then($this->expectCallableNever(), $mock);
     }

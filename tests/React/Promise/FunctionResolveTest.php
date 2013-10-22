@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenResolve
- */
-class WhenResolveTest extends TestCase
+class FunctionResolveTest extends TestCase
 {
     /** @test */
     public function shouldResolveAnImmediateValue()
@@ -19,7 +15,7 @@ class WhenResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::resolve($expected)
+        resolve($expected)
             ->then(
                 $mock,
                 $this->expectCallableNever()
@@ -27,12 +23,11 @@ class WhenResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveAResolvedPromise()
+    public function shouldResolveAFulfilledPromise()
     {
         $expected = 123;
 
-        $d = new Deferred();
-        $d->resolve($expected);
+        $resolved = new FulfilledPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -40,7 +35,7 @@ class WhenResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::resolve($d->promise())
+        resolve($resolved)
             ->then(
                 $mock,
                 $this->expectCallableNever()
@@ -52,8 +47,7 @@ class WhenResolveTest extends TestCase
     {
         $expected = 123;
 
-        $d = new Deferred();
-        $d->reject($expected);
+        $resolved = new RejectedPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -61,7 +55,7 @@ class WhenResolveTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::resolve($d->promise())
+        resolve($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -74,7 +68,7 @@ class WhenResolveTest extends TestCase
         $d = new Deferred();
         $d->resolve(false);
 
-        $result = When::resolve(When::resolve($d->then(function ($val) {
+        $result = resolve(resolve($d->then(function ($val) {
             $d = new Deferred();
             $d->resolve($val);
 
@@ -82,7 +76,7 @@ class WhenResolveTest extends TestCase
                 return $val;
             };
 
-            return When::resolve($d->then($identity))->then(
+            return resolve($d->then($identity))->then(
                 function ($val) {
                     return !$val;
                 }

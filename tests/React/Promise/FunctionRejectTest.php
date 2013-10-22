@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenReject
- */
-class WhenRejectTest extends TestCase
+class FunctionRejectTest extends TestCase
 {
     /** @test */
     public function shouldRejectAnImmediateValue()
@@ -19,20 +15,19 @@ class WhenRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::reject($expected)
+        reject($expected)
             ->then(
                 $this->expectCallableNever(),
                 $mock
             );
     }
-
+    
     /** @test */
-    public function shouldRejectAResolvedPromise()
+    public function shouldRejectAFulfilledPromise()
     {
         $expected = 123;
 
-        $d = new Deferred();
-        $d->resolve($expected);
+        $resolved = new FulfilledPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -40,7 +35,7 @@ class WhenRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::reject($d->promise())
+        reject($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -52,8 +47,7 @@ class WhenRejectTest extends TestCase
     {
         $expected = 123;
 
-        $d = new Deferred();
-        $d->reject($expected);
+        $resolved = new RejectedPromise($expected);
 
         $mock = $this->createCallableMock();
         $mock
@@ -61,7 +55,7 @@ class WhenRejectTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($expected));
 
-        When::reject($d->promise())
+        reject($resolved)
             ->then(
                 $this->expectCallableNever(),
                 $mock

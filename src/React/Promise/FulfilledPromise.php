@@ -20,7 +20,7 @@ class FulfilledPromise implements PromiseInterface
                 $value = call_user_func($onFulfilled, $value);
             }
 
-            return Util::promiseFor($value);
+            return resolve($value);
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }

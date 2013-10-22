@@ -98,7 +98,7 @@ class DeferredResolveTest extends TestCase
 
         $d
             ->resolver()
-            ->resolve(When::resolve(1))
+            ->resolve(resolve(1))
             ->then($mock);
     }
 
@@ -117,7 +117,7 @@ class DeferredResolveTest extends TestCase
         // be rejected with the same value
         $d
             ->resolver()
-            ->resolve(When::reject(1))
+            ->resolve(reject(1))
             ->then($this->expectCallableNever(), $mock);
     }
 

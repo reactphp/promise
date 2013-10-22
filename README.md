@@ -17,16 +17,16 @@ Table of Contents
 3. [API](#api)
    * [Deferred](#deferred-1)
    * [Promise](#promise-1)
+   * [LazyPromise](#lazypromise)
    * [Resolver](#resolver-1)
-   * [When](#when)
-     * [When::all()](#whenall)
-     * [When::any()](#whenany)
-     * [When::some()](#whensome)
-     * [When::map()](#whenmap)
-     * [When::reduce()](#whenreduce)
-     * [When::resolve()](#whenresolve)
-     * [When::reject()](#whenreject)
-     * [When::lazy()](#whenlazy)
+   * [Functions](#functions)
+     * [resolve()](#resolve)
+     * [reject()](#reject)
+     * [all()](#all)
+     * [any()](#any)
+     * [some()](#some)
+     * [map()](#map)
+     * [reduce()](#reduce)
    * [Promisor](#promisor)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
@@ -142,8 +142,29 @@ the same call to `then()`:
 
 #### See also
 
-* [When::resolve()](#whenresolve) - Creating a resolved Promise
-* [When::reject()](#whenreject) - Creating a rejected Promise
+* [resolve()](#resolve) - Creating a resolved Promise
+* [reject()](#reject) - Creating a rejected Promise
+
+### LazyPromise
+
+Creates a Promise which will be lazily initialized by `$factory` once a consumer
+calls the `then()` method.
+
+```php
+$factory = function () {
+    $deferred = new React\Promise\Deferred();
+
+    // Do some heavy stuff here and resolve the Deferred once completed
+
+    return $deferred->promise();
+};
+
+$promise = React\Promise\LazyPromise($factory);
+
+// $factory will only be executed once we call then()
+$promise->then(function ($value) {
+});
+```
 
 ### Resolver
 
@@ -183,78 +204,15 @@ is making progress toward its result.
 All consumers are notified by having `$onProgress` (which they registered via
 `$promise->then()`) called with `$update`.
 
-### When
+### Functions
 
-The `React\Promise\When` class provides useful methods for creating, joining,
-mapping and reducing collections of Promises.
+Useful functions for creating, joining, mapping and reducing collections of
+Promises.
 
-#### When::all()
-
-``` php
-$promise = React\Promise\When::all(array|React\Promise\PromiseInterface $promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
-```
-
-Returns a Promise that will resolve only once all the items in
-`$promisesOrValues` have resolved. The resolution value of the returned Promise
-will be an array containing the resolution values of each of the items in
-`$promisesOrValues`.
-
-#### When::any()
+#### resolve()
 
 ``` php
-$promise = React\Promise\When::any(array|React\Promise\PromiseInterface $promisesOrValues, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
-```
-
-Returns a Promise that will resolve when any one of the items in
-`$promisesOrValues` resolves. The resolution value of the returned Promise
-will be the resolution value of the triggering item.
-
-The returned Promise will only reject if *all* items in `$promisesOrValues` are
-rejected. The rejection value will be an array of all rejection reasons.
-
-#### When::some()
-
-``` php
-$promise = React\Promise\When::some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
-```
-
-Returns a Promise that will resolve when `$howMany` of the supplied items in
-`$promisesOrValues` resolve. The resolution value of the returned Promise
-will be an array of length `$howMany` containing the resolution values of the
-triggering items.
-
-The returned Promise will reject if it becomes impossible for `$howMany` items
-to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
-reject). The rejection value will be an array of
-`(count($promisesOrValues) - $howMany) + 1` rejection reasons.
-
-#### When::map()
-
-``` php
-$promise = React\Promise\When::map(array|React\Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
-```
-
-Traditional map function, similar to `array_map()`, but allows input to contain
-Promises and/or values, and `$mapFunc` may return either a value or a Promise.
-
-The map function receives each item as argument, where item is a fully resolved
-value of a Promise or value in `$promisesOrValues`.
-
-#### When::reduce()
-
-``` php
-$promise = React\Promise\When::reduce(array|React\Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
-```
-
-Traditional reduce function, similar to `array_reduce()`, but input may contain
-Promises and/or values, and `$reduceFunc` may return either a value or a
-Promise, *and* `$initialValue` may be a Promise or a value for the starting
-value.
-
-#### When::resolve()
-
-``` php
-$promise = React\Promise\When::resolve(mixed $promiseOrValue);
+$promise = React\Promise\resolve(mixed $promiseOrValue);
 ```
 
 Creates a resolved Promise for the supplied `$promiseOrValue`.
@@ -264,10 +222,10 @@ returned Promise.
 
 If `$promiseOrValue` is a Promise, it will simply be returned.
 
-#### When::reject()
+#### reject()
 
 ``` php
-$promise = React\Promise\When::reject(mixed $promiseOrValue);
+$promise = React\Promise\reject(mixed $promiseOrValue);
 ```
 
 Creates a rejected Promise for the supplied `$promiseOrValue`.
@@ -282,30 +240,68 @@ This can be useful in situations where you need to reject a Promise without
 throwing an exception. For example, it allows you to propagate a rejection with
 the value of another Promise.
 
-#### When::lazy()
+#### all()
 
 ``` php
-$promise = React\Promise\When::lazy(callable $factory);
+$promise = React\Promise\all(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
-Creates a Promise which will be lazily initialized by `$factory` once a consumer
-calls the `then()` method.
+Returns a Promise that will resolve only once all the items in
+`$promisesOrValues` have resolved. The resolution value of the returned Promise
+will be an array containing the resolution values of each of the items in
+`$promisesOrValues`.
 
-```php
-$factory = function () {
-    $deferred = new React\Promise\Deferred();
+#### any()
 
-    // Do some heavy stuff here and resolve the Deferred once completed
-
-    return $deferred->promise();
-};
-
-$promise = React\Promise\When::lazy($factory);
-
-// $factory will only be executed once we call then()
-$promise->then(function ($value) {
-});
+``` php
+$promise = React\Promise\any(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
+
+Returns a Promise that will resolve when any one of the items in
+`$promisesOrValues` resolves. The resolution value of the returned Promise
+will be the resolution value of the triggering item.
+
+The returned Promise will only reject if *all* items in `$promisesOrValues` are
+rejected. The rejection value will be an array of all rejection reasons.
+
+#### some()
+
+``` php
+$promise = React\Promise\some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany);
+```
+
+Returns a Promise that will resolve when `$howMany` of the supplied items in
+`$promisesOrValues` resolve. The resolution value of the returned Promise
+will be an array of length `$howMany` containing the resolution values of the
+triggering items.
+
+The returned Promise will reject if it becomes impossible for `$howMany` items
+to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
+reject). The rejection value will be an array of
+`(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+
+#### map()
+
+``` php
+$promise = React\Promise\map(array|React\Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
+```
+
+Traditional map function, similar to `array_map()`, but allows input to contain
+Promises and/or values, and `$mapFunc` may return either a value or a Promise.
+
+The map function receives each item as argument, where item is a fully resolved
+value of a Promise or value in `$promisesOrValues`.
+
+#### reduce()
+
+``` php
+$promise = React\Promise\reduce(array|React\Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
+```
+
+Traditional reduce function, similar to `array_reduce()`, but input may contain
+Promises and/or values, and `$reduceFunc` may return either a value or a
+Promise, *and* `$initialValue` may be a Promise or a value for the starting
+value.
 
 ### Promisor
 
@@ -414,7 +410,7 @@ $deferred->promise()
     })
     ->then(null, function (\Exception $x) {
         // Can also propagate by returning another rejection
-        return React\Promise\When::reject((integer) $x->getMessage() + 1);
+        return React\Promise\reject((integer) $x->getMessage() + 1);
     })
     ->then(null, function ($x) {
         echo 'Reject ' . $x; // 3
