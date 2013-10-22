@@ -18,9 +18,9 @@ class LazyPromiseTest extends TestCase
             'promise'  => function () use ($factory) {
                 return new LazyPromise($factory);
             },
-            'resolve'  => $this->toClosure(array($d, 'resolve')),
-            'reject'   => $this->toClosure(array($d, 'reject')),
-            'progress' => $this->toClosure(array($d, 'progress')),
+            'resolve'  => $this->toClosure([$d, 'resolve']),
+            'reject'   => $this->toClosure([$d, 'reject']),
+            'progress' => $this->toClosure([$d, 'progress']),
         ];
     }
 

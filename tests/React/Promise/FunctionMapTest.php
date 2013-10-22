@@ -25,10 +25,10 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(2, 4, 6)));
+            ->with($this->identicalTo([2, 4, 6]));
 
         map(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->mapper()
         )->then($mock);
     }
@@ -40,10 +40,10 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(2, 4, 6)));
+            ->with($this->identicalTo([2, 4, 6]));
 
         map(
-            array(resolve(1), resolve(2), resolve(3)),
+            [resolve(1), resolve(2), resolve(3)],
             $this->mapper()
         )->then($mock);
     }
@@ -55,10 +55,10 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(2, 4, 6)));
+            ->with($this->identicalTo([2, 4, 6]));
 
         map(
-            array(1, resolve(2), 3),
+            [1, resolve(2), 3],
             $this->mapper()
         )->then($mock);
     }
@@ -70,10 +70,10 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(2, 4, 6)));
+            ->with($this->identicalTo([2, 4, 6]));
 
         map(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->promiseMapper()
         )->then($mock);
     }
@@ -85,10 +85,10 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(2, 4, 6)));
+            ->with($this->identicalTo([2, 4, 6]));
 
         map(
-            resolve(array(1, resolve(2), 3)),
+            resolve([1, resolve(2), 3]),
             $this->mapper()
         )->then($mock);
     }
@@ -100,7 +100,7 @@ class FunctionMapTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo([]));
 
         map(
             resolve(1),
@@ -118,7 +118,7 @@ class FunctionMapTest extends TestCase
             ->with($this->identicalTo(2));
 
         map(
-            array(resolve(1), reject(2), resolve(3)),
+            [resolve(1), reject(2), resolve(3)],
             $this->mapper()
         )->then($this->expectCallableNever(), $mock);
     }

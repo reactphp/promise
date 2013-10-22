@@ -11,10 +11,10 @@ class DeferredTest extends TestCase
         $d = new Deferred();
 
         return [
-            'promise'  => $this->toClosure(array($d, 'promise')),
-            'resolve'  => $this->toClosure(array($d, 'resolve')),
-            'reject'   => $this->toClosure(array($d, 'reject')),
-            'progress' => $this->toClosure(array($d, 'progress')),
+            'promise'  => $this->toClosure([$d, 'promise']),
+            'resolve'  => $this->toClosure([$d, 'resolve']),
+            'reject'   => $this->toClosure([$d, 'reject']),
+            'progress' => $this->toClosure([$d, 'progress']),
         ];
     }
 }

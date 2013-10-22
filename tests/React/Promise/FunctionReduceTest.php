@@ -28,7 +28,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(6));
 
         reduce(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->plus()
         )->then($mock);
     }
@@ -43,7 +43,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         reduce(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->plus(),
             1
         )->then($mock);
@@ -59,7 +59,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         reduce(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->plus(),
             resolve(1)
         )->then($mock);
@@ -75,7 +75,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(6));
 
         reduce(
-            array(resolve(1), resolve(2), resolve(3)),
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus()
         )->then($mock);
     }
@@ -90,7 +90,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         reduce(
-            array(resolve(1), resolve(2), resolve(3)),
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus(),
             1
         )->then($mock);
@@ -106,7 +106,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(7));
 
         reduce(
-            array(resolve(1), resolve(2), resolve(3)),
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus(),
             resolve(1)
         )->then($mock);
@@ -122,7 +122,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(1));
 
         reduce(
-            array(),
+            [],
             $this->plus(),
             1
         )->then($mock);
@@ -138,7 +138,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(1));
 
         reduce(
-            array(),
+            [],
             $this->plus(),
             resolve(1)
         )->then($mock);
@@ -154,7 +154,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(2));
 
         reduce(
-            array(resolve(1), reject(2), resolve(3)),
+            [resolve(1), reject(2), resolve(3)],
             $this->plus(),
             resolve(1)
         )->then($this->expectCallableNever(), $mock);
@@ -174,7 +174,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(null));
 
         reduce(
-            array(),
+            [],
             $this->plus()
         )->then($mock);
     }
@@ -189,7 +189,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(3));
 
         reduce(
-            array(null, null, 1, null, 1, 1),
+            [null, null, 1, null, 1, 1],
             $this->plus()
         )->then($mock);
     }
@@ -204,7 +204,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo(4));
 
         reduce(
-            array(null, null, 1, null, 1, 1),
+            [null, null, 1, null, 1, 1],
             $this->plus(),
             1
         )->then($mock);
@@ -220,7 +220,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo('123'));
 
         reduce(
-            array(1, 2, 3),
+            [1, 2, 3],
             $this->append(),
             ''
         )->then($mock);
@@ -236,7 +236,7 @@ class FunctionReduceTest extends TestCase
             ->with($this->identicalTo('123'));
 
         reduce(
-            resolve(array(1, 2, 3)),
+            resolve([1, 2, 3]),
             $this->append(),
             ''
         )->then($mock);
@@ -275,12 +275,12 @@ class FunctionReduceTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2, 3)));
+            ->with($this->identicalTo([1, 2, 3]));
 
         reduce(
-            array($d1->promise(), $d2->promise(), $d3->promise()),
+            [$d1->promise(), $d2->promise(), $d3->promise()],
             $insertIntoArray,
-            array()
+            []
         )->then($mock);
 
         $d3->resolve(3);

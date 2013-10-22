@@ -13,7 +13,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(null));
 
-        any(array())
+        any([])
             ->then($mock);
     }
 
@@ -26,7 +26,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        any(array(1, 2, 3))
+        any([1, 2, 3])
             ->then($mock);
     }
 
@@ -39,7 +39,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        any(array(resolve(1), resolve(2), resolve(3)))
+        any([resolve(1), resolve(2), resolve(3)])
             ->then($mock);
     }
 
@@ -50,9 +50,9 @@ class FunctionAnyTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(0 => 1, 1 => 2, 2 => 3)));
+            ->with($this->identicalTo([0 => 1, 1 => 2, 2 => 3]));
 
-        any(array(reject(1), reject(2), reject(3)))
+        any([reject(1), reject(2), reject(3)])
             ->then($this->expectCallableNever(), $mock);
     }
 
@@ -65,7 +65,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        any(array(resolve(1), reject(2), reject(3)))
+        any([resolve(1), reject(2), reject(3)])
             ->then($mock);
     }
 
@@ -78,7 +78,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        any(resolve(array(1, 2, 3)))
+        any(resolve([1, 2, 3]))
             ->then($mock);
     }
 
@@ -107,7 +107,7 @@ class FunctionAnyTest extends TestCase
         $d1 = new Deferred();
         $d2 = new Deferred();
 
-        any(array('abc' => $d1->promise(), 1 => $d2->promise()))
+        any(['abc' => $d1->promise(), 1 => $d2->promise()])
             ->then($mock);
 
         $d2->resolve(2);

@@ -42,21 +42,21 @@ function some($promisesOrValues, $howMany)
     return resolve($promisesOrValues)
         ->then(function ($array) use ($howMany) {
             if (!is_array($array)) {
-                $array = array();
+                $array = [];
             }
 
             $len       = count($array);
             $toResolve = max(0, min($howMany, $len));
-            $values    = array();
+            $values    = [];
             $deferred  = new Deferred();
 
             if (!$toResolve) {
                 $deferred->resolve($values);
             } else {
                 $toReject = ($len - $toResolve) + 1;
-                $reasons  = array();
+                $reasons  = [];
 
-                $progress = array($deferred, 'progress');
+                $progress = [$deferred, 'progress'];
 
                 $fulfillOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
                     $values[$i] = $val;
@@ -109,11 +109,11 @@ function map($promisesOrValues, callable $mapFunc)
     return resolve($promisesOrValues)
         ->then(function ($array) use ($mapFunc) {
             if (!is_array($array)) {
-                $array = array();
+                $array = [];
             }
 
             $toResolve = count($array);
-            $values    = array();
+            $values    = [];
             $deferred  = new Deferred();
 
             if (!$toResolve) {
@@ -130,7 +130,7 @@ function map($promisesOrValues, callable $mapFunc)
                                     $deferred->resolve($values);
                                 }
                             },
-                            array($deferred, 'reject')
+                            [$deferred, 'reject']
                         );
                 };
 
@@ -148,7 +148,7 @@ function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
     return resolve($promisesOrValues)
         ->then(function ($array) use ($reduceFunc, $initialValue) {
             if (!is_array($array)) {
-                $array = array();
+                $array = [];
             }
 
             $total = count($array);

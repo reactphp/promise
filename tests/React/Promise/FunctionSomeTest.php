@@ -11,10 +11,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo([]));
 
         some(
-            array(),
+            [],
             1
         )->then($mock);
     }
@@ -26,10 +26,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo([1, 2]));
 
         some(
-            array(1, 2, 3),
+            [1, 2, 3],
             2
         )->then($mock);
     }
@@ -41,10 +41,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo([1, 2]));
 
         some(
-            array(resolve(1), resolve(2), resolve(3)),
+            [resolve(1), resolve(2), resolve(3)],
             2
         )->then($mock);
     }
@@ -56,10 +56,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(null, 1)));
+            ->with($this->identicalTo([null, 1]));
 
         some(
-            array(null, 1, null, 2, 3),
+            [null, 1, null, 2, 3],
             2
         )->then($mock);
     }
@@ -71,10 +71,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1 => 2, 2 => 3)));
+            ->with($this->identicalTo([1 => 2, 2 => 3]));
 
         some(
-            array(resolve(1), reject(2), reject(3)),
+            [resolve(1), reject(2), reject(3)],
             2
         )->then($this->expectCallableNever(), $mock);
     }
@@ -86,10 +86,10 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo([1, 2]));
 
         some(
-            resolve(array(1, 2, 3)),
+            resolve([1, 2, 3]),
             2
         )->then($mock);
     }
@@ -101,7 +101,7 @@ class FunctionSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo([]));
 
         some(
             resolve(1),

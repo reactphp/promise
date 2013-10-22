@@ -6,8 +6,8 @@ class Deferred implements PromisorInterface
 {
     private $completed;
     private $promise;
-    private $handlers = array();
-    private $progressHandlers = array();
+    private $handlers = [];
+    private $progressHandlers = [];
 
     public function resolve($value = null)
     {
@@ -19,7 +19,7 @@ class Deferred implements PromisorInterface
 
         $this->processQueue($this->handlers, $this->completed);
 
-        $this->progressHandlers = $this->handlers = array();
+        $this->progressHandlers = $this->handlers = [];
 
         return $this->completed;
     }
@@ -65,15 +65,15 @@ class Deferred implements PromisorInterface
                     }
                 };
             } else {
-                $progHandler = array($deferred, 'progress');
+                $progHandler = [$deferred, 'progress'];
             }
 
             $this->handlers[] = function ($promise) use ($onFulfilled, $onRejected, $deferred, $progHandler) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->then(
-                        array($deferred, 'resolve'),
-                        array($deferred, 'reject'),
+                        [$deferred, 'resolve'],
+                        [$deferred, 'reject'],
                         $progHandler
                     );
             };
