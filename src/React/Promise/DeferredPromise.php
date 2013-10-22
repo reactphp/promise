@@ -4,15 +4,15 @@ namespace React\Promise;
 
 class DeferredPromise implements PromiseInterface
 {
-    private $deferred;
+    private $thenCallback;
 
-    public function __construct(Deferred $deferred)
+    public function __construct(callable $thenCallback)
     {
-        $this->deferred = $deferred;
+        $this->thenCallback = $thenCallback;
     }
 
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        return $this->deferred->then($onFulfilled, $onRejected, $onProgress);
+        return call_user_func($this->thenCallback, $onFulfilled, $onRejected, $onProgress);
     }
 }

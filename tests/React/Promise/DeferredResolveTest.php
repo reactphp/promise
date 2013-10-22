@@ -24,7 +24,6 @@ class DeferredResolveTest extends TestCase
             ->then($mock);
 
         $d
-            ->resolver()
             ->resolve(1);
     }
 
@@ -44,7 +43,6 @@ class DeferredResolveTest extends TestCase
             ->then($mock);
 
         $d
-            ->resolver()
             ->resolve(new FulfilledPromise(1));
     }
 
@@ -64,7 +62,6 @@ class DeferredResolveTest extends TestCase
             ->then($this->expectCallableNever(), $mock);
 
         $d
-            ->resolver()
             ->resolve(new RejectedPromise(1));
     }
 
@@ -80,7 +77,6 @@ class DeferredResolveTest extends TestCase
             ->with($this->identicalTo(1));
 
         $d
-            ->resolver()
             ->resolve(1)
             ->then($mock);
     }
@@ -97,7 +93,6 @@ class DeferredResolveTest extends TestCase
             ->with($this->identicalTo(1));
 
         $d
-            ->resolver()
             ->resolve(resolve(1))
             ->then($mock);
     }
@@ -116,7 +111,6 @@ class DeferredResolveTest extends TestCase
         // Both the returned promise, and the deferred's own promise should
         // be rejected with the same value
         $d
-            ->resolver()
             ->resolve(reject(1))
             ->then($this->expectCallableNever(), $mock);
     }
@@ -126,7 +120,6 @@ class DeferredResolveTest extends TestCase
     {
         $d = new Deferred();
         $d
-            ->resolver()
             ->resolve(1);
 
         $mock = $this->createCallableMock();
@@ -151,6 +144,7 @@ class DeferredResolveTest extends TestCase
 
         $d = new Deferred();
         $d
+            ->promise()
             ->then(
                 null,
                 $this->expectCallableNever()

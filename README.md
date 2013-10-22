@@ -13,12 +13,14 @@ Table of Contents
 2. [Concepts](#concepts)
    * [Deferred](#deferred)
    * [Promise](#promise)
-   * [Resolver](#resolver)
 3. [API](#api)
    * [Deferred](#deferred-1)
+     * [Deferred::promise()](#deferredpromise)
+     * [Deferred::resolve()](#deferredresolve)
+     * [Deferred::reject()](#deferredreject)
+     * [Deferred::progress()](#deferredprogress)
    * [Promise](#promise-1)
    * [LazyPromise](#lazypromise)
-   * [Resolver](#resolver-1)
    * [Functions](#functions)
      * [resolve()](#resolve)
      * [reject()](#reject)
@@ -65,42 +67,77 @@ While a Deferred represents the computation itself, a **Promise** represents
 the result of that computation. Thus, each Deferred has a Promise that acts as
 a placeholder for its actual result.
 
-### Resolver
-
-A **Resolver** can resolve, reject or trigger progress notifications on behalf
-of a Deferred without knowing any details about consumers.
-
-Sometimes it can be useful to hand out a resolver and allow another
-(possibly untrusted) party to provide the resolution value for a Promise.
-
 API
 ---
 
 ### Deferred
 
 A deferred represents an operation whose resolution is pending. It has separate
-Promise and Resolver parts that can be safely given out to separate groups of
-consumers and producers to allow safe, one-way communication.
+promise and resolver parts.
 
 ``` php
 $deferred = new React\Promise\Deferred();
 
-$promise  = $deferred->promise();
-$resolver = $deferred->resolver();
-```
+$promise = $deferred->promise();
 
-Although a Deferred has the full Promise + Resolver API, this should be used for
-convenience only by the creator of the deferred. Only the Promise and Resolver
-should be given to consumers and producers.
-
-``` php
-$deferred = new React\Promise\Deferred();
-
-$deferred->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
-$deferred->resolve(mixed $promiseOrValue = null);
+$deferred->resolve(mixed $value = null);
 $deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
 ```
+
+The `promise` method returns the promise of the deferred.
+
+The `resolve` and `reject` methods control the state of the deferred.
+
+The `progress` method is for progress notification.
+
+#### Deferred::promise()
+
+``` php
+$promise = $deferred->promise();
+```
+
+Returns the promise of the deferred, which you can hand out to others while
+keeping the authority to modify its state to yourself.
+
+#### Deferred::resolve()
+
+``` php
+$deferred->resolve(mixed $value = null);
+```
+
+Resolves the promise returned by `promise()`. All consumers are notified by
+having `$onFulfilled` (which they registered via `$promise->then()`) called with
+`$value`.
+
+If `$value` itself is a promise, the promise will transition to the state of
+this promise once it is resolved.
+
+#### Deferred::reject()
+
+``` php
+$resolver->reject(mixed $reason = null);
+```
+
+Rejects the promise returned by `promise()`, signalling that the Deferred's
+computation failed.
+All consumers are notified by having `$onRejected` (which they registered via
+`$promise->then()`) called with `$reason`.
+
+If `$reason` itself is a promise, the promise will be rejected with the outcome
+of this promise regardless whether it fulfills or rejects.
+
+#### Deferred::progress()
+
+``` php
+$resolver->progress(mixed $update = null);
+```
+
+Triggers progress notifications, to indicate to consumers that the computation
+is making progress toward its result.
+
+All consumers are notified by having `$onProgress` (which they registered via
+`$promise->then()`) called with `$update`.
 
 ### Promise
 
@@ -111,6 +148,8 @@ value or reason, and produces a new Promise for the result.
 
 A Promise has a single method `then()` which registers new fulfilled, rejection
 and progress handlers with this Promise (all parameters are optional):
+
+#### Promise::then()
 
 ``` php
 $newPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
@@ -165,44 +204,6 @@ $promise = React\Promise\LazyPromise($factory);
 $promise->then(function ($value) {
 });
 ```
-
-### Resolver
-
-The Resolver represents the responsibility of fulfilling, rejecting and
-progressing the associated Promise.
-
-A Resolver has 3 methods: `resolve()`, `reject()` and `progress()`:
-
-``` php
-$resolver->resolve(mixed $value = null);
-```
-
-Resolves a Deferred. All consumers are notified by having  `$onFulfilled`
-(which they registered via `$promise->then()`) called with `$value`.
-
-If `$value` itself is a promise, the Deferred will transition to the state of
-this promise once it is resolved.
-
-``` php
-$resolver->reject(mixed $reason = null);
-```
-
-Rejects a Deferred, signalling that the Deferred's computation failed.
-All consumers are notified by having `$onRejected` (which they registered via
-`$promise->then()`) called with `$reason`.
-
-If `$reason` itself is a promise, the Deferred will be rejected with the outcome
-of this promise regardless whether it fulfills or rejects.
-
-``` php
-$resolver->progress(mixed $update = null);
-```
-
-Triggers progress notifications, to indicate to consumers that the computation
-is making progress toward its result.
-
-All consumers are notified by having `$onProgress` (which they registered via
-`$promise->then()`) called with `$update`.
 
 ### Functions
 

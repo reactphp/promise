@@ -2,48 +2,12 @@
 
 namespace React\Promise;
 
-class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
+class Deferred implements PromisorInterface
 {
     private $completed;
     private $promise;
-    private $resolver;
     private $handlers = array();
     private $progressHandlers = array();
-
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        if (null !== $this->completed) {
-            return $this->completed->then($onFulfilled, $onRejected, $onProgress);
-        }
-
-        $deferred = new static();
-
-        if (is_callable($onProgress)) {
-            $progHandler = function ($update) use ($deferred, $onProgress) {
-                try {
-                    $deferred->progress(call_user_func($onProgress, $update));
-                } catch (\Exception $e) {
-                    $deferred->progress($e);
-                }
-            };
-        } else {
-            $progHandler = array($deferred, 'progress');
-        }
-
-        $this->handlers[] = function ($promise) use ($onFulfilled, $onRejected, $deferred, $progHandler) {
-            $promise
-                ->then($onFulfilled, $onRejected)
-                ->then(
-                    array($deferred, 'resolve'),
-                    array($deferred, 'reject'),
-                    $progHandler
-                );
-        };
-
-        $this->progressHandlers[] = $progHandler;
-
-        return $deferred->promise();
-    }
 
     public function resolve($value = null)
     {
@@ -77,19 +41,47 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
     public function promise()
     {
         if (null === $this->promise) {
-            $this->promise = new DeferredPromise($this);
+            $this->promise = new DeferredPromise($this->getThenCallback());
         }
 
         return $this->promise;
     }
 
-    public function resolver()
+    protected function getThenCallback()
     {
-        if (null === $this->resolver) {
-            $this->resolver = new DeferredResolver($this);
-        }
+        return function (callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null) {
+            if (null !== $this->completed) {
+                return $this->completed->then($onFulfilled, $onRejected, $onProgress);
+            }
 
-        return $this->resolver;
+            $deferred = new static();
+
+            if (is_callable($onProgress)) {
+                $progHandler = function ($update) use ($deferred, $onProgress) {
+                    try {
+                        $deferred->progress(call_user_func($onProgress, $update));
+                    } catch (\Exception $e) {
+                        $deferred->progress($e);
+                    }
+                };
+            } else {
+                $progHandler = array($deferred, 'progress');
+            }
+
+            $this->handlers[] = function ($promise) use ($onFulfilled, $onRejected, $deferred, $progHandler) {
+                $promise
+                    ->then($onFulfilled, $onRejected)
+                    ->then(
+                        array($deferred, 'resolve'),
+                        array($deferred, 'reject'),
+                        $progHandler
+                    );
+            };
+
+            $this->progressHandlers[] = $progHandler;
+
+            return $deferred->promise();
+        };
     }
 
     protected function processQueue($queue, $value)

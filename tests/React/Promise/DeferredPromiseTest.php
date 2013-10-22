@@ -9,14 +9,14 @@ namespace React\Promise;
 class DeferredPromiseTest extends TestCase
 {
     /** @test */
-    public function shouldForwardToDeferred()
+    public function shouldInvokeThenCallback()
     {
         $callable = $this->createCallableMock();
 
-        $mock = $this->getMock('React\\Promise\\Deferred');
+        $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
-            ->method('then')
+            ->method('__invoke')
             ->with($callable, $callable, $callable);
 
         $p = new DeferredPromise($mock);

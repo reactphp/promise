@@ -68,7 +68,7 @@ class FunctionResolveTest extends TestCase
         $d = new Deferred();
         $d->resolve(false);
 
-        $result = resolve(resolve($d->then(function ($val) {
+        $result = resolve(resolve($d->promise()->then(function ($val) {
             $d = new Deferred();
             $d->resolve($val);
 
@@ -76,7 +76,7 @@ class FunctionResolveTest extends TestCase
                 return $val;
             };
 
-            return resolve($d->then($identity))->then(
+            return resolve($d->promise()->then($identity))->then(
                 function ($val) {
                     return !$val;
                 }

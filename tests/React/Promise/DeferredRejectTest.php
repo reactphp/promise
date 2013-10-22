@@ -24,7 +24,6 @@ class DeferredRejectTest extends TestCase
             ->then($this->expectCallableNever(), $mock);
 
         $d
-            ->resolver()
             ->reject(1);
     }
 
@@ -44,7 +43,6 @@ class DeferredRejectTest extends TestCase
             ->then($this->expectCallableNever(), $mock);
 
         $d
-            ->resolver()
             ->reject(new FulfilledPromise(1));
     }
 
@@ -64,7 +62,6 @@ class DeferredRejectTest extends TestCase
             ->then($this->expectCallableNever(), $mock);
 
         $d
-            ->resolver()
             ->reject(new RejectedPromise(1));
     }
 
@@ -80,7 +77,6 @@ class DeferredRejectTest extends TestCase
             ->with($this->identicalTo(1));
 
         $d
-            ->resolver()
             ->reject(1)
             ->then($this->expectCallableNever(), $mock);
     }
@@ -90,7 +86,6 @@ class DeferredRejectTest extends TestCase
     {
         $d = new Deferred();
         $d
-            ->resolver()
             ->reject(1);
 
         $mock = $this->createCallableMock();
@@ -115,6 +110,7 @@ class DeferredRejectTest extends TestCase
 
         $d = new Deferred();
         $d
+            ->promise()
             ->then(
                 $this->expectCallableNever()
             )

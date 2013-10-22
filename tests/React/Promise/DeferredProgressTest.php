@@ -26,7 +26,6 @@ class DeferredProgressTest extends TestCase
             ->then($this->expectCallableNever(), $this->expectCallableNever(), $mock);
 
         $d
-            ->resolver()
             ->progress($sentinel);
     }
 
@@ -63,7 +62,6 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->progress($sentinel);
     }
 
@@ -100,7 +98,6 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->progress(1);
     }
 
@@ -137,7 +134,6 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->progress(1);
     }
 
@@ -157,7 +153,6 @@ class DeferredProgressTest extends TestCase
 
         // resolve $d BEFORE calling attaching progress handler
         $d
-            ->resolver()
             ->resolve();
 
         $d
@@ -172,7 +167,6 @@ class DeferredProgressTest extends TestCase
             );
 
         $d2
-            ->resolver()
             ->progress($sentinel);
     }
 
@@ -203,10 +197,8 @@ class DeferredProgressTest extends TestCase
 
         // resolve $d AFTER calling attaching progress handler
         $d
-            ->resolver()
             ->resolve();
         $d2
-            ->resolver()
             ->progress($sentinel);
     }
 
@@ -244,10 +236,8 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->resolve($d2->promise());
         $d2
-            ->resolver()
             ->progress($sentinel);
     }
 
@@ -275,10 +265,8 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->progress(1);
         $d
-            ->resolver()
             ->resolve(2);
     }
 
@@ -306,10 +294,8 @@ class DeferredProgressTest extends TestCase
             );
 
         $d
-            ->resolver()
             ->progress(1);
         $d
-            ->resolver()
             ->reject(2);
     }
 }
