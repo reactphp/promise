@@ -5,7 +5,7 @@ namespace React\Promise;
 class FulfilledPromiseTest extends TestCase
 {
     use PromiseTest\PromiseTestTrait,
-        PromiseTest\PromiseFullfilledTestTrait;
+        PromiseTest\PromiseFulfilledTestTrait;
 
     public function getPromiseTestAdapter()
     {

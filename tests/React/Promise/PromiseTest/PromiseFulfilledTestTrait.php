@@ -2,7 +2,7 @@
 
 namespace React\Promise\PromiseTest;
 
-trait PromiseFullfilledTestTrait
+trait PromiseFulfilledTestTrait
 {
     abstract public function getPromiseTestAdapter();
 
