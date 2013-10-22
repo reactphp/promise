@@ -33,4 +33,12 @@ class FulfilledPromiseTest extends TestCase
             },
         ];
     }
+
+    /** @test */
+    public function shouldThrowExceptionIfConstructedWithAPromise()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        return new FulfilledPromise(new FulfilledPromise());
+    }
 }

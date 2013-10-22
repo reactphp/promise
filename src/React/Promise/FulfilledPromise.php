@@ -8,6 +8,10 @@ class FulfilledPromise implements PromiseInterface
 
     public function __construct($value = null)
     {
+        if ($value instanceof PromiseInterface) {
+            throw new \InvalidArgumentException('You cannot create React\Promise\FulfilledPromise with a promise. Use React\Promise\resolve($promiseOrValue) instead.');
+        }
+
         $this->value = $value;
     }
 

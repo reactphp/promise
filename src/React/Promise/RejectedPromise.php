@@ -8,6 +8,10 @@ class RejectedPromise implements PromiseInterface
 
     public function __construct($reason = null)
     {
+        if ($reason instanceof PromiseInterface) {
+            throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
+        }
+
         $this->reason = $reason;
     }
 
