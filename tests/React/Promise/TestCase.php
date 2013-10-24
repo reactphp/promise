@@ -4,17 +4,6 @@ namespace React\Promise;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    public function toClosure(callable $callable)
-    {
-        if ($callable instanceof \Closure) {
-            return $callable;
-        }
-
-        return function () use ($callable) {
-            return call_user_func_array($callable, func_get_args());
-        };
-    }
-
     public function expectCallableExactly($amount)
     {
         $mock = $this->createCallableMock();
