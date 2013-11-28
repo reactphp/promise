@@ -41,63 +41,58 @@ function some($promisesOrValues, $howMany)
 {
     return resolve($promisesOrValues)
         ->then(function ($array) use ($howMany) {
-            if (!is_array($array)) {
-                $array = [];
+            if (!is_array($array) || !$array) {
+                return resolve([]);
             }
 
             $len       = count($array);
             $toResolve = max(0, min($howMany, $len));
+            $toReject  = ($len - $toResolve) + 1;
             $values    = [];
+            $reasons   = [];
             $deferred  = new Deferred();
 
-            if (!$toResolve) {
-                $deferred->resolve($values);
-            } else {
-                $toReject = ($len - $toResolve) + 1;
-                $reasons  = [];
+            $progress = [$deferred, 'progress'];
 
-                $progress = [$deferred, 'progress'];
+            $fulfillOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
+                $values[$i] = $val;
 
-                $fulfillOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
-                    $values[$i] = $val;
+                if (0 === --$toResolve) {
+                    $deferred->resolve($values);
 
-                    if (0 === --$toResolve) {
-                        $deferred->resolve($values);
-
-                        return true;
-                    }
-                };
-
-                $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, $deferred) {
-                    $reasons[$i] = $reason;
-
-                    if (0 === --$toReject) {
-                        $deferred->reject($reasons);
-
-                        return true;
-                    }
-                };
-
-                foreach ($array as $i => $promiseOrValue) {
-                    $fulfiller = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
-                        $reset = $fulfillOne($val, $i);
-
-                        if (true === $reset) {
-                            $fulfillOne = $rejectOne = function () {};
-                        }
-                    };
-
-                    $rejecter = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
-                        $reset = $rejectOne($val, $i);
-
-                        if (true === $reset) {
-                            $fulfillOne = $rejectOne = function () {};
-                        }
-                    };
-
-                    resolve($promiseOrValue)
-                        ->then($fulfiller, $rejecter, $progress);
+                    return true;
                 }
+            };
+
+            $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, $deferred) {
+                $reasons[$i] = $reason;
+
+                if (0 === --$toReject) {
+                    $deferred->reject($reasons);
+
+                    return true;
+                }
+            };
+
+            foreach ($array as $i => $promiseOrValue) {
+                $fulfiller = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
+                    $reset = $fulfillOne($val, $i);
+
+                    if (true === $reset) {
+                        $fulfillOne = $rejectOne = function () {};
+                    }
+                };
+
+                $rejecter = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
+                    $reset = $rejectOne($val, $i);
+
+                    if (true === $reset) {
+                        $fulfillOne = $rejectOne = function () {};
+                    }
+                };
+
+                resolve($promiseOrValue)
+                    ->then($fulfiller, $rejecter, $progress);
             }
 
             return $deferred->promise();
@@ -108,35 +103,31 @@ function map($promisesOrValues, callable $mapFunc)
 {
     return resolve($promisesOrValues)
         ->then(function ($array) use ($mapFunc) {
-            if (!is_array($array)) {
-                $array = [];
+            if (!is_array($array) || !$array) {
+                return resolve([]);
             }
 
             $toResolve = count($array);
             $values    = [];
             $deferred  = new Deferred();
 
-            if (!$toResolve) {
-                $deferred->resolve($values);
-            } else {
-                $resolve = function ($item, $i) use ($mapFunc, &$values, &$toResolve, $deferred) {
-                    resolve($item)
-                        ->then($mapFunc)
-                        ->then(
-                            function ($mapped) use (&$values, $i, &$toResolve, $deferred) {
-                                $values[$i] = $mapped;
+            $resolve = function ($item, $i) use ($mapFunc, &$values, &$toResolve, $deferred) {
+                resolve($item)
+                    ->then($mapFunc)
+                    ->then(
+                        function ($mapped) use (&$values, $i, &$toResolve, $deferred) {
+                            $values[$i] = $mapped;
 
-                                if (0 === --$toResolve) {
-                                    $deferred->resolve($values);
-                                }
-                            },
-                            [$deferred, 'reject']
-                        );
-                };
+                            if (0 === --$toResolve) {
+                                $deferred->resolve($values);
+                            }
+                        },
+                        [$deferred, 'reject']
+                    );
+            };
 
-                foreach ($array as $i => $item) {
-                    $resolve($item, $i);
-                }
+            foreach ($array as $i => $item) {
+                $resolve($item, $i);
             }
 
             return $deferred->promise();
