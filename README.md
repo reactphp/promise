@@ -29,6 +29,7 @@ Table of Contents
      * [resolve()](#resolve)
      * [reject()](#reject)
      * [all()](#all)
+     * [race()](#race)
      * [any()](#any)
      * [some()](#some)
      * [map()](#map)
@@ -320,6 +321,15 @@ Returns a promise that will resolve only once all the items in
 `$promisesOrValues` have resolved. The resolution value of the returned promise
 will be an array containing the resolution values of each of the items in
 `$promisesOrValues`.
+
+#### race()
+
+``` php
+$promise = React\Promise\race(array|React\Promise\PromiseInterface $promisesOrValues);
+```
+
+Initiates a competitive race that allows one winner. Returns a promise which is
+resolved in the same way the first settled promise resolves.
 
 #### any()
 

@@ -29,6 +29,23 @@ function all($promisesOrValues)
     });
 }
 
+function race($promisesOrValues)
+{
+    return resolve($promisesOrValues)
+        ->then(function ($array) {
+            if (!is_array($array) || !$array) {
+                return resolve();
+            }
+
+            return new Promise(function ($resolve, $reject, $progress) use ($array) {
+                foreach ($array as $promiseOrValue) {
+                    resolve($promiseOrValue)
+                        ->then($resolve, $reject, $progress);
+                }
+            });
+        });
+}
+
 function any($promisesOrValues)
 {
     return some($promisesOrValues, 1)

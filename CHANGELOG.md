@@ -8,6 +8,7 @@ CHANGELOG
   [ES6 promises specification](https://github.com/domenic/promises-unwrapping/).
 
   * Add standalone Promise class.
+  * Add new React\Promise\race() function.
   * BC break: Bump minimum PHP version to PHP 5.4.
   * BC break: Remove ResolverInterface and PromiseInterface from Deferred.
   * BC break: Change signature of PromiseInterface.
