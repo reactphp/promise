@@ -45,57 +45,34 @@ function some($promisesOrValues, $howMany)
                 return resolve([]);
             }
 
-            $len       = count($array);
-            $toResolve = max(0, min($howMany, $len));
-            $toReject  = ($len - $toResolve) + 1;
-            $values    = [];
-            $reasons   = [];
-            $deferred  = new Deferred();
+            return new Promise(function ($resolve, $reject, $progress) use ($array, $howMany) {
+                $len       = count($array);
+                $toResolve = max(0, min($howMany, $len));
+                $toReject  = ($len - $toResolve) + 1;
+                $values    = [];
+                $reasons   = [];
 
-            $progress = [$deferred, 'progress'];
+                foreach ($array as $i => $promiseOrValue) {
+                    $fulfiller = function ($val) use ($i, &$values, &$toResolve, $resolve) {
+                        $values[$i] = $val;
 
-            $fulfillOne = function ($val, $i) use (&$values, &$toResolve, $deferred) {
-                $values[$i] = $val;
+                        if (0 === --$toResolve) {
+                            $resolve($values);
+                        }
+                    };
 
-                if (0 === --$toResolve) {
-                    $deferred->resolve($values);
+                    $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $reject) {
+                        $reasons[$i] = $reason;
 
-                    return true;
+                        if (0 === --$toReject) {
+                            $reject($reasons);
+                        }
+                    };
+
+                    resolve($promiseOrValue)
+                        ->then($fulfiller, $rejecter, $progress);
                 }
-            };
-
-            $rejectOne = function ($reason, $i) use (&$reasons, &$toReject, $deferred) {
-                $reasons[$i] = $reason;
-
-                if (0 === --$toReject) {
-                    $deferred->reject($reasons);
-
-                    return true;
-                }
-            };
-
-            foreach ($array as $i => $promiseOrValue) {
-                $fulfiller = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
-                    $reset = $fulfillOne($val, $i);
-
-                    if (true === $reset) {
-                        $fulfillOne = $rejectOne = function () {};
-                    }
-                };
-
-                $rejecter = function ($val) use ($i, &$fulfillOne, &$rejectOne) {
-                    $reset = $rejectOne($val, $i);
-
-                    if (true === $reset) {
-                        $fulfillOne = $rejectOne = function () {};
-                    }
-                };
-
-                resolve($promiseOrValue)
-                    ->then($fulfiller, $rejecter, $progress);
-            }
-
-            return $deferred->promise();
+            });
         });
 }
 
