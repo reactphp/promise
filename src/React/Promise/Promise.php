@@ -12,8 +12,7 @@ class Promise implements PromiseInterface
     public function __construct(callable $resolver)
     {
         try {
-            call_user_func(
-                $resolver,
+            $resolver(
                 function ($value = null) {
                     return $this->resolve($value);
                 },
@@ -44,7 +43,7 @@ class Promise implements PromiseInterface
             if ($onProgress) {
                 $progressHandler = function ($update) use ($progress, $onProgress) {
                     try {
-                        $progress(call_user_func($onProgress, $update));
+                        $progress($onProgress($update));
                     } catch (\Exception $e) {
                         $progress($e);
                     }
@@ -80,7 +79,7 @@ class Promise implements PromiseInterface
         }
 
         foreach ($this->progressHandlers as $handler) {
-            call_user_func($handler, $update);
+            $handler($update);
         }
     }
 
@@ -91,7 +90,7 @@ class Promise implements PromiseInterface
         }
 
         foreach ($this->handlers as $handler) {
-            call_user_func($handler, $result);
+            $handler($result);
         }
 
         $this->progressHandlers = $this->handlers = [];

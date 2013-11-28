@@ -152,7 +152,7 @@ function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
                     ->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
                         return resolve($val)
                             ->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
-                                return call_user_func($reduceFunc, $c, $value, $i++, $total);
+                                return $reduceFunc($c, $value, $i++, $total);
                             });
                     });
             };

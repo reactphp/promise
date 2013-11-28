@@ -21,7 +21,7 @@ class FulfilledPromise implements PromiseInterface
             $value = $this->value;
 
             if (null !== $onFulfilled) {
-                $value = call_user_func($onFulfilled, $value);
+                $value = $onFulfilled($value);
             }
 
             return resolve($value);
