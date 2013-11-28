@@ -7,21 +7,21 @@ class LazyPromise implements PromiseInterface
     private $factory;
     private $promise;
 
-    public function __construct($factory)
+    public function __construct(callable $factory)
     {
         $this->factory = $factory;
     }
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null === $this->promise) {
             try {
-                $this->promise = Util::promiseFor(call_user_func($this->factory));
+                $this->promise = resolve(call_user_func($this->factory));
             } catch (\Exception $exception) {
                 $this->promise = new RejectedPromise($exception);
             }
         }
 
-        return $this->promise->then($fulfilledHandler, $errorHandler, $progressHandler);
+        return $this->promise->then($onFulfilled, $onRejected, $onProgress);
     }
 }

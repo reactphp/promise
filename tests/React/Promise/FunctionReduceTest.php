@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenReduce
- */
-class WhenReduceTest extends TestCase
+class FunctionReduceTest extends TestCase
 {
     protected function plus()
     {
@@ -31,8 +27,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(6));
 
-        When::reduce(
-            array(1, 2, 3),
+        reduce(
+            [1, 2, 3],
             $this->plus()
         )->then($mock);
     }
@@ -46,8 +42,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(7));
 
-        When::reduce(
-            array(1, 2, 3),
+        reduce(
+            [1, 2, 3],
             $this->plus(),
             1
         )->then($mock);
@@ -62,10 +58,10 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(7));
 
-        When::reduce(
-            array(1, 2, 3),
+        reduce(
+            [1, 2, 3],
             $this->plus(),
-            When::resolve(1)
+            resolve(1)
         )->then($mock);
     }
 
@@ -78,8 +74,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(6));
 
-        When::reduce(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
+        reduce(
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus()
         )->then($mock);
     }
@@ -93,8 +89,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(7));
 
-        When::reduce(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
+        reduce(
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus(),
             1
         )->then($mock);
@@ -109,10 +105,10 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(7));
 
-        When::reduce(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
+        reduce(
+            [resolve(1), resolve(2), resolve(3)],
             $this->plus(),
-            When::resolve(1)
+            resolve(1)
         )->then($mock);
     }
 
@@ -125,8 +121,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        When::reduce(
-            array(),
+        reduce(
+            [],
             $this->plus(),
             1
         )->then($mock);
@@ -141,10 +137,10 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        When::reduce(
-            array(),
+        reduce(
+            [],
             $this->plus(),
-            When::resolve(1)
+            resolve(1)
         )->then($mock);
     }
 
@@ -157,10 +153,10 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        When::reduce(
-            array(When::resolve(1), When::reject(2), When::resolve(3)),
+        reduce(
+            [resolve(1), reject(2), resolve(3)],
             $this->plus(),
-            When::resolve(1)
+            resolve(1)
         )->then($this->expectCallableNever(), $mock);
     }
 
@@ -177,8 +173,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(null));
 
-        When::reduce(
-            array(),
+        reduce(
+            [],
             $this->plus()
         )->then($mock);
     }
@@ -192,8 +188,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(3));
 
-        When::reduce(
-            array(null, null, 1, null, 1, 1),
+        reduce(
+            [null, null, 1, null, 1, 1],
             $this->plus()
         )->then($mock);
     }
@@ -207,8 +203,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(4));
 
-        When::reduce(
-            array(null, null, 1, null, 1, 1),
+        reduce(
+            [null, null, 1, null, 1, 1],
             $this->plus(),
             1
         )->then($mock);
@@ -223,8 +219,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo('123'));
 
-        When::reduce(
-            array(1, 2, 3),
+        reduce(
+            [1, 2, 3],
             $this->append(),
             ''
         )->then($mock);
@@ -239,8 +235,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo('123'));
 
-        When::reduce(
-            When::resolve(array(1, 2, 3)),
+        reduce(
+            resolve([1, 2, 3]),
             $this->append(),
             ''
         )->then($mock);
@@ -255,8 +251,8 @@ class WhenReduceTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        When::reduce(
-            When::resolve(1),
+        reduce(
+            resolve(1),
             $this->plus(),
             1
         )->then($mock);
@@ -279,12 +275,12 @@ class WhenReduceTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2, 3)));
+            ->with($this->identicalTo([1, 2, 3]));
 
-        When::reduce(
-            array($d1->promise(), $d2->promise(), $d3->promise()),
+        reduce(
+            [$d1->promise(), $d2->promise(), $d3->promise()],
             $insertIntoArray,
-            array()
+            []
         )->then($mock);
 
         $d3->resolve(3);

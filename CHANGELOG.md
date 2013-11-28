@@ -1,6 +1,23 @@
 CHANGELOG
 =========
 
+* 2.0.0 (xxxx-xx-xx)
+
+  New major release. The goal was to streamline the API and to make it more
+  compliant with other promise libraries and especially with the new upcoming
+  [ES6 promises specification](https://github.com/domenic/promises-unwrapping/).
+
+  * Add standalone Promise class.
+  * Add new React\Promise\race() function.
+  * BC break: Bump minimum PHP version to PHP 5.4.
+  * BC break: Remove ResolverInterface and PromiseInterface from Deferred.
+  * BC break: Change signature of PromiseInterface.
+  * BC break: Remove When and Util classes and move static methods to functions.
+  * BC break: FulfilledPromise and RejectedPromise now throw an exception when
+    initialized with a promise instead of a value/reason.
+  * BC break: React\Promise\Deferred::resolve() and React\Promise\Deferred::reject()
+    no longer return a promise.
+
 * 1.0.4 (2013-04-03)
 
   * Trigger PHP errors when invalid callback is passed.

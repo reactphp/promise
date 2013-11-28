@@ -8,21 +8,21 @@ class RejectedPromise implements PromiseInterface
 
     public function __construct($reason = null)
     {
+        if ($reason instanceof PromiseInterface) {
+            throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
+        }
+
         $this->reason = $reason;
     }
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         try {
-            if (!is_callable($errorHandler)) {
-                if (null !== $errorHandler) {
-                    trigger_error('Invalid $errorHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
-                }
-
+            if (null === $onRejected) {
                 return new RejectedPromise($this->reason);
             }
 
-            return Util::promiseFor(call_user_func($errorHandler, $this->reason));
+            return resolve($onRejected($this->reason));
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }
