@@ -47,7 +47,7 @@ function some($promisesOrValues, $howMany)
 
             return new Promise(function ($resolve, $reject, $progress) use ($array, $howMany) {
                 $len       = count($array);
-                $toResolve = max(0, min($howMany, $len));
+                $toResolve = min($howMany, $len);
                 $toReject  = ($len - $toResolve) + 1;
                 $values    = [];
                 $reasons   = [];
