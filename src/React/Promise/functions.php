@@ -53,7 +53,11 @@ function some($promisesOrValues, $howMany)
                 $reasons   = [];
 
                 foreach ($array as $i => $promiseOrValue) {
-                    $fulfiller = function ($val) use ($i, &$values, &$toResolve, $resolve) {
+                    $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve) {
+                        if ($toResolve < 1 || $toReject < 1) {
+                            return;
+                        }
+
                         $values[$i] = $val;
 
                         if (0 === --$toResolve) {
@@ -61,7 +65,11 @@ function some($promisesOrValues, $howMany)
                         }
                     };
 
-                    $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $reject) {
+                    $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
+                        if ($toResolve < 1 || $toReject < 1) {
+                            return;
+                        }
+
                         $reasons[$i] = $reason;
 
                         if (0 === --$toReject) {
@@ -93,6 +101,10 @@ function map($promisesOrValues, callable $mapFunc)
                         ->then($mapFunc)
                         ->then(
                             function ($mapped) use ($i, &$values, &$toResolve, $resolve) {
+                                if ($toResolve < 1) {
+                                    return;
+                                }
+
                                 $values[$i] = $mapped;
 
                                 if (0 === --$toResolve) {
