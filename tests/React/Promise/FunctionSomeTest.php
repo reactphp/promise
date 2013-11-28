@@ -95,6 +95,21 @@ class FunctionSomeTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveWithEmptyArrayIfHowManyIsLessThanOne()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo([]));
+
+        some(
+            [1],
+            0
+        )->then($mock);
+    }
+
+    /** @test */
     public function shouldResolveToEmptyArrayWhenInputPromiseDoesNotResolveToArray()
     {
         $mock = $this->createCallableMock();

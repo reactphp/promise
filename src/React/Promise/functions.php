@@ -41,7 +41,7 @@ function some($promisesOrValues, $howMany)
 {
     return resolve($promisesOrValues)
         ->then(function ($array) use ($howMany) {
-            if (!is_array($array) || !$array) {
+            if (!is_array($array) || !$array || $howMany < 1) {
                 return resolve([]);
             }
 
