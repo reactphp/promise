@@ -60,55 +60,6 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldReturnAPromiseForTheRejectionValue()
-    {
-        extract($this->getPromiseTestAdapter());
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        $reject(1)
-            ->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function rejectShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyResolved()
-    {
-        extract($this->getPromiseTestAdapter());
-
-        $resolve(1);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
-
-        $reject(2)
-            ->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function rejectShouldReturnAPromiseForPassedInRejectionValueWhenAlreadyRejected()
-    {
-        extract($this->getPromiseTestAdapter());
-
-        $reject(1);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
-
-        $reject(2)
-            ->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
     public function rejectShouldInvokeNewlyAddedErrbackWhenAlreadyRejected()
     {
         extract($this->getPromiseTestAdapter());

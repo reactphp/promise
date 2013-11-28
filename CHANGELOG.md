@@ -15,6 +15,8 @@ CHANGELOG
   * BC break: Remove When and Util classes and move static methods to functions.
   * BC break: FulfilledPromise and RejectedPromise now throw an exception when
     initialized with a promise instead of a value/reason.
+  * BC break: React\Promise\Deferred::resolve() and React\Promise\Deferred::reject()
+    no longer return a promise.
 
 * 1.0.4 (2013-04-03)
 

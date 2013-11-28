@@ -14,10 +14,10 @@ class Promise implements PromiseInterface
         try {
             $resolver(
                 function ($value = null) {
-                    return $this->resolve($value);
+                    $this->resolve($value);
                 },
                 function ($reason = null) {
-                    return $this->reject($reason);
+                    $this->reject($reason);
                 },
                 function ($update = null) {
                     $this->progress($update);
@@ -64,12 +64,20 @@ class Promise implements PromiseInterface
 
     private function resolve($value = null)
     {
-        return $this->settle(resolve($value));
+        if (null !== $this->result) {
+            return;
+        }
+
+        $this->settle(resolve($value));
     }
 
     private function reject($reason = null)
     {
-        return $this->settle(reject($reason));
+        if (null !== $this->result) {
+            return;
+        }
+
+        $this->settle(reject($reason));
     }
 
     private function progress($update = null)
@@ -85,16 +93,12 @@ class Promise implements PromiseInterface
 
     private function settle(PromiseInterface $result)
     {
-        if (null !== $this->result) {
-            return $result;
-        }
-
         foreach ($this->handlers as $handler) {
             $handler($result);
         }
 
         $this->progressHandlers = $this->handlers = [];
 
-        return $this->result = $result;
+        $this->result = $result;
     }
 }
