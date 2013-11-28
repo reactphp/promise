@@ -84,30 +84,26 @@ function map($promisesOrValues, callable $mapFunc)
                 return resolve([]);
             }
 
-            $toResolve = count($array);
-            $values    = [];
-            $deferred  = new Deferred();
+            return new Promise(function ($resolve, $reject, $progress) use ($array, $mapFunc) {
+                $toResolve = count($array);
+                $values    = [];
 
-            $resolve = function ($item, $i) use ($mapFunc, &$values, &$toResolve, $deferred) {
-                resolve($item)
-                    ->then($mapFunc)
-                    ->then(
-                        function ($mapped) use (&$values, $i, &$toResolve, $deferred) {
-                            $values[$i] = $mapped;
+                foreach ($array as $i => $promiseOrValue) {
+                    resolve($promiseOrValue)
+                        ->then($mapFunc)
+                        ->then(
+                            function ($mapped) use ($i, &$values, &$toResolve, $resolve) {
+                                $values[$i] = $mapped;
 
-                            if (0 === --$toResolve) {
-                                $deferred->resolve($values);
-                            }
-                        },
-                        [$deferred, 'reject']
-                    );
-            };
-
-            foreach ($array as $i => $item) {
-                $resolve($item, $i);
-            }
-
-            return $deferred->promise();
+                                if (0 === --$toResolve) {
+                                    $resolve($values);
+                                }
+                            },
+                            $reject,
+                            $progress
+                        );
+                }
+            });
         });
 }
 
