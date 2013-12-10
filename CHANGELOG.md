@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-* 2.0.0 (xxxx-xx-xx)
+* 2.0.0 (2013-12-10)
 
   New major release. The goal was to streamline the API and to make it more
   compliant with other promise libraries and especially with the new upcoming
