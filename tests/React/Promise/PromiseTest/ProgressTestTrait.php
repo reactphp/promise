@@ -1,19 +1,17 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\PromiseTest;
 
-/**
- * @group Deferred
- * @group DeferredProgress
- */
-class DeferredProgressTest extends TestCase
+trait ProgressTestTrait
 {
-    /** @test */
-    public function shouldProgress()
-    {
-        $sentinel = new \stdClass();
+    abstract public function getPromiseTestAdapter();
 
-        $d = new Deferred();
+    /** @test */
+    public function progressShouldProgress()
+    {
+        extract($this->getPromiseTestAdapter());
+
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -21,21 +19,18 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        $d
-            ->promise()
+        $promise()
             ->then($this->expectCallableNever(), $this->expectCallableNever(), $mock);
 
-        $d
-            ->resolver()
-            ->progress($sentinel);
+        $progress($sentinel);
     }
 
     /** @test */
-    public function shouldPropagateProgressToDownstreamPromises()
+    public function progressShouldPropagateProgressToDownstreamPromises()
     {
-        $sentinel = new \stdClass();
+        extract($this->getPromiseTestAdapter());
 
-        $d = new Deferred();
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -49,8 +44,7 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $this->expectCallableNever(),
                 $this->expectCallableNever(),
@@ -62,17 +56,15 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d
-            ->resolver()
-            ->progress($sentinel);
+        $progress($sentinel);
     }
 
     /** @test */
-    public function shouldPropagateTransformedProgressToDownstreamPromises()
+    public function progressShouldPropagateTransformedProgressToDownstreamPromises()
     {
-        $sentinel = new \stdClass();
+        extract($this->getPromiseTestAdapter());
 
-        $d = new Deferred();
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -86,8 +78,7 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $this->expectCallableNever(),
                 $this->expectCallableNever(),
@@ -99,17 +90,15 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d
-            ->resolver()
-            ->progress(1);
+        $progress(1);
     }
 
     /** @test */
-    public function shouldPropagateCaughtExceptionValueAsProgress()
+    public function progressShouldPropagateCaughtExceptionValueAsProgress()
     {
-        $exception = new \Exception();
+        extract($this->getPromiseTestAdapter());
 
-        $d = new Deferred();
+        $exception = new \Exception();
 
         $mock = $this->createCallableMock();
         $mock
@@ -123,8 +112,7 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $this->expectCallableNever(),
                 $this->expectCallableNever(),
@@ -136,18 +124,16 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d
-            ->resolver()
-            ->progress(1);
+        $progress(1);
     }
 
     /** @test */
-    public function shouldForwardProgressEventsWhenIntermediaryCallbackTiedToAResolvedPromiseReturnsAPromise()
+    public function progressShouldForwardProgressEventsWhenIntermediaryCallbackTiedToAResolvedPromiseReturnsAPromise()
     {
-        $sentinel = new \stdClass();
+        extract($this->getPromiseTestAdapter());
+        extract($this->getPromiseTestAdapter(), EXTR_PREFIX_ALL, 'other');
 
-        $d = new Deferred();
-        $d2 = new Deferred();
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -155,15 +141,12 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        // resolve $d BEFORE calling attaching progress handler
-        $d
-            ->resolver()
-            ->resolve();
+        // resolve BEFORE attaching progress handler
+        $resolve();
 
-        $d
-            ->promise()
-            ->then(function () use ($d2) {
-                return $d2->promise();
+        $promise()
+            ->then(function () use ($other_promise) {
+                return $other_promise();
             })
             ->then(
                 $this->expectCallableNever(),
@@ -171,18 +154,16 @@ class DeferredProgressTest extends TestCase
                 $mock
             );
 
-        $d2
-            ->resolver()
-            ->progress($sentinel);
+        $other_progress($sentinel);
     }
 
     /** @test */
-    public function shouldForwardProgressEventsWhenIntermediaryCallbackTiedToAnUnresolvedPromiseReturnsAPromise()
+    public function progressShouldForwardProgressEventsWhenIntermediaryCallbackTiedToAnUnresolvedPromiseReturnsAPromise()
     {
-        $sentinel = new \stdClass();
+        extract($this->getPromiseTestAdapter());
+        extract($this->getPromiseTestAdapter(), EXTR_PREFIX_ALL, 'other');
 
-        $d = new Deferred();
-        $d2 = new Deferred();
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -190,10 +171,9 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        $d
-            ->promise()
-            ->then(function () use ($d2) {
-                return $d2->promise();
+        $promise()
+            ->then(function () use ($other_promise) {
+                return $other_promise();
             })
             ->then(
                 $this->expectCallableNever(),
@@ -201,22 +181,18 @@ class DeferredProgressTest extends TestCase
                 $mock
             );
 
-        // resolve $d AFTER calling attaching progress handler
-        $d
-            ->resolver()
-            ->resolve();
-        $d2
-            ->resolver()
-            ->progress($sentinel);
+        // resolve AFTER attaching progress handler
+        $resolve();
+        $other_progress($sentinel);
     }
 
     /** @test */
-    public function shouldForwardProgressWhenResolvedWithAnotherPromise()
+    public function progressShouldForwardProgressWhenResolvedWithAnotherPromise()
     {
-        $sentinel = new \stdClass();
+        extract($this->getPromiseTestAdapter());
+        extract($this->getPromiseTestAdapter(), EXTR_PREFIX_ALL, 'other');
 
-        $d = new Deferred();
-        $d2 = new Deferred();
+        $sentinel = new \stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -230,8 +206,7 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($sentinel);
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $this->expectCallableNever(),
                 $this->expectCallableNever(),
@@ -243,18 +218,14 @@ class DeferredProgressTest extends TestCase
                 $mock2
             );
 
-        $d
-            ->resolver()
-            ->resolve($d2->promise());
-        $d2
-            ->resolver()
-            ->progress($sentinel);
+        $resolve($other_promise());
+        $other_progress($sentinel);
     }
 
     /** @test */
-    public function shouldAllowResolveAfterProgress()
+    public function progressShouldAllowResolveAfterProgress()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -266,26 +237,21 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $mock,
                 $this->expectCallableNever(),
                 $mock
             );
 
-        $d
-            ->resolver()
-            ->progress(1);
-        $d
-            ->resolver()
-            ->resolve(2);
+        $progress(1);
+        $resolve(2);
     }
 
     /** @test */
-    public function shouldAllowRejectAfterProgress()
+    public function progressShouldAllowRejectAfterProgress()
     {
-        $d = new Deferred();
+        extract($this->getPromiseTestAdapter());
 
         $mock = $this->createCallableMock();
         $mock
@@ -297,53 +263,34 @@ class DeferredProgressTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $d
-            ->promise()
+        $promise()
             ->then(
                 $this->expectCallableNever(),
                 $mock,
                 $mock
             );
 
-        $d
-            ->resolver()
-            ->progress(1);
-        $d
-            ->resolver()
-            ->reject(2);
+        $progress(1);
+        $reject(2);
     }
 
-    /**
-     * @test
-     * @dataProvider invalidCallbackDataProvider
-     **/
-    public function shouldIgnoreNonFunctionsAndTriggerPhpNotice($var)
+    /** @test */
+    public function progressShouldReturnSilentlyOnProgressWhenAlreadyResolved()
     {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->register();
+        extract($this->getPromiseTestAdapter());
 
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
+        $resolve(1);
 
-        $d = new Deferred();
-        $d
-            ->then(
-                null,
-                null,
-                $var
-            )
-            ->then(
-                $this->expectCallableNever(),
-                $this->expectCallableNever(),
-                $mock
-            );
+        $this->assertNull($progress());
+    }
 
-        $d->progress(1);
+    /** @test */
+    public function progressShouldReturnSilentlyOnProgressWhenAlreadyRejected()
+    {
+        extract($this->getPromiseTestAdapter());
 
-        $errorCollector->assertCollectedError('Invalid $progressHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
-        $errorCollector->unregister();
+        $reject(1);
+
+        $this->assertNull($progress());
     }
 }

@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenAll
- */
-class WhenAllTest extends TestCase
+class FunctionSomeTest extends TestCase
 {
     /** @test */
     public function shouldResolveEmptyInput()
@@ -15,9 +11,12 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo([]));
 
-        When::all(array(), $mock);
+        some(
+            [],
+            1
+        )->then($mock);
     }
 
     /** @test */
@@ -27,12 +26,12 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2, 3)));
+            ->with($this->identicalTo([1, 2]));
 
-        When::all(
-            array(1, 2, 3),
-            $mock
-        );
+        some(
+            [1, 2, 3],
+            2
+        )->then($mock);
     }
 
     /** @test */
@@ -42,12 +41,12 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2, 3)));
+            ->with($this->identicalTo([1, 2]));
 
-        When::all(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
-            $mock
-        );
+        some(
+            [resolve(1), resolve(2), resolve(3)],
+            2
+        )->then($mock);
     }
 
     /** @test */
@@ -57,28 +56,27 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(null, 1, null, 1, 1)));
+            ->with($this->identicalTo([null, 1]));
 
-        When::all(
-            array(null, 1, null, 1, 1),
-            $mock
-        );
+        some(
+            [null, 1, null, 2, 3],
+            2
+        )->then($mock);
     }
 
     /** @test */
-    public function shouldRejectIfAnyInputPromiseRejects()
+    public function shouldRejectIfAnyInputPromiseRejectsBeforeDesiredNumberOfInputsAreResolved()
     {
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo([1 => 2, 2 => 3]));
 
-        When::all(
-            array(When::resolve(1), When::reject(2), When::resolve(3)),
-            $this->expectCallableNever(),
-            $mock
-        );
+        some(
+            [resolve(1), reject(2), reject(3)],
+            2
+        )->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
@@ -88,12 +86,27 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2, 3)));
+            ->with($this->identicalTo([1, 2]));
 
-        When::all(
-            When::resolve(array(1, 2, 3)),
-            $mock
-        );
+        some(
+            resolve([1, 2, 3]),
+            2
+        )->then($mock);
+    }
+
+    /** @test */
+    public function shouldResolveWithEmptyArrayIfHowManyIsLessThanOne()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo([]));
+
+        some(
+            [1],
+            0
+        )->then($mock);
     }
 
     /** @test */
@@ -103,11 +116,11 @@ class WhenAllTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo([]));
 
-        When::all(
-            When::resolve(1),
-            $mock
-        );
+        some(
+            resolve(1),
+            1
+        )->then($mock);
     }
 }

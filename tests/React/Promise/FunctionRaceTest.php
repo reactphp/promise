@@ -2,11 +2,7 @@
 
 namespace React\Promise;
 
-/**
- * @group When
- * @group WhenSome
- */
-class WhenSomeTest extends TestCase
+class FunctionRaceTest extends TestCase
 {
     /** @test */
     public function shouldResolveEmptyInput()
@@ -15,9 +11,11 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo(null));
 
-        When::some(array(), 1, $mock);
+        race(
+            []
+        )->then($mock);
     }
 
     /** @test */
@@ -27,13 +25,11 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo(1));
 
-        When::some(
-            array(1, 2, 3),
-            2,
-            $mock
-        );
+        race(
+            [1, 2, 3]
+        )->then($mock);
     }
 
     /** @test */
@@ -43,13 +39,20 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo(2));
 
-        When::some(
-            array(When::resolve(1), When::resolve(2), When::resolve(3)),
-            2,
-            $mock
-        );
+        $d1 = new Deferred();
+        $d2 = new Deferred();
+        $d3 = new Deferred();
+
+        race(
+            [$d1->promise(), $d2->promise(), $d3->promise()]
+        )->then($mock);
+
+        $d2->resolve(2);
+
+        $d1->resolve(1);
+        $d3->resolve(3);
     }
 
     /** @test */
@@ -59,30 +62,34 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(null, 1)));
+            ->with($this->identicalTo(null));
 
-        When::some(
-            array(null, 1, null, 2, 3),
-            2,
-            $mock
-        );
+        race(
+            [null, 1, null, 2, 3]
+        )->then($mock);
     }
 
     /** @test */
-    public function shouldRejectIfAnyInputPromiseRejectsBeforeDesiredNumberOfInputsAreResolved()
+    public function shouldRejectIfFirstSettledPromiseRejects()
     {
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1 => 2, 2 => 3)));
+            ->with($this->identicalTo(2));
 
-        When::some(
-            array(When::resolve(1), When::reject(2), When::reject(3)),
-            2,
-            $this->expectCallableNever(),
-            $mock
-        );
+        $d1 = new Deferred();
+        $d2 = new Deferred();
+        $d3 = new Deferred();
+
+        race(
+            [$d1->promise(), $d2->promise(), $d3->promise()]
+        )->then($this->expectCallableNever(), $mock);
+
+        $d2->reject(2);
+
+        $d1->resolve(1);
+        $d3->resolve(3);
     }
 
     /** @test */
@@ -92,28 +99,24 @@ class WhenSomeTest extends TestCase
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array(1, 2)));
+            ->with($this->identicalTo(1));
 
-        When::some(
-            When::resolve(array(1, 2, 3)),
-            2,
-            $mock
-        );
+        race(
+            resolve([1, 2, 3])
+        )->then($mock);
     }
 
     /** @test */
-    public function shouldResolveToEmptyArrayWhenInputPromiseDoesNotResolveToArray()
+    public function shouldResolveToNullWhenInputPromiseDoesNotResolveToArray()
     {
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(array()));
+            ->with($this->identicalTo(null));
 
-        When::some(
-            When::resolve(1),
-            1,
-            $mock
-        );
+        race(
+            resolve(1)
+        )->then($mock);
     }
 }

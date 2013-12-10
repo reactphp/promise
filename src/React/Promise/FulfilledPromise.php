@@ -4,25 +4,27 @@ namespace React\Promise;
 
 class FulfilledPromise implements PromiseInterface
 {
-    private $result;
+    private $value;
 
-    public function __construct($result = null)
+    public function __construct($value = null)
     {
-        $this->result = $result;
+        if ($value instanceof PromiseInterface) {
+            throw new \InvalidArgumentException('You cannot create React\Promise\FulfilledPromise with a promise. Use React\Promise\resolve($promiseOrValue) instead.');
+        }
+
+        $this->value = $value;
     }
 
-    public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         try {
-            $result = $this->result;
+            $value = $this->value;
 
-            if (is_callable($fulfilledHandler)) {
-                $result = call_user_func($fulfilledHandler, $result);
-            } elseif (null !== $fulfilledHandler) {
-                trigger_error('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
+            if (null !== $onFulfilled) {
+                $value = $onFulfilled($value);
             }
 
-            return Util::promiseFor($result);
+            return resolve($value);
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }
