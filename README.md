@@ -121,7 +121,7 @@ this promise once it is resolved.
 #### Deferred::reject()
 
 ``` php
-$resolver->reject(mixed $reason = null);
+$deferred->reject(mixed $reason = null);
 ```
 
 Rejects the promise returned by `promise()`, signalling that the deferred's
@@ -135,7 +135,7 @@ of this promise regardless whether it fulfills or rejects.
 #### Deferred::progress()
 
 ``` php
-$resolver->progress(mixed $update = null);
+$deferred->progress(mixed $update = null);
 ```
 
 Triggers progress notifications, to indicate to consumers that the computation
@@ -399,11 +399,16 @@ function getAwesomeResultPromise()
 {
     $deferred = new React\Promise\Deferred();
 
-    // Pass only the Resolver, to provide the resolution value for the promise
-    computeAwesomeResultAsynchronously($deferred->resolver());
+    // Execute a Node.js-style function using the callback pattern
+    computeAwesomeResultAsynchronously(function ($error, $result) use ($deferred) {
+        if ($error) {
+            $deferred->reject($error);
+        } else {
+            $deferred->resolve($result);
+        }
+    });
 
-    // Return only the promise, so that the caller cannot
-    // resolve, reject, or otherwise muck with the original deferred.
+    // Return the promise
     return $deferred->promise();
 }
 
