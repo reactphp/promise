@@ -98,4 +98,25 @@ trait RejectTestTrait
 
         $reject(1);
     }
+
+    /** @test */
+    public function rejectShouldMakePromiseImmutable()
+    {
+        extract($this->getPromiseTestAdapter());
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $reject(1);
+        $reject(2);
+
+        $promise()
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+    }
 }

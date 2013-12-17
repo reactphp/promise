@@ -99,4 +99,26 @@ trait ResolveTestTrait
 
         $resolve(1);
     }
+
+    /** @test */
+    public function resolveShouldMakePromiseImmutable()
+    {
+        extract($this->getPromiseTestAdapter());
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $resolve(1);
+        $resolve(2);
+
+        $promise()
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+    }
+
 }
