@@ -118,10 +118,6 @@ function map($promisesOrValues, callable $mapFunc)
                         ->then($mapFunc)
                         ->then(
                             function ($mapped) use ($i, &$values, &$toResolve, $resolve) {
-                                if ($toResolve < 1) {
-                                    return;
-                                }
-
                                 $values[$i] = $mapped;
 
                                 if (0 === --$toResolve) {
