@@ -12,10 +12,10 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": {
-            "React\\Promise": "src/"
+        "psr-4": {
+            "React\\Promise\\": "src/"
         },
-        "files": ["src/React/Promise/functions.php"]
+        "files": ["src/functions.php"]
     },
     "extra": {
         "branch-alias": {

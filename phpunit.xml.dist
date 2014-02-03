@@ -13,7 +13,7 @@
 >
     <testsuites>
         <testsuite name="Promise Test Suite">
-            <directory>./tests/React/Promise/</directory>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
