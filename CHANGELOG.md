@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+* 2.1.x (xxxx-xx-xx)
+
+  * Introduce new ExtendedPromiseInterface implemented by all promises
+
 * 2.0.0 (2013-12-10)
 
   New major release. The goal was to streamline the API and to make it more

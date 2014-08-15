@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class Promise implements PromiseInterface
+class Promise implements ExtendedPromiseInterface
 {
     private $result;
 

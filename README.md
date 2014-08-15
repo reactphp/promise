@@ -21,6 +21,7 @@ Table of Contents
      * [Deferred::progress()](#deferredprogress)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
+   * [ExtendedPromiseInterface](#extendedpromiseinterface)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -196,6 +197,11 @@ the same call to `then()`:
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
+
+### ExtendedPromiseInterface
+
+The ExtendedPromiseInterface extends the PromiseInterface with useful shortcut
+and utility methods which are not part of the Promises/A specification.
 
 ### Promise
 
