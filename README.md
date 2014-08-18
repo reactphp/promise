@@ -22,6 +22,7 @@ Table of Contents
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
+        * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -43,6 +44,7 @@ Table of Contents
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
      * [Progress event forwarding](#progress-event-forwarding)
+   * [done() vs. then()](#done-vs-then)
 5. [Credits](#credits)
 6. [License](#license)
 
@@ -81,7 +83,7 @@ API
 A deferred represents an operation whose resolution is pending. It has separate
 promise and resolver parts.
 
-``` php
+```php
 $deferred = new React\Promise\Deferred();
 
 $promise = $deferred->promise();
@@ -99,7 +101,7 @@ The `progress` method is for progress notification.
 
 #### Deferred::promise()
 
-``` php
+```php
 $promise = $deferred->promise();
 ```
 
@@ -108,7 +110,7 @@ keeping the authority to modify its state to yourself.
 
 #### Deferred::resolve()
 
-``` php
+```php
 $deferred->resolve(mixed $value = null);
 ```
 
@@ -121,7 +123,7 @@ this promise once it is resolved.
 
 #### Deferred::reject()
 
-``` php
+```php
 $deferred->reject(mixed $reason = null);
 ```
 
@@ -135,7 +137,7 @@ of this promise regardless whether it fulfills or rejects.
 
 #### Deferred::progress()
 
-``` php
+```php
 $deferred->progress(mixed $update = null);
 ```
 
@@ -158,12 +160,15 @@ Neither its state nor its result (or error) can be modified.
 
 #### PromiseInterface::then()
 
-``` php
-$newPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
+```php
+$transformedPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 ```
 
+Transforms a promise's value by applying a function to the promise's fulfillment
+or rejection value. Returns a new promise for the transformed result.
+
 The `then()` method registers new fulfilled, rejection and progress handlers
-with this promise (all parameters are optional):
+with a promise (all parameters are optional):
 
   * `$onFulfilled` will be invoked once the promise is fulfilled and passed
     the result as the first argument.
@@ -197,18 +202,47 @@ the same call to `then()`:
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
+* [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
+* [done() vs. then()](#done-vs-then)
 
 ### ExtendedPromiseInterface
 
 The ExtendedPromiseInterface extends the PromiseInterface with useful shortcut
 and utility methods which are not part of the Promises/A specification.
 
+#### ExtendedPromiseInterface::done()
+
+```php
+$promise->done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
+```
+
+Consumes the promise's ultimate value if the promise fulfills, or handles the
+ultimate error.
+
+It will cause a fatal error if either `$onFulfilled` or `$onRejected` throw or
+return a rejected promise.
+
+Since the purpose of `done()` is consumption rather than transformation,
+`done()` always returns `null`.
+
+#### Implementations
+
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
+
+#### See also
+
+* [PromiseInterface::then()](#promiseinterfacethen)
+* [done() vs. then()](#done-vs-then)
+
 ### Promise
 
 Creates a promise whose state is controlled by the functions passed to
 `$resolver`.
 
-``` php
+```php
 $resolver = function (callable $resolve, callable $reject, callable $progress) {
     // Do some work, possibly asynchronously, and then
     // resolve or reject. You can notify of progress events
@@ -288,7 +322,7 @@ promises.
 
 #### resolve()
 
-``` php
+```php
 $promise = React\Promise\resolve(mixed $promiseOrValue);
 ```
 
@@ -301,7 +335,7 @@ If `$promiseOrValue` is a promise, it will simply be returned.
 
 #### reject()
 
-``` php
+```php
 $promise = React\Promise\reject(mixed $promiseOrValue);
 ```
 
@@ -319,7 +353,7 @@ the value of another promise.
 
 #### all()
 
-``` php
+```php
 $promise = React\Promise\all(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
@@ -330,7 +364,7 @@ will be an array containing the resolution values of each of the items in
 
 #### race()
 
-``` php
+```php
 $promise = React\Promise\race(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
@@ -339,7 +373,7 @@ resolved in the same way the first settled promise resolves.
 
 #### any()
 
-``` php
+```php
 $promise = React\Promise\any(array|React\Promise\PromiseInterface $promisesOrValues);
 ```
 
@@ -352,7 +386,7 @@ rejected. The rejection value will be an array of all rejection reasons.
 
 #### some()
 
-``` php
+```php
 $promise = React\Promise\some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany);
 ```
 
@@ -368,7 +402,7 @@ reject). The rejection value will be an array of
 
 #### map()
 
-``` php
+```php
 $promise = React\Promise\map(array|React\Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
 ```
 
@@ -380,7 +414,7 @@ value of a promise or value in `$promisesOrValues`.
 
 #### reduce()
 
-``` php
+```php
 $promise = React\Promise\reduce(array|React\Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
 ```
 
@@ -400,7 +434,7 @@ Examples
 
 ### How to use Deferred
 
-``` php
+```php
 function getAwesomeResultPromise()
 {
     $deferred = new React\Promise\Deferred();
@@ -448,7 +482,7 @@ to `$deferred->resolve()` below.
 Each call to `then()` returns a new promise that will resolve with the return
 value of the previous handler. This creates a promise "pipeline".
 
-``` php
+```php
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
@@ -488,7 +522,7 @@ Similarly, when you handle a rejected promise, to propagate the rejection,
 "rethrow" it by either returning a rejected promise, or actually throwing
 (since promise translates thrown exceptions into rejections)
 
-``` php
+```php
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
@@ -515,7 +549,7 @@ $deferred->resolve(1);  // Prints "Reject 3"
 Just like try/catch, you can choose to propagate or not. Mixing resolutions and
 rejections will still forward handler results in a predictable way.
 
-``` php
+```php
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
@@ -555,7 +589,7 @@ chain so that they are meaningful to the next step. It also allows you to choose
 not to transform them, and simply let them propagate untransformed, by not
 registering a progress handler.
 
-``` php
+```php
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
@@ -567,6 +601,89 @@ $deferred->promise()
     });
 
 $deferred->progress(1);  // Prints "Progress 2"
+```
+
+### done() vs. then()
+
+The golden rule is:
+
+    Either return your promise, or call `done()` on it.
+
+At a first glance, `then()` and `done()` seem very similar. However, there are
+important distinctions.
+
+The intent of `then()` is to transform a promise's value and to pass or return
+a new promise for the transformed value along to other parts of your code.
+
+The intent of `done()` is to consume a promise's value, transferring
+responsibility for the value to your code.
+
+In addition to transforming a value, `then()` allows you to recover from, or
+propagate intermediate errors. Any errors that are not handled will be caught
+by the promise machinery and used to reject the promise returned by `then()`.
+
+Calling `done()` transfers all responsibility for errors to your code. If an
+error (either a thrown exception or returned rejection) escapes the
+`$onFulfilled` or `$onRejected` callbacks you provide to done, it will be
+rethrown in an uncatchable way causing a fatal error.
+
+```php
+function getJsonResult()
+{
+    return queryApi()
+        ->then(
+            // Transform API results to an object
+            function ($jsonResultString) {
+                return json_decode($jsonResultString);
+            },
+            // Transform API errors to an exception
+            function ($jsonErrorString) {
+                $object = json_decode($jsonErrorString);
+                throw new ApiErrorException($object->errorMessage);
+            }
+        );
+}
+
+// Here we provide no rejection handler.
+// If the promise returned has been rejected,
+// a React\Promise\UnhandledRejectionException will be thrown
+getJsonResult()
+    ->done(
+        // Consume transformed object
+        function ($jsonResultObject) {
+            // Do something with $jsonObject
+        }
+    );
+
+// Here we provide a rejection handler which will either throw while debugging
+// or log the exception.
+getJsonResult()
+    ->done(
+        function ($jsonObject) {
+            // Do something with $jsonObject
+        },
+        function (ApiErrorException $exception) {
+            if ($isDebug) {
+                throw $e;
+            } else {
+                logException($exception);
+            }
+        }
+    );
+```
+
+Note that exceptions which escape the `$onFulfilled` or `$onRejected` callbacks
+are __always__ from type `React\Promise\UnhandledRejectionException`.
+
+You can get the original reason/exception by calling
+`$unhandledRejectionException->getReason()`.
+
+```php
+try {
+    getJsonResult()->done();
+} catch (React\Promise\UnhandledRejectionException $e) {
+    echo $e->getReason()->getMessage();
+}
 ```
 
 Credits

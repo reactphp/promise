@@ -29,4 +29,17 @@ class FulfilledPromise implements ExtendedPromiseInterface
             return new RejectedPromise($exception);
         }
     }
+
+    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    {
+        if (null === $onFulfilled) {
+            return;
+        }
+
+        $this
+            ->then($onFulfilled)
+            ->then(null, function($reason) {
+                throw new UnhandledRejectionException($reason);
+            });
+    }
 }

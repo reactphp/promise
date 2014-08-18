@@ -37,6 +37,19 @@ class Promise implements ExtendedPromiseInterface
         return new static($this->resolver($onFulfilled, $onRejected, $onProgress));
     }
 
+    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    {
+        $promise = $this;
+
+        if ($onFulfilled || $onRejected || $onProgress) {
+            $promise = $this->then($onFulfilled, $onRejected, $onProgress);
+        }
+
+        $promise->then(null, function($reason) {
+            throw new UnhandledRejectionException($reason);
+        });
+    }
+
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         return function ($resolve, $reject, $progress) use ($onFulfilled, $onRejected, $onProgress) {

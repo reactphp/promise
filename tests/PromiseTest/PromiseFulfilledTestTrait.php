@@ -137,4 +137,61 @@ trait PromiseFulfilledTestTrait
                 $mock2
             );
     }
+
+    /** @test */
+    public function doneShouldReturnNull()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->assertNull($adapter->promise()->done());
+    }
+
+    /** @test */
+    public function doneShouldReturnAllowNull()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->assertNull($adapter->promise()->done(null, null, null));
+    }
+
+    /** @test */
+    public function doneShouldInvokeFulfillmentHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->resolve(1);
+        $this->assertNull($adapter->promise()->done($mock));
+    }
+
+    /** @test */
+    public function doneShouldBeFatalWhenFulfillmentHandlerThrows()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+
+        $adapter->resolve(1);
+        $this->assertNull($adapter->promise()->done(function() {
+            throw new \Exception();
+        }));
+    }
+
+    /** @test */
+    public function doneShouldBeFatalWhenFulfillmentHandlerRejects()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+
+        $adapter->resolve(1);
+        $this->assertNull($adapter->promise()->done(function() {
+            return \React\Promise\reject();
+        }));
+    }
 }
