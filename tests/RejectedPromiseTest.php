@@ -6,7 +6,7 @@ use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 
 class RejectedPromiseTest extends TestCase
 {
-    use PromiseTest\PromiseTestTrait,
+    use PromiseTest\PromiseSettledTestTrait,
         PromiseTest\PromiseRejectedTestTrait;
 
     public function getPromiseTestAdapter()
@@ -16,7 +16,7 @@ class RejectedPromiseTest extends TestCase
         return new CallbackPromiseAdapter([
             'promise' => function () use (&$promise) {
                 if (!$promise) {
-                    $promise = new RejectedPromise();
+                    throw new \LogicException('RejectedPromise must be rejected before obtaining the promise');
                 }
 
                 return $promise;
@@ -24,15 +24,18 @@ class RejectedPromiseTest extends TestCase
             'resolve' => function () {
                 throw new \LogicException('You cannot call resolve() for React\Promise\RejectedPromise');
             },
-            'reject' => function ($reason) use (&$promise) {
+            'reject' => function ($reason = null) use (&$promise) {
                 if (!$promise) {
-                    $promise = new RejectedPromise();
+                    $promise = new RejectedPromise($reason);
                 }
-
-                $promise = new RejectedPromise($reason);
             },
             'progress' => function () {
                 throw new \LogicException('You cannot call progress() for React\Promise\RejectedPromise');
+            },
+            'settle' => function ($reason = null) use (&$promise) {
+                if (!$promise) {
+                    $promise = new RejectedPromise($reason);
+                }
             },
         ]);
     }

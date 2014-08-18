@@ -4,7 +4,8 @@ namespace React\Promise\PromiseTest;
 
 trait FullTestTrait
 {
-    use PromiseTestTrait,
+    use PromisePendingTestTrait,
+        PromiseSettledTestTrait,
         PromiseFulfilledTestTrait,
         PromiseRejectedTestTrait,
         ResolveTestTrait,

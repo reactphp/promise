@@ -32,4 +32,9 @@ class CallbackPromiseAdapter implements PromiseAdapterInterface
     {
         return call_user_func_array($this->callbacks['progress'], func_get_args());
     }
+
+    public function settle()
+    {
+        return call_user_func_array($this->callbacks['settle'], func_get_args());
+    }
 }

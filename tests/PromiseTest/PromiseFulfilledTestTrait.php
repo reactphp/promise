@@ -10,6 +10,44 @@ trait PromiseFulfilledTestTrait
     abstract public function getPromiseTestAdapter();
 
     /** @test */
+    public function fulfilledPromiseShouldBeImmutable()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->resolve(1);
+        $adapter->resolve(2);
+
+        $adapter->promise()
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+    }
+
+    /** @test */
+    public function fulfilledPromiseShouldInvokeNewlyAddedCallback()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->promise()
+            ->then($mock, $this->expectCallableNever());
+    }
+
+    /** @test */
     public function thenShouldForwardResultWhenCallbackIsNull()
     {
         $adapter = $this->getPromiseTestAdapter();

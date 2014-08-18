@@ -63,23 +63,6 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function resolveShouldInvokeNewlyAddedCallbackWhenAlreadyResolved()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->resolve(1);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        $adapter->promise()
-            ->then($mock, $this->expectCallableNever());
-    }
-
-    /** @test */
     public function resolveShouldForwardValueWhenCallbackIsNull()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -114,14 +97,13 @@ trait ResolveTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $adapter->resolve(1);
-        $adapter->resolve(2);
-
         $adapter->promise()
             ->then(
                 $mock,
                 $this->expectCallableNever()
             );
-    }
 
+        $adapter->resolve(1);
+        $adapter->resolve(2);
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace React\Promise\PromiseTest;
 
-trait PromiseTestTrait
+trait PromisePendingTestTrait
 {
     /**
      * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
@@ -10,7 +10,7 @@ trait PromiseTestTrait
     abstract public function getPromiseTestAdapter();
 
     /** @test */
-    public function thenShouldReturnAPromise()
+    public function thenShouldReturnAPromiseForPendingPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -18,7 +18,7 @@ trait PromiseTestTrait
     }
 
     /** @test */
-    public function thenShouldReturnAllowNull()
+    public function thenShouldReturnAllowNullForPendingPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 

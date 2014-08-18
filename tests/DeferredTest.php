@@ -17,6 +17,7 @@ class DeferredTest extends TestCase
             'resolve'  => [$d, 'resolve'],
             'reject'   => [$d, 'reject'],
             'progress' => [$d, 'progress'],
+            'settle'   => [$d, 'resolve'],
         ]);
     }
 }
