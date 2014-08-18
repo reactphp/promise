@@ -4,12 +4,15 @@ namespace React\Promise\PromiseTest;
 
 trait PromiseRejectedTestTrait
 {
+    /**
+     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     */
     abstract public function getPromiseTestAdapter();
 
     /** @test */
     public function shouldForwardUndefinedRejectionValue()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -17,8 +20,8 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with(null);
 
-        $reject(1);
-        $promise()
+        $adapter->reject(1);
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 function () {
@@ -37,7 +40,7 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackDoesNotExplicitlyPropagate()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -45,8 +48,8 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $reject(1);
-        $promise()
+        $adapter->reject(1);
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 function ($val) {
@@ -62,7 +65,7 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function shouldSwitchFromErrbacksToCallbacksWhenErrbackReturnsAResolution()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -70,8 +73,8 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $reject(1);
-        $promise()
+        $adapter->reject(1);
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 function ($val) {
@@ -87,7 +90,7 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function shouldPropagateRejectionsWhenErrbackThrows()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $exception = new \Exception();
 
@@ -103,8 +106,8 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
-        $reject(1);
-        $promise()
+        $adapter->reject(1);
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 $mock
@@ -118,7 +121,7 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function shouldPropagateRejectionsWhenErrbackReturnsARejection()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -126,8 +129,8 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $reject(1);
-        $promise()
+        $adapter->reject(1);
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 function ($val) {

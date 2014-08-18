@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+
 class PromiseTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
@@ -16,14 +18,14 @@ class PromiseTest extends TestCase
             $progressCallback = $progress;
         });
 
-        return [
+        return new CallbackPromiseAdapter([
             'promise' => function () use ($promise) {
                 return $promise;
             },
             'resolve'  => $resolveCallback,
             'reject'   => $rejectCallback,
             'progress' => $progressCallback,
-        ];
+        ]);
     }
 
     /** @test */

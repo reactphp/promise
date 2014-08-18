@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+
 class LazyPromiseTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
@@ -14,14 +16,14 @@ class LazyPromiseTest extends TestCase
             return $d->promise();
         };
 
-        return [
+        return new CallbackPromiseAdapter([
             'promise'  => function () use ($factory) {
                 return new LazyPromise($factory);
             },
             'resolve'  => [$d, 'resolve'],
             'reject'   => [$d, 'reject'],
             'progress' => [$d, 'progress'],
-        ];
+        ]);
     }
 
     /** @test */

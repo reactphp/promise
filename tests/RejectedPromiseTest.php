@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+
 class RejectedPromiseTest extends TestCase
 {
     use PromiseTest\PromiseTestTrait,
@@ -11,7 +13,7 @@ class RejectedPromiseTest extends TestCase
     {
         $promise = null;
 
-        return [
+        return new CallbackPromiseAdapter([
             'promise' => function () use (&$promise) {
                 if (!$promise) {
                     $promise = new RejectedPromise();
@@ -32,7 +34,7 @@ class RejectedPromiseTest extends TestCase
             'progress' => function () {
                 throw new \LogicException('You cannot call progress() for React\Promise\RejectedPromise');
             },
-        ];
+        ]);
     }
 
     /** @test */

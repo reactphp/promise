@@ -4,21 +4,24 @@ namespace React\Promise\PromiseTest;
 
 trait PromiseTestTrait
 {
+    /**
+     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     */
     abstract public function getPromiseTestAdapter();
 
     /** @test */
     public function thenShouldReturnAPromise()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $promise()->then());
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then());
     }
 
     /** @test */
     public function thenShouldReturnAllowNull()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $promise()->then(null, null, null));
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then(null, null, null));
     }
 }

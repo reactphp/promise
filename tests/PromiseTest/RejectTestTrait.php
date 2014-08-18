@@ -6,12 +6,15 @@ use React\Promise;
 
 trait RejectTestTrait
 {
+    /**
+     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     */
     abstract public function getPromiseTestAdapter();
 
     /** @test */
     public function rejectShouldRejectWithAnImmediateValue()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -19,16 +22,16 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $promise()
+        $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $reject(1);
+        $adapter->reject(1);
     }
 
     /** @test */
     public function rejectShouldRejectWithFulfilledPromise()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -36,16 +39,16 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $promise()
+        $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $reject(Promise\resolve(1));
+        $adapter->reject(Promise\resolve(1));
     }
 
     /** @test */
     public function rejectShouldRejectWithRejectedPromise()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -53,18 +56,18 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $promise()
+        $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $reject(Promise\reject(1));
+        $adapter->reject(Promise\reject(1));
     }
 
     /** @test */
     public function rejectShouldInvokeNewlyAddedErrbackWhenAlreadyRejected()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
-        $reject(1);
+        $adapter->reject(1);
 
         $mock = $this->createCallableMock();
         $mock
@@ -72,14 +75,14 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $promise()
+        $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
     public function rejectShouldForwardReasonWhenCallbackIsNull()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -87,7 +90,7 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $promise()
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever()
             )
@@ -96,13 +99,13 @@ trait RejectTestTrait
                 $mock
             );
 
-        $reject(1);
+        $adapter->reject(1);
     }
 
     /** @test */
     public function rejectShouldMakePromiseImmutable()
     {
-        extract($this->getPromiseTestAdapter());
+        $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
         $mock
@@ -110,10 +113,10 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $reject(1);
-        $reject(2);
+        $adapter->reject(1);
+        $adapter->reject(2);
 
-        $promise()
+        $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 $mock

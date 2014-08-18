@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+
 class FulfilledPromiseTest extends TestCase
 {
     use PromiseTest\PromiseTestTrait,
@@ -11,7 +13,7 @@ class FulfilledPromiseTest extends TestCase
     {
         $promise = null;
 
-        return [
+        return new CallbackPromiseAdapter([
             'promise' => function () use (&$promise) {
                 if (!$promise) {
                     $promise = new FulfilledPromise();
@@ -30,7 +32,7 @@ class FulfilledPromiseTest extends TestCase
             'progress' => function () {
                 throw new \LogicException('You cannot call progress() for React\Promise\FulfilledPromise');
             },
-        ];
+        ]);
     }
 
     /** @test */

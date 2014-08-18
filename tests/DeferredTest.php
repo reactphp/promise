@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+
 class DeferredTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
@@ -10,11 +12,11 @@ class DeferredTest extends TestCase
     {
         $d = new Deferred();
 
-        return [
+        return new CallbackPromiseAdapter([
             'promise'  => [$d, 'promise'],
             'resolve'  => [$d, 'resolve'],
             'reject'   => [$d, 'reject'],
             'progress' => [$d, 'progress'],
-        ];
+        ]);
     }
 }
