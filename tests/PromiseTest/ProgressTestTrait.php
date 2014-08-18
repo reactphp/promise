@@ -282,16 +282,6 @@ trait ProgressTestTrait
     }
 
     /** @test */
-    public function progressShouldReturnSilentlyOnProgressWhenAlreadyResolved()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->resolve(1);
-
-        $this->assertNull($adapter->progress());
-    }
-
-    /** @test */
     public function progressShouldReturnSilentlyOnProgressWhenAlreadyRejected()
     {
         $adapter = $this->getPromiseTestAdapter();

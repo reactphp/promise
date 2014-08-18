@@ -25,6 +25,7 @@ class PromiseTest extends TestCase
             'resolve'  => $resolveCallback,
             'reject'   => $rejectCallback,
             'progress' => $progressCallback,
+            'settle'   => $resolveCallback,
         ]);
     }
 

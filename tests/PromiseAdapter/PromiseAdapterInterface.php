@@ -10,4 +10,5 @@ interface PromiseAdapterInterface
     public function resolve();
     public function reject();
     public function progress();
+    public function settle();
 }

@@ -63,23 +63,6 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldInvokeNewlyAddedErrbackWhenAlreadyRejected()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(1);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        $adapter->promise()
-            ->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
     public function rejectShouldForwardReasonWhenCallbackIsNull()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -113,13 +96,13 @@ trait RejectTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        $adapter->reject(1);
-        $adapter->reject(2);
-
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
                 $mock
             );
+
+        $adapter->reject(1);
+        $adapter->reject(2);
     }
 }

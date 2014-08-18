@@ -13,6 +13,44 @@ trait PromiseRejectedTestTrait
     abstract public function getPromiseTestAdapter();
 
     /** @test */
+    public function rejectedPromiseShouldBeImmutable()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->reject(1);
+        $adapter->reject(2);
+
+        $adapter->promise()
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+    }
+
+    /** @test */
+    public function rejectedPromiseShouldInvokeNewlyAddedCallback()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->reject(1);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->promise()
+            ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
     public function shouldForwardUndefinedRejectionValue()
     {
         $adapter = $this->getPromiseTestAdapter();
