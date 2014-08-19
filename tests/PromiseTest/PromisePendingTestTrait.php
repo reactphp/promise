@@ -24,4 +24,20 @@ trait PromisePendingTestTrait
 
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then(null, null, null));
     }
+
+    /** @test */
+    public function doneShouldReturnNullForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->assertNull($adapter->promise()->done());
+    }
+
+    /** @test */
+    public function doneShouldReturnAllowNullForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->assertNull($adapter->promise()->done(null, null, null));
+    }
 }

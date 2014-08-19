@@ -3,7 +3,6 @@
 namespace React\Promise\PromiseTest;
 
 use React\Promise\Deferred;
-use React\Promise\UnhandledRejectionException;
 
 trait PromiseRejectedTestTrait
 {
@@ -185,7 +184,7 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function doneShouldInvokeRejectionHandler()
+    public function doneShouldInvokeRejectionHandlerForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -200,20 +199,31 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function doneShouldBeFatalWhenRejectionHandlerThrows()
+    public function doneShouldThrowExceptionThrownByRejectionHandlerForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $adapter->reject(1);
+        $this->assertNull($adapter->promise()->done(null, function() {
+            throw new \Exception('UnhandledRejectionException');
+        }));
+    }
+
+    /** @test */
+    public function doneShouldThrowUnhandledRejectionExceptionWhenRejectedWithNonExceptionForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
         $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
 
         $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function() {
-            throw new \Exception();
-        }));
+        $this->assertNull($adapter->promise()->done());
     }
 
     /** @test */
-    public function doneShouldBeFatalWhenRejectionHandlerRejects()
+    public function doneShouldThrowUnhandledRejectionExceptionWhenRejectionHandlerRejectsForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -226,20 +236,35 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function doneShouldBeFatalWhenNoRejectionHandlerProvided()
+    public function doneShouldThrowRejectionExceptionWhenRejectionHandlerRejectsWithExceptionForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $adapter->reject(1);
+        $this->assertNull($adapter->promise()->done(null, function() {
+            return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
+        }));
+    }
+
+    /** @test */
+    public function doneShouldThrowExceptionProvidedAsRejectionValueForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $adapter->reject(new \Exception('UnhandledRejectionException'));
         $this->assertNull($adapter->promise()->done());
     }
 
     /** @test */
-    public function doneShouldBeFatalInDeepNestingPromiseChains()
+    public function doneShouldThrowWithDeepNestingPromiseChainsForRejectedPromise()
     {
-        $exception = new \Exception('Fatal');
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $exception = new \Exception('UnhandledRejectionException');
 
         $d = new Deferred();
         $d->resolve();
@@ -248,24 +273,24 @@ trait PromiseRejectedTestTrait
             $d = new Deferred();
             $d->resolve();
 
-            $identity = function () {
-            };
-
-            return \React\Promise\resolve($d->promise()->then($identity))->then(
-                function () use($exception) {
+            return \React\Promise\resolve($d->promise()->then(function () {}))->then(
+                function () use ($exception) {
                     throw $exception;
                 }
             );
         })));
 
-        $catchedException = null;
+        $result->done();
+    }
 
-        try {
-            $result->done();
-        } catch (UnhandledRejectionException $e) {
-            $catchedException = $e->getReason();
-        }
+    /** @test */
+    public function doneShouldRecoverWhenRejectionHandlerCatchesExceptionForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertEquals($exception, $catchedException);
+        $adapter->reject(new \Exception('UnhandledRejectionException'));
+        $this->assertNull($adapter->promise()->done(null, function(\Exception $e) {
+
+        }));
     }
 }

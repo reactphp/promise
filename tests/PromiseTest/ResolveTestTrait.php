@@ -106,4 +106,45 @@ trait ResolveTestTrait
         $adapter->resolve(1);
         $adapter->resolve(2);
     }
+
+    /** @test */
+    public function doneShouldInvokeFulfillmentHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $this->assertNull($adapter->promise()->done($mock));
+        $adapter->resolve(1);
+    }
+
+    /** @test */
+    public function doneShouldThrowExceptionThrownFulfillmentHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $this->assertNull($adapter->promise()->done(function() {
+            throw new \Exception('UnhandledRejectionException');
+        }));
+        $adapter->resolve(1);
+    }
+
+    /** @test */
+    public function doneShouldThrowUnhandledRejectionExceptionWhenFulfillmentHandlerRejects()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+
+        $this->assertNull($adapter->promise()->done(function() {
+            return \React\Promise\reject();
+        }));
+        $adapter->resolve(1);
+    }
 }

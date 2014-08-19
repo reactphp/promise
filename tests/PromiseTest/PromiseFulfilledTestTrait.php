@@ -177,23 +177,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function doneShouldReturnNull()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $this->assertNull($adapter->promise()->done());
-    }
-
-    /** @test */
-    public function doneShouldReturnAllowNull()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $this->assertNull($adapter->promise()->done(null, null, null));
-    }
-
-    /** @test */
-    public function doneShouldInvokeFulfillmentHandler()
+    public function doneShouldInvokeFulfillmentHandlerForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -208,20 +192,20 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function doneShouldBeFatalWhenFulfillmentHandlerThrows()
+    public function doneShouldThrowExceptionThrownFulfillmentHandlerForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $adapter->resolve(1);
         $this->assertNull($adapter->promise()->done(function() {
-            throw new \Exception();
+            throw new \Exception('UnhandledRejectionException');
         }));
     }
 
     /** @test */
-    public function doneShouldBeFatalWhenFulfillmentHandlerRejects()
+    public function doneShouldThrowUnhandledRejectionExceptionWhenFulfillmentHandlerRejectsForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 

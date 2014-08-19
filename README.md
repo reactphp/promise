@@ -607,7 +607,7 @@ $deferred->progress(1);  // Prints "Progress 2"
 
 The golden rule is:
 
-    Either return your promise, or call `done()` on it.
+    Either return your promise, or call done() on it.
 
 At a first glance, `then()` and `done()` seem very similar. However, there are
 important distinctions.
@@ -663,7 +663,7 @@ getJsonResult()
             // Do something with $jsonObject
         },
         function (ApiErrorException $exception) {
-            if ($isDebug) {
+            if (isDebug()) {
                 throw $e;
             } else {
                 logException($exception);
@@ -672,19 +672,10 @@ getJsonResult()
     );
 ```
 
-Note that exceptions which escape the `$onFulfilled` or `$onRejected` callbacks
-are __always__ from type `React\Promise\UnhandledRejectionException`.
+Note that if a rejection value is not an instance of `\Exception`, it will be
+wrapped in an exception of the type `React\Promise\UnhandledRejectionException`.
 
-You can get the original reason/exception by calling
-`$unhandledRejectionException->getReason()`.
-
-```php
-try {
-    getJsonResult()->done();
-} catch (React\Promise\UnhandledRejectionException $e) {
-    echo $e->getReason()->getMessage();
-}
-```
+You can get the original rejection reason by calling `$exception->getReason()`.
 
 Credits
 -------

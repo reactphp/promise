@@ -26,4 +26,22 @@ trait PromiseSettledTestTrait
         $adapter->settle();
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then(null, null, null));
     }
+
+    /** @test */
+    public function doneShouldReturnNullForSettledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $this->assertNull($adapter->promise()->done(null, function() {}));
+    }
+
+    /** @test */
+    public function doneShouldReturnAllowNullForSettledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $this->assertNull($adapter->promise()->done(null, function() {}, null));
+    }
 }

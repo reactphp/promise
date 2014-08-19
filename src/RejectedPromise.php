@@ -23,8 +23,6 @@ class RejectedPromise implements ExtendedPromiseInterface
             }
 
             return resolve($onRejected($this->reason));
-        } catch (UnhandledRejectionException $e) {
-            throw $e;
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }
@@ -32,16 +30,18 @@ class RejectedPromise implements ExtendedPromiseInterface
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        $handler = function($reason) {
-            throw new UnhandledRejectionException($reason);
-        };
-
         if (null === $onRejected) {
-            return $handler($this->reason);
+            throw UnhandledRejectionException::resolve($this->reason);
         }
 
-        $this
-            ->then(null, $onRejected)
-            ->then(null, $handler);
+        $result = $onRejected($this->reason);
+
+        if ($result instanceof self) {
+            throw UnhandledRejectionException::resolve($result->reason);
+        }
+
+        if ($result instanceof PromiseInterface) {
+            $result->done();
+        }
     }
 }

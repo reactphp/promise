@@ -39,15 +39,18 @@ class Promise implements ExtendedPromiseInterface
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        $promise = $this;
-
-        if ($onFulfilled || $onRejected || $onProgress) {
-            $promise = $this->then($onFulfilled, $onRejected, $onProgress);
+        if (null !== $this->result) {
+            return $this->result->done($onFulfilled, $onRejected, $onProgress);
         }
 
-        $promise->then(null, function($reason) {
-            throw new UnhandledRejectionException($reason);
-        });
+        $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
+            $promise
+                ->done($onFulfilled, $onRejected);
+        };
+
+        if ($onProgress) {
+            $this->progressHandlers[] = $onProgress;
+        }
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -68,7 +71,7 @@ class Promise implements ExtendedPromiseInterface
             $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
                 $promise
                     ->then($onFulfilled, $onRejected)
-                    ->then($resolve, $reject, $progressHandler);
+                    ->done($resolve, $reject, $progressHandler);
             };
 
             $this->progressHandlers[] = $progressHandler;

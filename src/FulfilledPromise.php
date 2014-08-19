@@ -36,10 +36,10 @@ class FulfilledPromise implements ExtendedPromiseInterface
             return;
         }
 
-        $this
-            ->then($onFulfilled)
-            ->then(null, function($reason) {
-                throw new UnhandledRejectionException($reason);
-            });
+        $result = $onFulfilled($this->value);
+
+        if ($result instanceof PromiseInterface) {
+            $result->done();
+        }
     }
 }

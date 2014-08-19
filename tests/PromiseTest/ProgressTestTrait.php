@@ -290,4 +290,32 @@ trait ProgressTestTrait
 
         $this->assertNull($adapter->progress());
     }
+
+    /** @test */
+    public function doneShouldInvokeProgressHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $this->assertNull($adapter->promise()->done(null, null, $mock));
+        $adapter->progress(1);
+    }
+
+    /** @test */
+    public function doneShouldThrowExceptionThrownProgressHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $this->assertNull($adapter->promise()->done(null, null, function() {
+            throw new \Exception('UnhandledRejectionException');
+        }));
+        $adapter->progress(1);
+    }
 }
