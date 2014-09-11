@@ -8,9 +8,9 @@ class DeferredTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
-    public function getPromiseTestAdapter()
+    public function getPromiseTestAdapter(callable $canceller = null)
     {
-        $d = new Deferred();
+        $d = new Deferred($canceller);
 
         return new CallbackPromiseAdapter([
             'promise'  => [$d, 'promise'],

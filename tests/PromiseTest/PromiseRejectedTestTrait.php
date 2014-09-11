@@ -7,7 +7,7 @@ trait PromiseRejectedTestTrait
     /**
      * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
      */
-    abstract public function getPromiseTestAdapter();
+    abstract public function getPromiseTestAdapter(callable $canceller = null);
 
     /** @test */
     public function rejectedPromiseShouldBeImmutable()
@@ -179,5 +179,25 @@ trait PromiseRejectedTestTrait
                 $this->expectCallableNever(),
                 $mock
             );
+    }
+
+    /** @test */
+    public function cancelShouldReturnNullForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->reject();
+
+        $this->assertNull($adapter->promise()->cancel());
+    }
+
+    /** @test */
+    public function cancelShouldHaveNoEffectForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
+
+        $adapter->reject();
+
+        $adapter->promise()->cancel();
     }
 }
