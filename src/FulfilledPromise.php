@@ -38,7 +38,7 @@ class FulfilledPromise implements ExtendedPromiseInterface
 
         $result = $onFulfilled($this->value);
 
-        if ($result instanceof PromiseInterface) {
+        if ($result instanceof ExtendedPromiseInterface) {
             $result->done();
         }
     }

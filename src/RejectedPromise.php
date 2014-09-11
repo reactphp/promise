@@ -40,7 +40,7 @@ class RejectedPromise implements ExtendedPromiseInterface
             throw UnhandledRejectionException::resolve($result->reason);
         }
 
-        if ($result instanceof PromiseInterface) {
+        if ($result instanceof ExtendedPromiseInterface) {
             $result->done();
         }
     }
