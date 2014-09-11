@@ -107,8 +107,16 @@ class Promise implements ExtendedPromiseInterface
         }
     }
 
-    private function settle(PromiseInterface $result)
+    private function settle(PromiseInterface $promise)
     {
+        $result = $promise;
+
+        if (!$result instanceof ExtendedPromiseInterface) {
+            $result = new static(function($resolve, $reject, $progress) use ($promise) {
+                $promise->then($resolve, $reject, $progress);
+            });
+        }
+
         foreach ($this->handlers as $handler) {
             $handler($result);
         }
