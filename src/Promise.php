@@ -20,7 +20,7 @@ class Promise implements ExtendedPromiseInterface
                     $this->reject($reason);
                 },
                 function ($update = null) {
-                    $this->progress($update);
+                    $this->notify($update);
                 }
             );
         } catch (\Exception $e) {
@@ -51,6 +51,11 @@ class Promise implements ExtendedPromiseInterface
         if ($onProgress) {
             $this->progressHandlers[] = $onProgress;
         }
+    }
+
+    public function progress(callable $onProgress)
+    {
+        return $this->then(null, null, $onProgress);
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -96,7 +101,7 @@ class Promise implements ExtendedPromiseInterface
         $this->settle(reject($reason));
     }
 
-    private function progress($update = null)
+    private function notify($update = null)
     {
         if (null !== $this->result) {
             return;

@@ -44,4 +44,9 @@ class RejectedPromise implements ExtendedPromiseInterface
             $result->done();
         }
     }
+
+    public function progress(callable $onProgress)
+    {
+        return new RejectedPromise($this->reason);
+    }
 }

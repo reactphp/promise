@@ -44,4 +44,14 @@ trait PromiseSettledTestTrait
         $adapter->settle();
         $this->assertNull($adapter->promise()->done(null, function() {}, null));
     }
+
+    /** @test */
+    public function progressShouldNotInvokeProgressHandlerForSettledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $adapter->promise()->progress($this->expectCallableNever());
+        $adapter->progress();
+    }
 }

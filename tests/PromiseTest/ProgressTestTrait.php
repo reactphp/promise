@@ -318,4 +318,19 @@ trait ProgressTestTrait
         }));
         $adapter->progress(1);
     }
+
+    /** @test */
+    public function progressShouldInvokeProgressHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->promise()->progress($mock);
+        $adapter->progress(1);
+    }
 }

@@ -30,7 +30,7 @@ class RejectedPromiseTest extends TestCase
                 }
             },
             'progress' => function () {
-                throw new \LogicException('You cannot call progress() for React\Promise\RejectedPromise');
+                // no-op
             },
             'settle' => function ($reason = null) use (&$promise) {
                 if (!$promise) {

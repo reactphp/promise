@@ -42,4 +42,9 @@ class FulfilledPromise implements ExtendedPromiseInterface
             $result->done();
         }
     }
+
+    public function progress(callable $onProgress)
+    {
+        return resolve($this->value);
+    }
 }

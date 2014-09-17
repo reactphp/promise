@@ -23,6 +23,7 @@ Table of Contents
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
         * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
+        * [ExtendedPromiseInterface::done()](#extendedpromiseinterfaceprogress)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -158,6 +159,13 @@ and an associated value, or rejection (failure) and an associated reason.
 Once in the fulfilled or rejected state, a promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
 
+#### Implementations
+
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
+
 #### PromiseInterface::then()
 
 ```php
@@ -191,13 +199,6 @@ the same call to `then()`:
      than once.
   3. `$onProgress` may be called multiple times.
 
-#### Implementations
-
-* [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
-
 #### See also
 
 * [resolve()](#resolve) - Creating a resolved promise
@@ -209,6 +210,13 @@ the same call to `then()`:
 
 The ExtendedPromiseInterface extends the PromiseInterface with useful shortcut
 and utility methods which are not part of the Promises/A specification.
+
+#### Implementations
+
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
 
 #### ExtendedPromiseInterface::done()
 
@@ -225,17 +233,22 @@ return a rejected promise.
 Since the purpose of `done()` is consumption rather than transformation,
 `done()` always returns `null`.
 
-#### Implementations
-
-* [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
-
 #### See also
 
 * [PromiseInterface::then()](#promiseinterfacethen)
 * [done() vs. then()](#done-vs-then)
+
+#### ExtendedPromiseInterface::progress()
+
+```php
+$promise->progress($onProgress);
+```
+
+Registers a handler for progress updates from promise. It is a shortcut for:
+
+```php
+$promise->then(null, null, $onProgress);
+```
 
 ### Promise
 
@@ -593,10 +606,10 @@ registering a progress handler.
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
-    ->then(null, null, function ($update) {
+    ->progress(function ($update) {
         return $update + 1;
     })
-    ->then(null, null, function ($update) {
+    ->progress(function ($update) {
         echo 'Progress ' . $update; // 2
     });
 

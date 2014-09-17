@@ -5,6 +5,7 @@ CHANGELOG
 
   * Introduce new ExtendedPromiseInterface implemented by all promises
   * Add new .done() method (part of the ExtendedPromiseInterface)
+  * Add new .progress() method (part of the ExtendedPromiseInterface)
 
 * 2.0.0 (2013-12-10)
 
