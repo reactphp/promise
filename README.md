@@ -606,10 +606,10 @@ registering a progress handler.
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
-    ->progress(function ($update) {
+    ->then(null, null, function ($update) {
         return $update + 1;
     })
-    ->progress(function ($update) {
+    ->then(null, null, function ($update) {
         echo 'Progress ' . $update; // 2
     });
 
