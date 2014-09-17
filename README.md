@@ -23,7 +23,7 @@ Table of Contents
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
         * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
-        * [ExtendedPromiseInterface::done()](#extendedpromiseinterfaceprogress)
+        * [ExtendedPromiseInterface::progress()](#extendedpromiseinterfaceprogress)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
