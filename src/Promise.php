@@ -10,6 +10,9 @@ class Promise implements PromiseInterface, CancellablePromiseInterface
     private $handlers = [];
     private $progressHandlers = [];
 
+    private $requiredCancelRequests = 0;
+    private $cancelRequests = 0;
+
     public function __construct(callable $resolver, callable $canceller = null)
     {
         $this->canceller = $canceller;
@@ -22,7 +25,13 @@ class Promise implements PromiseInterface, CancellablePromiseInterface
             return $this->result->then($onFulfilled, $onRejected, $onProgress);
         }
 
+        $this->requiredCancelRequests++;
+
         return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function($resolve, $reject, $progress) {
+            if (++$this->cancelRequests < $this->requiredCancelRequests) {
+                return;
+            }
+
             $this->cancel();
         });
     }

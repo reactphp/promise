@@ -268,7 +268,7 @@ If the resolver or canceller throw an exception, the promise will be rejected
 with that thrown exception as the rejection reason.
 
 The resolver function will be called immediately, the canceller function only
-once a consumer calls the `cancel()` method of the promise.
+once all consumers called the `cancel()` method of the promise.
 
 ### FulfilledPromise
 
