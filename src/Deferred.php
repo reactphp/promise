@@ -7,15 +7,15 @@ class Deferred implements PromisorInterface
     private $promise;
     private $resolveCallback;
     private $rejectCallback;
-    private $progressCallback;
+    private $notifyCallback;
 
     public function promise()
     {
         if (null === $this->promise) {
-            $this->promise = new Promise(function ($resolve, $reject, $progress) {
-                $this->resolveCallback  = $resolve;
-                $this->rejectCallback   = $reject;
-                $this->progressCallback = $progress;
+            $this->promise = new Promise(function ($resolve, $reject, $notify) {
+                $this->resolveCallback = $resolve;
+                $this->rejectCallback  = $reject;
+                $this->notifyCallback  = $notify;
             });
         }
 
@@ -36,10 +36,19 @@ class Deferred implements PromisorInterface
         call_user_func($this->rejectCallback, $reason);
     }
 
-    public function progress($update = null)
+    public function notify($update = null)
     {
         $this->promise();
 
-        call_user_func($this->progressCallback, $update);
+        call_user_func($this->notifyCallback, $update);
+    }
+
+    /**
+     * @deprecated 2.1.0
+     * @see Deferred::notify()
+     */
+    public function progress($update = null)
+    {
+        $this->notify($update);
     }
 }

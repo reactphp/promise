@@ -22,10 +22,10 @@ class PromiseTest extends TestCase
             'promise' => function () use ($promise) {
                 return $promise;
             },
-            'resolve'  => $resolveCallback,
-            'reject'   => $rejectCallback,
-            'progress' => $progressCallback,
-            'settle'   => $resolveCallback,
+            'resolve' => $resolveCallback,
+            'reject'  => $rejectCallback,
+            'notify'  => $progressCallback,
+            'settle'  => $resolveCallback,
         ]);
     }
 

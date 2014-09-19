@@ -29,7 +29,7 @@ class RejectedPromiseTest extends TestCase
                     $promise = new RejectedPromise($reason);
                 }
             },
-            'progress' => function () {
+            'notify' => function () {
                 // no-op
             },
             'settle' => function ($reason = null) use (&$promise) {

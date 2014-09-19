@@ -18,7 +18,7 @@ Table of Contents
      * [Deferred::promise()](#deferredpromise)
      * [Deferred::resolve()](#deferredresolve)
      * [Deferred::reject()](#deferredreject)
-     * [Deferred::progress()](#deferredprogress)
+     * [Deferred::notify()](#deferrednotify)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
@@ -91,14 +91,14 @@ $promise = $deferred->promise();
 
 $deferred->resolve(mixed $value = null);
 $deferred->reject(mixed $reason = null);
-$deferred->progress(mixed $update = null);
+$deferred->notify(mixed $update = null);
 ```
 
 The `promise` method returns the promise of the deferred.
 
 The `resolve` and `reject` methods control the state of the deferred.
 
-The `progress` method is for progress notification.
+The `notify` method is for progress notification.
 
 #### Deferred::promise()
 
@@ -136,10 +136,10 @@ All consumers are notified by having `$onRejected` (which they registered via
 If `$reason` itself is a promise, the promise will be rejected with the outcome
 of this promise regardless whether it fulfills or rejects.
 
-#### Deferred::progress()
+#### Deferred::notify()
 
 ```php
-$deferred->progress(mixed $update = null);
+$deferred->notify(mixed $update = null);
 ```
 
 Triggers progress notifications, to indicate to consumers that the computation
@@ -256,7 +256,7 @@ Creates a promise whose state is controlled by the functions passed to
 `$resolver`.
 
 ```php
-$resolver = function (callable $resolve, callable $reject, callable $progress) {
+$resolver = function (callable $resolve, callable $reject, callable $notify) {
     // Do some work, possibly asynchronously, and then
     // resolve or reject. You can notify of progress events
     // along the way if you want/need.
@@ -264,7 +264,7 @@ $resolver = function (callable $resolve, callable $reject, callable $progress) {
     $resolve($awesomeResult);
     // or $resolve($anotherPromise);
     // or $reject($nastyError);
-    // or $progress($progressNotification);
+    // or $notify($progressNotification);
 };
 
 $promise = new React\Promise\Promise($resolver);
@@ -279,7 +279,7 @@ with 3 arguments:
     When called with another promise, e.g. `$resolve($otherPromise)`, promise's
     fate will be equivalent to that of `$otherPromise`.
   * `$reject($reason)` - Function that rejects the promise.
-  * `$progress($update)` - Function that issues progress events for the promise.
+  * `$notify($update)` - Function that issues progress events for the promise.
 
 If the resolver throws an exception, the promise will be rejected with that
 thrown exception as the rejection reason.
@@ -606,14 +606,14 @@ registering a progress handler.
 $deferred = new React\Promise\Deferred();
 
 $deferred->promise()
-    ->then(null, null, function ($update) {
+    ->progress(function ($update) {
         return $update + 1;
     })
-    ->then(null, null, function ($update) {
+    ->progress(function ($update) {
         echo 'Progress ' . $update; // 2
     });
 
-$deferred->progress(1);  // Prints "Progress 2"
+$deferred->notify(1);  // Prints "Progress 2"
 ```
 
 ### done() vs. then()

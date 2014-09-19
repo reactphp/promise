@@ -60,17 +60,17 @@ class Promise implements ExtendedPromiseInterface
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        return function ($resolve, $reject, $progress) use ($onFulfilled, $onRejected, $onProgress) {
+        return function ($resolve, $reject, $notify) use ($onFulfilled, $onRejected, $onProgress) {
             if ($onProgress) {
-                $progressHandler = function ($update) use ($progress, $onProgress) {
+                $progressHandler = function ($update) use ($notify, $onProgress) {
                     try {
-                        $progress($onProgress($update));
+                        $notify($onProgress($update));
                     } catch (\Exception $e) {
-                        $progress($e);
+                        $notify($e);
                     }
                 };
             } else {
-                $progressHandler = $progress;
+                $progressHandler = $notify;
             }
 
             $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
@@ -117,8 +117,8 @@ class Promise implements ExtendedPromiseInterface
         $result = $promise;
 
         if (!$result instanceof ExtendedPromiseInterface) {
-            $result = new static(function($resolve, $reject, $progress) use ($promise) {
-                $promise->then($resolve, $reject, $progress);
+            $result = new static(function($resolve, $reject, $notify) use ($promise) {
+                $promise->then($resolve, $reject, $notify);
             });
         }
 

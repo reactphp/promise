@@ -37,10 +37,10 @@ function race($promisesOrValues)
                 return resolve();
             }
 
-            return new Promise(function ($resolve, $reject, $progress) use ($array) {
+            return new Promise(function ($resolve, $reject, $notify) use ($array) {
                 foreach ($array as $promiseOrValue) {
                     resolve($promiseOrValue)
-                        ->then($resolve, $reject, $progress);
+                        ->then($resolve, $reject, $notify);
                 }
             });
         });
@@ -62,7 +62,7 @@ function some($promisesOrValues, $howMany)
                 return resolve([]);
             }
 
-            return new Promise(function ($resolve, $reject, $progress) use ($array, $howMany) {
+            return new Promise(function ($resolve, $reject, $notify) use ($array, $howMany) {
                 $len       = count($array);
                 $toResolve = min($howMany, $len);
                 $toReject  = ($len - $toResolve) + 1;
@@ -95,7 +95,7 @@ function some($promisesOrValues, $howMany)
                     };
 
                     resolve($promiseOrValue)
-                        ->then($fulfiller, $rejecter, $progress);
+                        ->then($fulfiller, $rejecter, $notify);
                 }
             });
         });
@@ -109,7 +109,7 @@ function map($promisesOrValues, callable $mapFunc)
                 return resolve([]);
             }
 
-            return new Promise(function ($resolve, $reject, $progress) use ($array, $mapFunc) {
+            return new Promise(function ($resolve, $reject, $notify) use ($array, $mapFunc) {
                 $toResolve = count($array);
                 $values    = [];
 
@@ -125,7 +125,7 @@ function map($promisesOrValues, callable $mapFunc)
                                 }
                             },
                             $reject,
-                            $progress
+                            $notify
                         );
                 }
             });

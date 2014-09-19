@@ -52,6 +52,6 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
         $adapter->promise()->progress($this->expectCallableNever());
-        $adapter->progress();
+        $adapter->notify();
     }
 }
