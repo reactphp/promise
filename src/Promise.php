@@ -53,6 +53,11 @@ class Promise implements ExtendedPromiseInterface
         }
     }
 
+    public function otherwise(callable $onRejected)
+    {
+        return $this->then(null, $onRejected);
+    }
+
     public function progress(callable $onProgress)
     {
         return $this->then(null, null, $onProgress);

@@ -216,4 +216,13 @@ trait PromiseFulfilledTestTrait
             return \React\Promise\reject();
         }));
     }
+
+    /** @test */
+    public function otherwiseShouldNotInvokeRejectionHandlerForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+        $adapter->promise()->otherwise($this->expectCallableNever());
+    }
 }

@@ -108,6 +108,23 @@ trait RejectTestTrait
     }
 
     /** @test */
+    public function notifyShouldInvokeOtherwiseHandler()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->promise()
+            ->otherwise($mock);
+
+        $adapter->reject(1);
+    }
+
+    /** @test */
     public function doneShouldInvokeRejectionHandler()
     {
         $adapter = $this->getPromiseTestAdapter();

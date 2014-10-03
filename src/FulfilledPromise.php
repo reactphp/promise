@@ -43,6 +43,11 @@ class FulfilledPromise implements ExtendedPromiseInterface
         }
     }
 
+    public function otherwise(callable $onRejected)
+    {
+        return new FulfilledPromise($this->value);
+    }
+
     public function progress(callable $onProgress)
     {
         return new FulfilledPromise($this->value);

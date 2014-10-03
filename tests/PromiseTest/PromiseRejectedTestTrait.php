@@ -293,4 +293,19 @@ trait PromiseRejectedTestTrait
 
         }));
     }
+
+    /** @test */
+    public function otherwiseShouldInvokeRejectionHandlerForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(1));
+
+        $adapter->reject(1);
+        $adapter->promise()->otherwise($mock);
+    }
 }

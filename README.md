@@ -23,6 +23,7 @@ Table of Contents
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
         * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
+        * [ExtendedPromiseInterface::otherwise()](#extendedpromiseinterfaceotherwise)
         * [ExtendedPromiseInterface::progress()](#extendedpromiseinterfaceprogress)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
@@ -237,6 +238,18 @@ Since the purpose of `done()` is consumption rather than transformation,
 
 * [PromiseInterface::then()](#promiseinterfacethen)
 * [done() vs. then()](#done-vs-then)
+
+#### ExtendedPromiseInterface::otherwise()
+
+```php
+$promise->otherwise($onRejected);
+```
+
+Registers a rejection handler for promise. It is a shortcut for:
+
+```php
+$promise->then(null, $onRejected);
+```
 
 #### ExtendedPromiseInterface::progress()
 

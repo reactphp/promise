@@ -45,6 +45,11 @@ class RejectedPromise implements ExtendedPromiseInterface
         }
     }
 
+    public function otherwise(callable $onRejected)
+    {
+        return $this->then(null, $onRejected);
+    }
+
     public function progress(callable $onProgress)
     {
         return new RejectedPromise($this->reason);

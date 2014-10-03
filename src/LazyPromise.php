@@ -22,6 +22,11 @@ class LazyPromise implements ExtendedPromiseInterface
         return $this->promise()->done($onFulfilled, $onRejected, $onProgress);
     }
 
+    public function otherwise(callable $onRejected)
+    {
+        return $this->promise()->otherwise($onRejected);
+    }
+
     public function progress(callable $onProgress)
     {
         return $this->promise()->progress($onProgress);

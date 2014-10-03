@@ -40,4 +40,13 @@ trait PromisePendingTestTrait
 
         $this->assertNull($adapter->promise()->done(null, null, null));
     }
+
+    /** @test */
+    public function otherwiseShouldNotInvokeRejectionHandlerForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $adapter->promise()->otherwise($this->expectCallableNever());
+    }
 }
