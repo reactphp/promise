@@ -251,6 +251,20 @@ Registers a rejection handler for promise. It is a shortcut for:
 $promise->then(null, $onRejected);
 ```
 
+Additionally, you can type hint the `$reason` argument of `$onRejected` to catch
+only specific errors.
+
+```php
+$promise
+    ->otherwise(function (\RuntimeException $reason) {
+        // Only catch \RuntimeException instances
+        // All other types of errors will propagate automatically
+    })
+    ->otherwise(function ($reason) {
+        // Catch other errors
+    )};
+```
+
 #### ExtendedPromiseInterface::progress()
 
 ```php

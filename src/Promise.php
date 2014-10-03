@@ -55,7 +55,13 @@ class Promise implements ExtendedPromiseInterface
 
     public function otherwise(callable $onRejected)
     {
-        return $this->then(null, $onRejected);
+        return $this->then(null, function ($reason) use ($onRejected) {
+            if (!_checkTypehint($onRejected, $reason)) {
+                return new RejectedPromise($reason);
+            }
+
+            return $onRejected($reason);
+        });
     }
 
     public function progress(callable $onProgress)

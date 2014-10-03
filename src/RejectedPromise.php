@@ -47,6 +47,10 @@ class RejectedPromise implements ExtendedPromiseInterface
 
     public function otherwise(callable $onRejected)
     {
+        if (!_checkTypehint($onRejected, $this->reason)) {
+            return new RejectedPromise($this->reason);
+        }
+
         return $this->then(null, $onRejected);
     }
 

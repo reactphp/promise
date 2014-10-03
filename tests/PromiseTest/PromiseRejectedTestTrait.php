@@ -308,4 +308,40 @@ trait PromiseRejectedTestTrait
         $adapter->reject(1);
         $adapter->promise()->otherwise($mock);
     }
+
+    /** @test */
+    public function otherwiseShouldInvokeRejectionHandlerIfReasonMatchesTypehintForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new \InvalidArgumentException();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->otherwise(function(\InvalidArgumentException $reason) use ($mock) {
+                $mock($reason);
+            });
+    }
+
+    /** @test */
+    public function otherwiseShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehontForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new \Exception();
+
+        $mock = $this->expectCallableNever();
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->otherwise(function(\InvalidArgumentException $reason) use ($mock) {
+                $mock($reason);
+            });
+    }
 }
