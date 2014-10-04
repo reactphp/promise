@@ -54,6 +54,15 @@ class RejectedPromise implements ExtendedPromiseInterface
         return $this->then(null, $onRejected);
     }
 
+    public function always(callable $onFulfilledOrRejected)
+    {
+        return $this->then(null, function ($reason) use ($onFulfilledOrRejected) {
+            return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
+                return new RejectedPromise($reason);
+            });
+        });
+    }
+
     public function progress(callable $onProgress)
     {
         return new RejectedPromise($this->reason);

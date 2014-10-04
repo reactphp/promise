@@ -48,6 +48,15 @@ class FulfilledPromise implements ExtendedPromiseInterface
         return new FulfilledPromise($this->value);
     }
 
+    public function always(callable $onFulfilledOrRejected)
+    {
+        return $this->then(function($value) use ($onFulfilledOrRejected) {
+            return resolve($onFulfilledOrRejected())->then(function () use ($value) {
+                return $value;
+            });
+        });
+    }
+
     public function progress(callable $onProgress)
     {
         return new FulfilledPromise($this->value);

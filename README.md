@@ -24,6 +24,7 @@ Table of Contents
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
         * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
         * [ExtendedPromiseInterface::otherwise()](#extendedpromiseinterfaceotherwise)
+        * [ExtendedPromiseInterface::always()](#extendedpromiseinterfacealways)
         * [ExtendedPromiseInterface::progress()](#extendedpromiseinterfaceprogress)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
@@ -242,7 +243,7 @@ Since the purpose of `done()` is consumption rather than transformation,
 #### ExtendedPromiseInterface::otherwise()
 
 ```php
-$promise->otherwise($onRejected);
+$promise->otherwise(callable $onRejected);
 ```
 
 Registers a rejection handler for promise. It is a shortcut for:
@@ -265,10 +266,57 @@ $promise
     )};
 ```
 
+#### ExtendedPromiseInterface::always()
+
+```php
+$newPromise = $promise->always(callable $onFulfilledOrRejected);
+```
+
+Allows you to execute "cleanup" type tasks in a promise chain.
+
+It arranges for `$onFulfilledOrRejected` to be called, with no arguments,
+when the promise is either fulfilled or rejected.
+
+* If `$promise` fulfills, and `$onFulfilledOrRejected` returns successfully,
+  `$newPromise` will fulfill with the same value as `$promise`.
+* If `$promise` fulfills, and `$onFulfilledOrRejected` throws or returns a
+  rejected promise, `$newPromise` will reject with the thrown exception or
+  rejected promise's reason.
+* If `$promise` rejects, and `$onFulfilledOrRejected` returns successfully,
+  `$newPromise` will reject with the same reason as `$promise`.
+* If `$promise` rejects, and `$onFulfilledOrRejected` throws or returns a
+  rejected promise, `$newPromise` will reject with the thrown exception or
+  rejected promise's reason.
+
+`always()` behaves similarly to the synchronous finally statement. When combined
+with `otherwise()`, `always()` allows you to write code that is similar to the familiar
+synchronous catch/finally pair.
+
+Consider the following synchronous code:
+
+```php
+try {
+  return doSomething();
+} catch(\Exception $e) {
+    return handleError($e);
+} finally {
+    cleanup();
+}
+```
+
+Similar asynchronous code (with `doSomething()` that returns a promise) can be
+written:
+
+```php
+return doSomething()
+    ->otherwise('handleError')
+    ->always('cleanup');
+```
+
 #### ExtendedPromiseInterface::progress()
 
 ```php
-$promise->progress($onProgress);
+$promise->progress(callable $onProgress);
 ```
 
 Registers a handler for progress updates from promise. It is a shortcut for:

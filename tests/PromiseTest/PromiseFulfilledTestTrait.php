@@ -225,4 +225,107 @@ trait PromiseFulfilledTestTrait
         $adapter->resolve(1);
         $adapter->promise()->otherwise($this->expectCallableNever());
     }
+
+    /** @test */
+    public function alwaysShouldNotSuppressValueForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new \stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->always(function() {})
+            ->then($mock);
+    }
+
+    /** @test */
+    public function alwaysShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new \stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->always(function() {
+                return 1;
+            })
+            ->then($mock);
+    }
+
+    /** @test */
+    public function alwaysShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new \stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->always(function() {
+                return \React\Promise\resolve(1);
+            })
+            ->then($mock);
+    }
+
+    /** @test */
+    public function alwaysShouldRejectWhenHandlerThrowsForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new \Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->resolve(1);
+        $adapter->promise()
+            ->always(function() use($exception) {
+                throw $exception;
+            })
+            ->then(null, $mock);
+    }
+
+    /** @test */
+    public function alwaysShouldRejectWhenHandlerRejectsForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new \Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->resolve(1);
+        $adapter->promise()
+            ->always(function() use($exception) {
+                return \React\Promise\reject($exception);
+            })
+            ->then(null, $mock);
+    }
 }

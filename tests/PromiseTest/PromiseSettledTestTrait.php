@@ -54,4 +54,13 @@ trait PromiseSettledTestTrait
         $adapter->promise()->progress($this->expectCallableNever());
         $adapter->notify();
     }
+
+    /** @test */
+    public function alwaysShouldReturnAPromiseForSettledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function(){}));
+    }
 }

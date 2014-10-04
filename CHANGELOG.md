@@ -6,6 +6,7 @@ CHANGELOG
   * Introduce new ExtendedPromiseInterface implemented by all promises
   * Add new .done() method (part of the ExtendedPromiseInterface)
   * Add new .otherwise() method (part of the ExtendedPromiseInterface)
+  * Add new .always() method (part of the ExtendedPromiseInterface)
   * Add new .progress() method (part of the ExtendedPromiseInterface)
   * Rename Deferred::progress to Deferred::notfiy to avoid confusion with
     ExtendedPromiseInterface::progress (a Deferred::progress alias is still

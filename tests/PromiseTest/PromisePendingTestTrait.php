@@ -49,4 +49,12 @@ trait PromisePendingTestTrait
         $adapter->settle();
         $adapter->promise()->otherwise($this->expectCallableNever());
     }
+
+    /** @test */
+    public function alwaysShouldReturnAPromiseForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function(){}));
+    }
 }
