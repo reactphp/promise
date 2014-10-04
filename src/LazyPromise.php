@@ -31,6 +31,7 @@ class LazyPromise implements PromiseInterface, CancellablePromiseInterface
                 $this->promise = new RejectedPromise($exception);
             }
         }
+
         return $this->promise;
     }
 }

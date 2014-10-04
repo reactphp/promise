@@ -110,7 +110,7 @@ trait CancelTestTrait
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->will($this->returnCallback(function($resolve) {
+            ->will($this->returnCallback(function ($resolve) {
                 $resolve();
             }));
 
@@ -144,15 +144,15 @@ trait CancelTestTrait
 
         $promise = $adapter->promise()
             ->then(function () {
-                return new Promise\Promise(function() {});
+                return new Promise\Promise(function () {});
             })
-            ->then(function() {
+            ->then(function () {
                 $d = new Promise\Deferred();
 
                 return $d->promise();
             })
             ->then(function () {
-                return new Promise\Promise(function() {});
+                return new Promise\Promise(function () {});
             });
 
         $promise->cancel();
