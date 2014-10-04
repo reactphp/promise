@@ -199,7 +199,7 @@ trait PromiseFulfilledTestTrait
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $adapter->resolve(1);
-        $this->assertNull($adapter->promise()->done(function() {
+        $this->assertNull($adapter->promise()->done(function () {
             throw new \Exception('UnhandledRejectionException');
         }));
     }
@@ -212,7 +212,7 @@ trait PromiseFulfilledTestTrait
         $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
 
         $adapter->resolve(1);
-        $this->assertNull($adapter->promise()->done(function() {
+        $this->assertNull($adapter->promise()->done(function () {
             return \React\Promise\reject();
         }));
     }
@@ -241,7 +241,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function() {})
+            ->always(function () {})
             ->then($mock);
     }
 
@@ -260,7 +260,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return 1;
             })
             ->then($mock);
@@ -281,7 +281,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return \React\Promise\resolve(1);
             })
             ->then($mock);
@@ -302,7 +302,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -323,7 +323,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 return \React\Promise\reject($exception);
             })
             ->then(null, $mock);

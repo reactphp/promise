@@ -33,7 +33,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertNull($adapter->promise()->done(null, function() {}));
+        $this->assertNull($adapter->promise()->done(null, function () {}));
     }
 
     /** @test */
@@ -42,7 +42,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertNull($adapter->promise()->done(null, function() {}, null));
+        $this->assertNull($adapter->promise()->done(null, function () {}, null));
     }
 
     /** @test */
@@ -61,6 +61,6 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function(){}));
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function () {}));
     }
 }

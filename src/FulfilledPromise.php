@@ -50,7 +50,7 @@ class FulfilledPromise implements ExtendedPromiseInterface
 
     public function always(callable $onFulfilledOrRejected)
     {
-        return $this->then(function($value) use ($onFulfilledOrRejected) {
+        return $this->then(function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });

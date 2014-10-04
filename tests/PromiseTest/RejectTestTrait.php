@@ -146,7 +146,7 @@ trait RejectTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             throw new \Exception('UnhandledRejectionException');
         }));
         $adapter->reject(1);
@@ -170,7 +170,7 @@ trait RejectTestTrait
 
         $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject();
         }));
         $adapter->reject(1);
@@ -183,7 +183,7 @@ trait RejectTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
         }));
         $adapter->reject(1);
@@ -199,7 +199,7 @@ trait RejectTestTrait
         $d = new Deferred();
         $promise = $d->promise();
 
-        $this->assertNull($adapter->promise()->done(null, function() use ($promise) {
+        $this->assertNull($adapter->promise()->done(null, function () use ($promise) {
             return $promise;
         }));
         $adapter->reject(1);
@@ -226,7 +226,7 @@ trait RejectTestTrait
 
         $d = new Deferred();
 
-        $result = \React\Promise\resolve(\React\Promise\resolve($d->promise()->then(function () use($exception) {
+        $result = \React\Promise\resolve(\React\Promise\resolve($d->promise()->then(function () use ($exception) {
             $d = new Deferred();
             $d->resolve();
 
@@ -247,7 +247,7 @@ trait RejectTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertNull($adapter->promise()->done(null, function(\Exception $e) {
+        $this->assertNull($adapter->promise()->done(null, function (\Exception $e) {
 
         }));
         $adapter->reject(new \Exception('UnhandledRejectionException'));
@@ -267,7 +267,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() {})
+            ->always(function () {})
             ->then(null, $mock);
 
         $adapter->reject($exception);
@@ -287,7 +287,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return 1;
             })
             ->then(null, $mock);
@@ -309,7 +309,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return \React\Promise\resolve(1);
             })
             ->then(null, $mock);
@@ -331,7 +331,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -353,7 +353,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 return \React\Promise\reject($exception);
             })
             ->then(null, $mock);

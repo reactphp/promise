@@ -55,6 +55,6 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function(){}));
+        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function () {}));
     }
 }

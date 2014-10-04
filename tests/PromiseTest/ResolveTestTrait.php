@@ -129,7 +129,7 @@ trait ResolveTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(function() {
+        $this->assertNull($adapter->promise()->done(function () {
             throw new \Exception('UnhandledRejectionException');
         }));
         $adapter->resolve(1);
@@ -142,7 +142,7 @@ trait ResolveTestTrait
 
         $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(function() {
+        $this->assertNull($adapter->promise()->done(function () {
             return \React\Promise\reject();
         }));
         $adapter->resolve(1);
@@ -162,7 +162,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function() {})
+            ->always(function () {})
             ->then($mock);
 
         $adapter->resolve($value);
@@ -182,7 +182,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return 1;
             })
             ->then($mock);
@@ -204,7 +204,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return \React\Promise\resolve(1);
             })
             ->then($mock);
@@ -226,7 +226,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -248,7 +248,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function() use($exception) {
+            ->always(function () use ($exception) {
                 return \React\Promise\reject($exception);
             })
             ->then(null, $mock);

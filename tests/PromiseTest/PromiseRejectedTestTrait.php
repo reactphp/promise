@@ -206,7 +206,7 @@ trait PromiseRejectedTestTrait
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             throw new \Exception('UnhandledRejectionException');
         }));
     }
@@ -230,7 +230,7 @@ trait PromiseRejectedTestTrait
         $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
 
         $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject();
         }));
     }
@@ -243,7 +243,7 @@ trait PromiseRejectedTestTrait
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function() {
+        $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
         }));
     }
@@ -269,7 +269,7 @@ trait PromiseRejectedTestTrait
         $d = new Deferred();
         $d->resolve();
 
-        $result = \React\Promise\resolve(\React\Promise\resolve($d->promise()->then(function () use($exception) {
+        $result = \React\Promise\resolve(\React\Promise\resolve($d->promise()->then(function () use ($exception) {
             $d = new Deferred();
             $d->resolve();
 
@@ -289,7 +289,7 @@ trait PromiseRejectedTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->reject(new \Exception('UnhandledRejectionException'));
-        $this->assertNull($adapter->promise()->done(null, function(\Exception $e) {
+        $this->assertNull($adapter->promise()->done(null, function (\Exception $e) {
 
         }));
     }
@@ -324,7 +324,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function(\InvalidArgumentException $reason) use ($mock) {
+            ->otherwise(function (\InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
@@ -340,7 +340,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function(\InvalidArgumentException $reason) use ($mock) {
+            ->otherwise(function (\InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
@@ -360,7 +360,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function() {})
+            ->always(function () {})
             ->then(null, $mock);
     }
 
@@ -379,7 +379,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return 1;
             })
             ->then(null, $mock);
@@ -400,7 +400,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function() {
+            ->always(function () {
                 return \React\Promise\resolve(1);
             })
             ->then(null, $mock);
@@ -422,7 +422,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function() use ($exception2) {
+            ->always(function () use ($exception2) {
                 throw $exception2;
             })
             ->then(null, $mock);
@@ -444,7 +444,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function() use ($exception2) {
+            ->always(function () use ($exception2) {
                 return \React\Promise\reject($exception2);
             })
             ->then(null, $mock);

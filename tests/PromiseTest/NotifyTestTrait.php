@@ -328,7 +328,7 @@ trait NotifyTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $this->assertNull($adapter->promise()->done(null, null, function() {
+        $this->assertNull($adapter->promise()->done(null, null, function () {
             throw new \Exception('UnhandledRejectionException');
         }));
         $adapter->notify(1);

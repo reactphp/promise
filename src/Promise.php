@@ -66,7 +66,7 @@ class Promise implements ExtendedPromiseInterface
 
     public function always(callable $onFulfilledOrRejected)
     {
-        return $this->then(function($value) use ($onFulfilledOrRejected) {
+        return $this->then(function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
@@ -141,7 +141,7 @@ class Promise implements ExtendedPromiseInterface
         $result = $promise;
 
         if (!$result instanceof ExtendedPromiseInterface) {
-            $result = new static(function($resolve, $reject, $notify) use ($promise) {
+            $result = new static(function ($resolve, $reject, $notify) use ($promise) {
                 $promise->then($resolve, $reject, $notify);
             });
         }
