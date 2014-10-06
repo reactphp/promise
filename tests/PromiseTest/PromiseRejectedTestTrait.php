@@ -330,7 +330,7 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function otherwiseShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehontForRejectedPromise()
+    public function otherwiseShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehintForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
