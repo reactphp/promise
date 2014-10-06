@@ -8,7 +8,7 @@ CHANGELOG
   * Add new .otherwise() method (part of the ExtendedPromiseInterface)
   * Add new .always() method (part of the ExtendedPromiseInterface)
   * Add new .progress() method (part of the ExtendedPromiseInterface)
-  * Rename Deferred::progress to Deferred::notfiy to avoid confusion with
+  * Rename Deferred::progress to Deferred::notify to avoid confusion with
     ExtendedPromiseInterface::progress (a Deferred::progress alias is still
     available for backward compatibility)
 
