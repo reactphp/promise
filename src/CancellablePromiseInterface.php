@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-interface CancellablePromiseInterface
+interface CancellablePromiseInterface extends PromiseInterface
 {
     /**
      * @return void

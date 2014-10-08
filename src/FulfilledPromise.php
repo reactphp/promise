@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements PromiseInterface, CancellablePromiseInterface
+class FulfilledPromise implements CancellablePromiseInterface
 {
     private $value;
 

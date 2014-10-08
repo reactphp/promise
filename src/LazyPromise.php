@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class LazyPromise implements PromiseInterface, CancellablePromiseInterface
+class LazyPromise implements CancellablePromiseInterface
 {
     private $factory;
     private $promise;
