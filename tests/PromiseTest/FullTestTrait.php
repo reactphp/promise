@@ -10,5 +10,6 @@ trait FullTestTrait
         PromiseRejectedTestTrait,
         ResolveTestTrait,
         RejectTestTrait,
-        ProgressTestTrait;
+        ProgressTestTrait,
+        CancelTestTrait;
 }

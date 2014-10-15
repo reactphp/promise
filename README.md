@@ -21,6 +21,8 @@ Table of Contents
      * [Deferred::progress()](#deferredprogress)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
+   * [CancellablePromiseInterface](#cancellablepromiseinterface)
+        * [CancellablePromiseInterface::cancel()](#cancellablepromiseinterfacecancel)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -95,6 +97,9 @@ The `promise` method returns the promise of the deferred.
 The `resolve` and `reject` methods control the state of the deferred.
 
 The `progress` method is for progress notification.
+
+The constructor of the `Deferred` accepts an optional `$canceller` argument.
+See [Promise](#promise-1) for more information.
 
 #### Deferred::promise()
 
@@ -197,6 +202,31 @@ the same call to `then()`:
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
 
+### CancellablePromiseInterface
+
+A cancellable promise provides a mechanism for consumers to notify the creator
+of the promise that they are not longer interested in the result of an
+operation.
+
+#### CancellablePromiseInterface::cancel()
+
+``` php
+$promise->cancel();
+```
+
+The `cancel()` method notifies the creator of the promise that there is no
+further interest in the results of the operation.
+
+Once a promise is settled (either fulfilled or rejected), calling `cancel()` on
+a promise has no effect.
+
+#### Implementations
+
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
+
 ### Promise
 
 Creates a promise whose state is controlled by the functions passed to
@@ -214,11 +244,17 @@ $resolver = function (callable $resolve, callable $reject, callable $progress) {
     // or $progress($progressNotification);
 };
 
-$promise = new React\Promise\Promise($resolver);
+$canceller = function (callable $resolve, callable $reject, callable $progress) {
+    // Cancel/abort any running operations like network connections, streams etc.
+
+    $reject(new \Exception('Promise cancelled'));
+};
+
+$promise = new React\Promise\Promise($resolver, $canceller);
 ```
 
-The promise constructor receives a resolver function which will be called
-with 3 arguments:
+The promise constructor receives a resolver function and an optional canceller
+function which both will be called with 3 arguments:
 
   * `$resolve($value)` - Primary function that seals the fate of the
     returned promise. Accepts either a non-promise value, or another promise.
@@ -228,9 +264,11 @@ with 3 arguments:
   * `$reject($reason)` - Function that rejects the promise.
   * `$progress($update)` - Function that issues progress events for the promise.
 
-If the resolver throws an exception, the promise will be rejected with that
-thrown exception as the rejection reason.
+If the resolver or canceller throw an exception, the promise will be rejected
+with that thrown exception as the rejection reason.
 
+The resolver function will be called immediately, the canceller function only
+once all consumers called the `cancel()` method of the promise.
 
 ### FulfilledPromise
 

@@ -9,7 +9,7 @@ trait ResolveTestTrait
     /**
      * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
      */
-    abstract public function getPromiseTestAdapter();
+    abstract public function getPromiseTestAdapter(callable $canceller = null);
 
     /** @test */
     public function resolveShouldResolve()
