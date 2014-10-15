@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-* 2.1.x (xxxx-xx-xx)
+* 2.1.0 (2014-10-15)
 
   * Introduce new CancellablePromiseInterface implemented by all promises
   * Add new .cancel() method (part of the CancellablePromiseInterface)
