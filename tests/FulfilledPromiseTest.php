@@ -9,7 +9,7 @@ class FulfilledPromiseTest extends TestCase
     use PromiseTest\PromiseSettledTestTrait,
         PromiseTest\PromiseFulfilledTestTrait;
 
-    public function getPromiseTestAdapter()
+    public function getPromiseTestAdapter(callable $canceller = null)
     {
         $promise = null;
 

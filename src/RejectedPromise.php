@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class RejectedPromise implements ExtendedPromiseInterface
+class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $reason;
 
@@ -66,5 +66,9 @@ class RejectedPromise implements ExtendedPromiseInterface
     public function progress(callable $onProgress)
     {
         return new RejectedPromise($this->reason);
+    }
+
+    public function cancel()
+    {
     }
 }

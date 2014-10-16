@@ -8,7 +8,7 @@ class PromiseTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
-    public function getPromiseTestAdapter()
+    public function getPromiseTestAdapter(callable $canceller = null)
     {
         $resolveCallback = $rejectCallback = $progressCallback = null;
 
@@ -16,7 +16,7 @@ class PromiseTest extends TestCase
             $resolveCallback  = $resolve;
             $rejectCallback   = $reject;
             $progressCallback = $progress;
-        });
+        }, $canceller);
 
         return new CallbackPromiseAdapter([
             'promise' => function () use ($promise) {

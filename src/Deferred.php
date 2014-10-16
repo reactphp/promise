@@ -8,6 +8,12 @@ class Deferred implements PromisorInterface
     private $resolveCallback;
     private $rejectCallback;
     private $notifyCallback;
+    private $canceller;
+
+    public function __construct(callable $canceller = null)
+    {
+        $this->canceller = $canceller;
+    }
 
     public function promise()
     {
@@ -16,7 +22,7 @@ class Deferred implements PromisorInterface
                 $this->resolveCallback = $resolve;
                 $this->rejectCallback  = $reject;
                 $this->notifyCallback  = $notify;
-            });
+            }, $this->canceller);
         }
 
         return $this->promise;
@@ -44,7 +50,7 @@ class Deferred implements PromisorInterface
     }
 
     /**
-     * @deprecated 2.1.0
+     * @deprecated 2.2.0
      * @see Deferred::notify()
      */
     public function progress($update = null)

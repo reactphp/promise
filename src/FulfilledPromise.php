@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements ExtendedPromiseInterface
+class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $value;
 
@@ -60,5 +60,9 @@ class FulfilledPromise implements ExtendedPromiseInterface
     public function progress(callable $onProgress)
     {
         return new FulfilledPromise($this->value);
+    }
+
+    public function cancel()
+    {
     }
 }

@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class LazyPromise implements ExtendedPromiseInterface
+class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $factory;
     private $promise;
@@ -16,6 +16,7 @@ class LazyPromise implements ExtendedPromiseInterface
     {
         return $this->promise()->then($onFulfilled, $onRejected, $onProgress);
     }
+
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
@@ -35,6 +36,11 @@ class LazyPromise implements ExtendedPromiseInterface
     public function progress(callable $onProgress)
     {
         return $this->promise()->progress($onProgress);
+    }
+
+    public function cancel()
+    {
+        return $this->promise()->cancel();
     }
 
     private function promise()

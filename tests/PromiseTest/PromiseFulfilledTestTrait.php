@@ -7,7 +7,7 @@ trait PromiseFulfilledTestTrait
     /**
      * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
      */
-    abstract public function getPromiseTestAdapter();
+    abstract public function getPromiseTestAdapter(callable $canceller = null);
 
     /** @test */
     public function fulfilledPromiseShouldBeImmutable()
@@ -174,6 +174,26 @@ trait PromiseFulfilledTestTrait
                 $this->expectCallableNever(),
                 $mock2
             );
+    }
+
+    /** @test */
+    public function cancelShouldReturnNullForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve();
+
+        $this->assertNull($adapter->promise()->cancel());
+    }
+
+    /** @test */
+    public function cancelShouldHaveNoEffectForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
+
+        $adapter->resolve();
+
+        $adapter->promise()->cancel();
     }
 
     /** @test */
