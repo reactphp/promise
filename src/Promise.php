@@ -148,15 +148,9 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         }
     }
 
-    private function settle(PromiseInterface $promise)
+    private function settle(ExtendedPromiseInterface $promise)
     {
         $result = $promise;
-
-        if (!$result instanceof ExtendedPromiseInterface) {
-            $result = new static(function ($resolve, $reject, $notify) use ($promise) {
-                $promise->then($resolve, $reject, $notify);
-            });
-        }
 
         foreach ($this->handlers as $handler) {
             $handler($result);

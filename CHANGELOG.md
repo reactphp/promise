@@ -11,6 +11,7 @@ CHANGELOG
   * Rename Deferred::progress to Deferred::notify to avoid confusion with
     ExtendedPromiseInterface::progress (a Deferred::progress alias is still
     available for backward compatibility)
+  * resolve() now always returns a ExtendedPromiseInterface
 
 * 2.1.0 (2014-10-15)
 

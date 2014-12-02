@@ -452,12 +452,17 @@ promises.
 $promise = React\Promise\resolve(mixed $promiseOrValue);
 ```
 
-Creates a resolved promise for the supplied `$promiseOrValue`.
+Creates a promise for the supplied `$promiseOrValue`.
 
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
 If `$promiseOrValue` is a promise, it will simply be returned.
+
+Note: The promise returned is always a promise implementing
+[ExtendedPromiseInterface](#extendedpromiseinterface). If you pass in a custom
+promise which only implements [PromiseInterface](#promiseinterface), this
+promise will be assimilated to a extended promise following `$promiseOrValue`.
 
 #### reject()
 

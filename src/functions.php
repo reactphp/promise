@@ -4,17 +4,23 @@ namespace React\Promise;
 
 function resolve($promiseOrValue = null)
 {
-    if ($promiseOrValue instanceof PromiseInterface) {
+    if (!$promiseOrValue instanceof PromiseInterface) {
+        return new FulfilledPromise($promiseOrValue);
+    }
+
+    if ($promiseOrValue instanceof ExtendedPromiseInterface) {
         return $promiseOrValue;
     }
 
-    return new FulfilledPromise($promiseOrValue);
+    return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
+        $promiseOrValue->then($resolve, $reject, $notify);
+    });
 }
 
 function reject($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
-        return $promiseOrValue->then(function ($value) {
+        return resolve($promiseOrValue)->then(function ($value) {
             return new RejectedPromise($value);
         });
     }
@@ -40,7 +46,7 @@ function race($promisesOrValues)
             return new Promise(function ($resolve, $reject, $notify) use ($array) {
                 foreach ($array as $promiseOrValue) {
                     resolve($promiseOrValue)
-                        ->then($resolve, $reject, $notify);
+                        ->done($resolve, $reject, $notify);
                 }
             });
         });
@@ -95,7 +101,7 @@ function some($promisesOrValues, $howMany)
                     };
 
                     resolve($promiseOrValue)
-                        ->then($fulfiller, $rejecter, $notify);
+                        ->done($fulfiller, $rejecter, $notify);
                 }
             });
         });
@@ -116,7 +122,7 @@ function map($promisesOrValues, callable $mapFunc)
                 foreach ($array as $i => $promiseOrValue) {
                     resolve($promiseOrValue)
                         ->then($mapFunc)
-                        ->then(
+                        ->done(
                             function ($mapped) use ($i, &$values, &$toResolve, $resolve) {
                                 $values[$i] = $mapped;
 
