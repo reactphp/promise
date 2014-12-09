@@ -189,7 +189,7 @@ function _checkTypehint(callable $callback, $object)
     $expectedException = $parameters[0];
 
     if (!$expectedException->getClass()) {
-        return false;
+        return true;
     }
 
     return $expectedException->getClass()->isInstance($object);
