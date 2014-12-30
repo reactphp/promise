@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-* 2.2.0 (xxxx-xx-xx)
+* 2.2.0 (2014-12-30)
 
   * Introduce new ExtendedPromiseInterface implemented by all promises
   * Add new .done() method (part of the ExtendedPromiseInterface)
