@@ -31,7 +31,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
         $this->requiredCancelRequests++;
 
-        return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function ($resolve, $reject, $progress) {
+        return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function () {
             if (++$this->cancelRequests < $this->requiredCancelRequests) {
                 return;
             }
