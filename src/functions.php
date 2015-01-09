@@ -138,7 +138,7 @@ function map($promisesOrValues, callable $mapFunc)
         });
 }
 
-function reduce($promisesOrValues, callable $reduceFunc , $initialValue = null)
+function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
     return resolve($promisesOrValues)
         ->then(function ($array) use ($reduceFunc, $initialValue) {

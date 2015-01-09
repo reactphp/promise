@@ -17,7 +17,6 @@ class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterfa
         return $this->promise()->then($onFulfilled, $onRejected, $onProgress);
     }
 
-
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         return $this->promise()->done($onFulfilled, $onRejected, $onProgress);
