@@ -165,6 +165,27 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
         });
 }
 
+function queue(QueueInterface $queue = null)
+{
+    static $globalQueue, $globalQueueUsed = false;
+
+    if ($queue) {
+        if ($globalQueueUsed) {
+            throw new \RuntimeException('Cannot set global queue instance because there is already an instance running.');
+        }
+
+        return $globalQueue = $queue;
+    }
+
+    $globalQueueUsed = true;
+
+    if (!$globalQueue) {
+        $globalQueue = new Queue();
+    }
+
+    return $globalQueue;
+}
+
 // Internal functions
 function _checkTypehint(callable $callback, $object)
 {
