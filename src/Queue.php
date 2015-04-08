@@ -5,41 +5,33 @@ namespace React\Promise;
 class Queue implements QueueInterface
 {
     private $queue = [];
-    private $resumeAt = null;
 
     public function enqueue(callable $task)
     {
-        $length = array_push($this->queue, $task);
-
-        if (null === $this->resumeAt && 1 !== $length) {
-            return;
+        if (1 === array_push($this->queue, $task)) {
+            $this->drain();
         }
-
-        $this->drain();
     }
 
     private function drain()
     {
-        $start = null !== $this->resumeAt ? $this->resumeAt : 0;
-
-        for ($i = $start; isset($this->queue[$i]); $i++) {
+        for ($i = key($this->queue); isset($this->queue[$i]); $i++) {
             $task = $this->queue[$i];
+
+            $exception = null;
 
             try {
                 $task();
-            } catch (\Exception $e) {
-                if (isset($this->queue[$i + 1])) {
-                    $this->resumeAt = $i + 1;
-                } else {
-                    $this->resumeAt = null;
-                    $this->queue = [];
-                }
+            } catch (\Exception $exception) {
+            }
 
-                throw $e;
+            unset($this->queue[$i]);
+
+            if ($exception) {
+                throw $exception;
             }
         }
 
-        $this->resumeAt = null;
         $this->queue = [];
     }
 }
