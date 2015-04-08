@@ -22,7 +22,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null !== $this->result) {
-            return $this->result->then($onFulfilled, $onRejected, $onProgress);
+            return $this->result()->then($onFulfilled, $onRejected, $onProgress);
         }
 
         if (null === $this->canceller) {
@@ -43,7 +43,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null !== $this->result) {
-            return $this->result->done($onFulfilled, $onRejected, $onProgress);
+            return $this->result()->done($onFulfilled, $onRejected, $onProgress);
         }
 
         $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
@@ -159,6 +159,15 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->progressHandlers = $this->handlers = [];
 
         $this->result = $result;
+    }
+
+    private function result()
+    {
+        while ($this->result instanceof self && null !== $this->result->result) {
+            $this->result = $this->result->result;
+        }
+
+        return $this->result;
     }
 
     private function call(callable $callback)
