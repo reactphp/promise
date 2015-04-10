@@ -46,7 +46,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result()->done($onFulfilled, $onRejected, $onProgress);
         }
 
-        $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
@@ -109,7 +109,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 $progressHandler = $notify;
             }
 
-            $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
+            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject, $progressHandler);
