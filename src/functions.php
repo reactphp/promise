@@ -180,7 +180,7 @@ function queue(Queue\QueueInterface $queue = null)
     $globalQueueUsed = true;
 
     if (!$globalQueue) {
-        $globalQueue = new Queue\Queue();
+        $globalQueue = new Queue\SynchronousQueue();
     }
 
     return $globalQueue;
