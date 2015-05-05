@@ -165,7 +165,7 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
         });
 }
 
-function queue(QueueInterface $queue = null)
+function queue(Queue\QueueInterface $queue = null)
 {
     static $globalQueue, $globalQueueUsed = false;
 
@@ -180,7 +180,7 @@ function queue(QueueInterface $queue = null)
     $globalQueueUsed = true;
 
     if (!$globalQueue) {
-        $globalQueue = new Queue();
+        $globalQueue = new Queue\Queue();
     }
 
     return $globalQueue;

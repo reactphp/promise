@@ -1,6 +1,6 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\Queue;
 
 interface QueueInterface
 {
