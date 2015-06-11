@@ -14,6 +14,23 @@ class PromiseTest extends TestCase
 
         new Promise(null);
     }
+    /** @test */
+    public function shouldRejectIfResolverThrows()
+    {
+        $e = new \Exception();
+
+        $promise = new Promise(function() use($e) {
+            throw $e;
+        });
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($e));
+
+        $promise->then($this->expectCallableNever(), $mock);
+    }
 
     /** @test */
     public function shouldResolve()
