@@ -3,7 +3,7 @@
     "description": "A lightweight implementation of CommonJS Promises/A for PHP",
     "license": "MIT",
     "authors": [
-        {"name": "Jan Sorgalla", "email": "jsorgalla@googlemail.com"}
+        {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
     "require": {
         "php": ">=5.4.0"
