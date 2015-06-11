@@ -29,7 +29,8 @@ class Promise implements PromiseInterface
     private function call($callback)
     {
         try {
-            $callback(
+            call_user_func(
+                $callback,
                 array($this->deferred, 'resolve'),
                 array($this->deferred, 'reject'),
                 array($this->deferred, 'progress')
