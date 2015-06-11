@@ -30,13 +30,11 @@ class When
 
     public static function any($promisesOrValues, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
-        $unwrapSingleResult = function ($val) use ($fulfilledHandler) {
-            $val = array_shift($val);
+        $promise =  static::some($promisesOrValues, 1)->then(function($val) {
+            return array_shift($val);
+        });
 
-            return $fulfilledHandler ? $fulfilledHandler($val) : $val;
-        };
-
-        return static::some($promisesOrValues, 1, $unwrapSingleResult, $errorHandler, $progressHandler);
+        return $promise->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
 
     public static function some($promisesOrValues, $howMany, $fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
