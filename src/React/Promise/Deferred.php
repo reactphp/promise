@@ -52,10 +52,10 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
     public function resolve($result = null)
     {
         if (null !== $this->completed) {
-            return Util::promiseFor($result);
+            return resolve($result);
         }
 
-        $this->completed = Util::promiseFor($result);
+        $this->completed = resolve($result);
 
         $this->processQueue($this->handlers, $this->completed);
 
@@ -66,7 +66,7 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
 
     public function reject($reason = null)
     {
-        return $this->resolve(Util::rejectedPromiseFor($reason));
+        return $this->resolve(reject($reason));
     }
 
     public function progress($update = null)

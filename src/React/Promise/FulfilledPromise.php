@@ -22,7 +22,7 @@ class FulfilledPromise implements PromiseInterface
                 trigger_error('Invalid $fulfilledHandler argument passed to then(), must be null or callable.', E_USER_NOTICE);
             }
 
-            return Util::promiseFor($result);
+            return resolve($result);
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }

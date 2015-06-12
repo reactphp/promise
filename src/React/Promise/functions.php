@@ -8,12 +8,22 @@ if (function_exists('React\Promise\resolve')) {
 
 function resolve($promiseOrValue = null)
 {
-    return Util::promiseFor($promiseOrValue);
+    if ($promiseOrValue instanceof PromiseInterface) {
+        return $promiseOrValue;
+    }
+
+    return new FulfilledPromise($promiseOrValue);
 }
 
 function reject($promiseOrValue = null)
 {
-    return Util::rejectedPromiseFor($promiseOrValue);
+    if ($promiseOrValue instanceof PromiseInterface) {
+        return $promiseOrValue->then(function ($value) {
+            return new RejectedPromise($value);
+        });
+    }
+
+    return new RejectedPromise($promiseOrValue);
 }
 
 function all($promisesOrValues)
