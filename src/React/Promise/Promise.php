@@ -11,7 +11,7 @@ class Promise implements PromiseInterface
         if (!is_callable($resolver)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'The resolver arguments must be of type callable, %s given.',
+                    'The resolver argument must be of type callable, %s given.',
                     gettype($resolver)
                 )
             );
