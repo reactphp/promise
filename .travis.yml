@@ -9,7 +9,11 @@ php:
   - 7.0
   - hhvm
 
-before_script:
-  - composer install
+before_install:
+  - composer self-update
 
-script: phpunit --coverage-text
+install:
+  - composer install --prefer-source
+
+script:
+  - phpunit -v --coverage-text
