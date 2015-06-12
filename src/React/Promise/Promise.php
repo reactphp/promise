@@ -28,12 +28,20 @@ class Promise implements PromiseInterface
 
     private function call($callback)
     {
+        $deferred = $this->deferred;
+
         try {
             call_user_func(
                 $callback,
-                array($this->deferred, 'resolve'),
-                array($this->deferred, 'reject'),
-                array($this->deferred, 'progress')
+                function ($result = null) use ($deferred) {
+                    $deferred->resolve($result);
+                },
+                function ($reason = null) use ($deferred) {
+                    $deferred->reject($reason);
+                },
+                function ($update = null) use ($deferred) {
+                    $deferred->progress($update);
+                }
             );
         } catch (\Exception $e) {
             $this->deferred->reject($e);
