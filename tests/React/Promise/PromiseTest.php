@@ -65,7 +65,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldProgres()
+    public function shouldProgress()
     {
         $promise = new Promise(function($_, $_, $progress) use (&$notify) {
             $notify = $progress;
