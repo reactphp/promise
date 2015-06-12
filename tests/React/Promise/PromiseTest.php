@@ -51,7 +51,7 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldReject()
     {
-        $promise = new Promise(function($_, $reject) {
+        $promise = new Promise(function($resolve, $reject) {
             $reject(1);
         });
 
@@ -67,7 +67,7 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldProgress()
     {
-        $promise = new Promise(function($_, $_, $progress) use (&$notify) {
+        $promise = new Promise(function($resolve, $reject, $progress) use (&$notify) {
             $notify = $progress;
         });
 
