@@ -6,7 +6,7 @@ class Promise implements PromiseInterface
 {
     private $deferred;
 
-    public function __construct($resolver, $canceller = null)
+    public function __construct($resolver)
     {
         if (!is_callable($resolver)) {
             throw new \InvalidArgumentException(
