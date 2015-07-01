@@ -22,7 +22,7 @@ class RejectedPromise implements PromiseInterface
                 return new RejectedPromise($this->reason);
             }
 
-            return Util::promiseFor(call_user_func($errorHandler, $this->reason));
+            return resolve(call_user_func($errorHandler, $this->reason));
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }

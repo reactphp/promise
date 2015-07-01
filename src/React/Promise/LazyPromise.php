@@ -16,7 +16,7 @@ class LazyPromise implements PromiseInterface
     {
         if (null === $this->promise) {
             try {
-                $this->promise = Util::promiseFor(call_user_func($this->factory));
+                $this->promise = resolve(call_user_func($this->factory));
             } catch (\Exception $exception) {
                 $this->promise = new RejectedPromise($exception);
             }

@@ -3,7 +3,7 @@
     "description": "A lightweight implementation of CommonJS Promises/A for PHP",
     "license": "MIT",
     "authors": [
-        {"name": "Jan Sorgalla", "email": "jsorgalla@googlemail.com"}
+        {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
     "require": {
         "php": ">=5.3.3"
@@ -11,11 +11,12 @@
     "autoload": {
         "psr-0": {
             "React\\Promise": "src/"
-        }
+        },
+        "files": ["src/React/Promise/functions_include.php"]
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         }
     }
 }
