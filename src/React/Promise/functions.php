@@ -2,10 +2,6 @@
 
 namespace React\Promise;
 
-if (function_exists('React\Promise\resolve')) {
-    return;
-}
-
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
