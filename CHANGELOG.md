@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+* 1.1.0 (2015-07-01)
+
+  This release makes the API more compatible with 2.0 while preserving full
+  backward compatibility.
+
+  * Add `React\Promise\Promise` class.
+  * Move methods of `React\Promise\When` and `React\Promise\Util` to functions
+    while keeping the classes as a proxy for BC.
+
 * 1.0.4 (2013-04-03)
 
   * Trigger PHP errors when invalid callback is passed.
