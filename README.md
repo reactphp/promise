@@ -459,8 +459,6 @@ the value of another Promise.
 $promise = React\Promise\When::lazy(callable $factory);
 ```
 
-> **Note:** Since version 1.1, [`React\Promise\lazy()`](#lazy) is preferred over `React\Promise\When::lazy()`.
-    
 Creates a Promise which will be lazily initialized by `$factory` once a consumer
 calls the `then()` method.
 
