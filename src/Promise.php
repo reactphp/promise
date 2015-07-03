@@ -150,15 +150,14 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
     private function settle(ExtendedPromiseInterface $promise)
     {
-        $result = $promise;
-
-        foreach ($this->handlers as $handler) {
-            $handler($result);
-        }
+        $handlers = $this->handlers;
 
         $this->progressHandlers = $this->handlers = [];
+        $this->result = $promise;
 
-        $this->result = $result;
+        foreach ($handlers as $handler) {
+            $handler($promise);
+        }
     }
 
     private function result()

@@ -98,6 +98,11 @@ trait RejectTestTrait
             ->with($this->identicalTo(1));
 
         $adapter->promise()
+            ->then(null, function ($value) use ($adapter) {
+                $adapter->reject(3);
+
+                return Promise\reject($value);
+            })
             ->then(
                 $this->expectCallableNever(),
                 $mock
