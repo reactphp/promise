@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+* 2.2.1 (2015-07-03)
+
+  * Fix stack error when resolving a promise in its own fulfillment or rejection
+    handlers.
+
 * 2.2.0 (2014-12-30)
 
   * Introduce new ExtendedPromiseInterface implemented by all promises
