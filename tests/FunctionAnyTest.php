@@ -113,4 +113,44 @@ class FunctionAnyTest extends TestCase
         $d2->resolve(2);
         $d1->resolve(1);
     }
+
+    /** @test */
+    public function shouldRejectWhenInputPromiseRejects()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(null));
+
+        any(reject())
+            ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldCancelInputPromise()
+    {
+        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock
+            ->expects($this->once())
+            ->method('cancel');
+
+        any($mock)->cancel();
+    }
+
+    /** @test */
+    public function shouldCancelInputArrayPromises()
+    {
+        $mock1 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock1
+            ->expects($this->once())
+            ->method('cancel');
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        any([$mock1, $mock2])->cancel();
+    }
 }

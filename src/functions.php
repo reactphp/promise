@@ -37,19 +37,25 @@ function all($promisesOrValues)
 
 function race($promisesOrValues)
 {
-    return resolve($promisesOrValues)
-        ->then(function ($array) {
-            if (!is_array($array) || !$array) {
-                return resolve();
-            }
+    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue->enqueue($promisesOrValues);
 
-            return new Promise(function ($resolve, $reject, $notify) use ($array) {
+    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $cancellationQueue) {
+        resolve($promisesOrValues)
+            ->done(function ($array) use ($cancellationQueue, $resolve, $reject, $notify) {
+                if (!is_array($array) || !$array) {
+                    $resolve();
+                    return;
+                }
+
                 foreach ($array as $promiseOrValue) {
+                    $cancellationQueue->enqueue($promiseOrValue);
+
                     resolve($promiseOrValue)
                         ->done($resolve, $reject, $notify);
                 }
-            });
-        });
+            }, $reject, $notify);
+    }, $cancellationQueue);
 }
 
 function any($promisesOrValues)
@@ -62,13 +68,17 @@ function any($promisesOrValues)
 
 function some($promisesOrValues, $howMany)
 {
-    return resolve($promisesOrValues)
-        ->then(function ($array) use ($howMany) {
-            if (!is_array($array) || !$array || $howMany < 1) {
-                return resolve([]);
-            }
+    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue->enqueue($promisesOrValues);
 
-            return new Promise(function ($resolve, $reject, $notify) use ($array, $howMany) {
+    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $howMany, $cancellationQueue) {
+        resolve($promisesOrValues)
+            ->done(function ($array) use ($howMany, $cancellationQueue, $resolve, $reject, $notify) {
+                if (!is_array($array) || !$array || $howMany < 1) {
+                    $resolve([]);
+                    return;
+                }
+
                 $len       = count($array);
                 $toResolve = min($howMany, $len);
                 $toReject  = ($len - $toResolve) + 1;
@@ -100,26 +110,34 @@ function some($promisesOrValues, $howMany)
                         }
                     };
 
+                    $cancellationQueue->enqueue($promiseOrValue);
+
                     resolve($promiseOrValue)
                         ->done($fulfiller, $rejecter, $notify);
                 }
-            });
-        });
+            }, $reject, $notify);
+    }, $cancellationQueue);
 }
 
 function map($promisesOrValues, callable $mapFunc)
 {
-    return resolve($promisesOrValues)
-        ->then(function ($array) use ($mapFunc) {
-            if (!is_array($array) || !$array) {
-                return resolve([]);
-            }
+    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue->enqueue($promisesOrValues);
 
-            return new Promise(function ($resolve, $reject, $notify) use ($array, $mapFunc) {
+    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
+        resolve($promisesOrValues)
+            ->done(function ($array) use ($mapFunc, $cancellationQueue, $resolve, $reject, $notify) {
+                if (!is_array($array) || !$array) {
+                    $resolve([]);
+                    return;
+                }
+
                 $toResolve = count($array);
                 $values    = [];
 
                 foreach ($array as $i => $promiseOrValue) {
+                    $cancellationQueue->enqueue($promiseOrValue);
+
                     resolve($promiseOrValue)
                         ->then($mapFunc)
                         ->done(
@@ -134,35 +152,45 @@ function map($promisesOrValues, callable $mapFunc)
                             $notify
                         );
                 }
-            });
-        });
+            }, $reject, $notify);
+    }, $cancellationQueue);
 }
 
 function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
-    return resolve($promisesOrValues)
-        ->then(function ($array) use ($reduceFunc, $initialValue) {
-            if (!is_array($array)) {
-                $array = [];
-            }
+    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue->enqueue($promisesOrValues);
 
-            $total = count($array);
-            $i = 0;
+    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
+        resolve($promisesOrValues)
+            ->done(function ($array) use ($reduceFunc, $initialValue, $cancellationQueue, $resolve, $reject, $notify) {
+                if (!is_array($array)) {
+                    $array = [];
+                }
 
-            // Wrap the supplied $reduceFunc with one that handles promises and then
-            // delegates to the supplied.
-            $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $total, &$i) {
-                return resolve($current)
-                    ->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
-                        return resolve($val)
-                            ->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
-                                return $reduceFunc($c, $value, $i++, $total);
-                            });
-                    });
-            };
+                $total = count($array);
+                $i = 0;
 
-            return array_reduce($array, $wrappedReduceFunc, $initialValue);
-        });
+                // Wrap the supplied $reduceFunc with one that handles promises and then
+                // delegates to the supplied.
+                $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $cancellationQueue, $total, &$i) {
+                    $cancellationQueue->enqueue($val);
+
+                    return $current
+                        ->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
+                            return resolve($val)
+                                ->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
+                                    return $reduceFunc($c, $value, $i++, $total);
+                                });
+                        });
+                };
+
+                $cancellationQueue->enqueue($initialValue);
+
+                array_reduce($array, $wrappedReduceFunc, resolve($initialValue))
+                    ->done($resolve, $reject, $notify);
+            }, $reject, $notify);
+    }, $cancellationQueue);
 }
 
 // Internal functions
