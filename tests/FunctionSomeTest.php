@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\RangeException;
+
 class FunctionSomeTest extends TestCase
 {
     /** @test */
@@ -13,8 +15,8 @@ class FunctionSomeTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->callback(function($exception){
-                    return $exception instanceof \RangeException &&
-                    'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
+                    return $exception instanceof RangeException &&
+                           'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
             );
 
@@ -33,8 +35,8 @@ class FunctionSomeTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->callback(function($exception){
-                    return $exception instanceof \RangeException &&
-                    'Input array must contain at least 4 items but contains only 3 items.' === $exception->getMessage();
+                    return $exception instanceof RangeException &&
+                           'Input array must contain at least 4 items but contains only 3 items.' === $exception->getMessage();
                 })
             );
 

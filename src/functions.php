@@ -71,7 +71,7 @@ function some($promisesOrValues, $howMany)
             $len = count($array);
 
             if ($len < $howMany) {
-                throw new \RangeException(
+                throw new Exception\RangeException(
                     sprintf(
                         'Input array must contain at least %d item%s but contains only %s item%s.',
                         $howMany,
