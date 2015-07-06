@@ -64,12 +64,25 @@ function some($promisesOrValues, $howMany)
 {
     return resolve($promisesOrValues)
         ->then(function ($array) use ($howMany) {
-            if (!is_array($array) || !$array || $howMany < 1) {
-                return resolve([]);
+            if (!is_array($array) || $howMany < 1) {
+                return [];
             }
 
-            return new Promise(function ($resolve, $reject, $notify) use ($array, $howMany) {
-                $len       = count($array);
+            $len = count($array);
+
+            if ($len < $howMany) {
+                throw new \RangeException(
+                    sprintf(
+                        'Input array must contain at least %d item%s but contains only %s item%s.',
+                        $howMany,
+                        1 === $howMany ? '' : 's',
+                        $len,
+                        1 === $len ? '' : 's'
+                    )
+                );
+            }
+
+            return new Promise(function ($resolve, $reject, $notify) use ($array, $howMany, $len) {
                 $toResolve = min($howMany, $len);
                 $toReject  = ($len - $toResolve) + 1;
                 $values    = [];
