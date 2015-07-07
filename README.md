@@ -446,6 +446,11 @@ $promise->then(function ($value) {
 Useful functions for creating, joining, mapping and reducing collections of
 promises.
 
+All functions working on promise collections (like `all()`, `race()`, `some()`
+etc.) support cancellation. This means, if you call `cancel()` on the returned
+promise, all promises in the collection are cancelled. If the collection itself
+is a promise which resolves to an array, this promise is also cancelled.
+
 #### resolve()
 
 ```php
