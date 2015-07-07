@@ -5,6 +5,10 @@ namespace React\Promise;
 class CancellationQueue
 {
     private $started = false;
+
+    /**
+     * @var CancellablePromiseInterface[]
+     */
     private $queue = [];
 
     public function __invoke()
@@ -33,7 +37,6 @@ class CancellationQueue
     private function drain()
     {
         for ($i = key($this->queue); isset($this->queue[$i]); $i++) {
-            /** @var  CancellablePromiseInterface $promise */
             $promise = $this->queue[$i];
 
             $exception = null;
