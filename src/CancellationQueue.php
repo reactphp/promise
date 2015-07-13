@@ -36,23 +36,8 @@ class CancellationQueue
 
     private function drain()
     {
-        for ($i = key($this->queue); isset($this->queue[$i]); $i++) {
-            $promise = $this->queue[$i];
-
-            $exception = null;
-
-            try {
-                $promise->cancel();
-            } catch (\Exception $exception) {
-            }
-
-            unset($this->queue[$i]);
-
-            if ($exception) {
-                throw $exception;
-            }
+        while ($promise = array_shift($this->queue)) {
+            $promise->cancel();
         }
-
-        $this->queue = [];
     }
 }
