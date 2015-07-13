@@ -165,4 +165,24 @@ class FunctionSomeTest extends TestCase
 
         some([$mock1, $mock2], 1)->cancel();
     }
+
+    /** @test */
+    public function shouldCancelOtherPendingInputArrayPromisesIfEnoughPromisesFulfill()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->never())
+            ->method('__invoke');
+
+
+        $deferred = New Deferred($mock);
+        $deferred->resolve();
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        some([$deferred->promise(), $mock2], 1)->cancel();
+    }
 }

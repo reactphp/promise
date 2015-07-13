@@ -51,8 +51,18 @@ function race($promisesOrValues)
                 foreach ($array as $promiseOrValue) {
                     $cancellationQueue->enqueue($promiseOrValue);
 
+                    $fulfiller = function ($value) use ($cancellationQueue, $resolve) {
+                        $cancellationQueue();
+                        $resolve($value);
+                    };
+
+                    $rejecter = function ($reason) use ($cancellationQueue, $reject) {
+                        $cancellationQueue();
+                        $reject($reason);
+                    };
+
                     resolve($promiseOrValue)
-                        ->done($resolve, $reject, $notify);
+                        ->done($fulfiller, $rejecter, $notify);
                 }
             }, $reject, $notify);
     }, $cancellationQueue);
@@ -86,7 +96,7 @@ function some($promisesOrValues, $howMany)
                 $reasons   = [];
 
                 foreach ($array as $i => $promiseOrValue) {
-                    $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve) {
+                    $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve, $cancellationQueue) {
                         if ($toResolve < 1 || $toReject < 1) {
                             return;
                         }
@@ -94,6 +104,7 @@ function some($promisesOrValues, $howMany)
                         $values[$i] = $val;
 
                         if (0 === --$toResolve) {
+                            $cancellationQueue();
                             $resolve($values);
                         }
                     };

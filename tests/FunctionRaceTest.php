@@ -160,4 +160,42 @@ class FunctionRaceTest extends TestCase
 
         race([$mock1, $mock2])->cancel();
     }
+
+    /** @test */
+    public function shouldCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $deferred = New Deferred($mock);
+        $deferred->resolve();
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        race([$deferred->promise(), $mock2])->cancel();
+    }
+
+    /** @test */
+    public function shouldCancelOtherPendingInputArrayPromisesIfOnePromiseRejects()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $deferred = New Deferred($mock);
+        $deferred->reject();
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        race([$deferred->promise(), $mock2])->cancel();
+    }
 }
