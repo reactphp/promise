@@ -65,7 +65,7 @@ function some($promisesOrValues, $howMany)
     return resolve($promisesOrValues)
         ->then(function ($array) use ($howMany) {
             if (!is_array($array) || !$array || $howMany < 1) {
-                return resolve([]);
+                return resolve();
             }
 
             return new Promise(function ($resolve, $reject, $notify) use ($array, $howMany) {
