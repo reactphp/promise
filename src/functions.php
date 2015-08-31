@@ -2,6 +2,11 @@
 
 namespace React\Promise;
 
+/**
+ * @param mixed $promiseOrValue
+ *
+ * @return ExtendedPromiseInterface
+ */
 function resolve($promiseOrValue = null)
 {
     if (!$promiseOrValue instanceof PromiseInterface) {
@@ -17,6 +22,11 @@ function resolve($promiseOrValue = null)
     });
 }
 
+/**
+ * @param mixed $promiseOrValue
+ *
+ * @return RejectedPromise
+ */
 function reject($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
@@ -35,6 +45,11 @@ function all($promisesOrValues)
     });
 }
 
+/**
+ * @param mixed $promisesOrValues
+ *
+ * @return ExtendedPromiseInterface
+ */
 function race($promisesOrValues)
 {
     return resolve($promisesOrValues)
@@ -52,6 +67,11 @@ function race($promisesOrValues)
         });
 }
 
+/**
+ * @param mixed $promisesOrValues
+ *
+ * @return ExtendedPromiseInterface
+ */
 function any($promisesOrValues)
 {
     return some($promisesOrValues, 1)
@@ -60,6 +80,12 @@ function any($promisesOrValues)
         });
 }
 
+/**
+ * @param mixed $promisesOrValues
+ * @param int $howMany
+ *
+ * @return ExtendedPromiseInterface
+ */
 function some($promisesOrValues, $howMany)
 {
     return resolve($promisesOrValues)
@@ -107,6 +133,12 @@ function some($promisesOrValues, $howMany)
         });
 }
 
+/**
+ * @param mixed $promisesOrValues
+ * @param callable $mapFunc
+ *
+ * @return ExtendedPromiseInterface
+ */
 function map($promisesOrValues, callable $mapFunc)
 {
     return resolve($promisesOrValues)
@@ -138,6 +170,13 @@ function map($promisesOrValues, callable $mapFunc)
         });
 }
 
+/**
+ * @param mixed $promisesOrValues
+ * @param callable $reduceFunc
+ * @param mixed $initialValue
+ *
+ * @return ExtendedPromiseInterface
+ */
 function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
     return resolve($promisesOrValues)
@@ -165,7 +204,14 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
         });
 }
 
-// Internal functions
+/**
+ * Internal functions
+ *
+ * @param callable $callback
+ * @param mixed $object
+ *
+ * @return bool
+ */
 function _checkTypehint(callable $callback, $object)
 {
     if (!is_object($object)) {
