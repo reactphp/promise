@@ -515,6 +515,9 @@ will be the resolution value of the triggering item.
 The returned promise will only reject if *all* items in `$promisesOrValues` are
 rejected. The rejection value will be an array of all rejection reasons.
 
+The returned promise will also reject with a `React\Promise\Exception\RangeException`
+if `$promisesOrValues` contains 0 items.
+
 #### some()
 
 ```php
