@@ -15,9 +15,23 @@ class SynchronousQueue implements QueueInterface
 
     private function drain()
     {
-        /** @var callable $task */
-        while ($task = array_shift($this->queue)) {
-            $task();
+        for ($i = key($this->queue); isset($this->queue[$i]); $i++) {
+            $task = $this->queue[$i];
+
+            $exception = null;
+
+            try {
+                $task();
+            } catch (\Exception $exception) {
+            }
+
+            unset($this->queue[$i]);
+
+            if ($exception) {
+                throw $exception;
+            }
         }
+
+        $this->queue = [];
     }
 }
