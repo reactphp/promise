@@ -21,28 +21,34 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
             return $this;
         }
 
-        try {
-            return resolve($onRejected($this->reason));
-        } catch (\Exception $exception) {
-            return new RejectedPromise($exception);
-        }
+        return new Promise(function (callable $resolve, callable $reject) use ($onRejected) {
+            queue()->enqueue(function () use ($resolve, $reject, $onRejected) {
+                try {
+                    $resolve($onRejected($this->reason));
+                } catch (\Exception $exception) {
+                    $reject($exception);
+                }
+            });
+        });
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        if (null === $onRejected) {
-            throw UnhandledRejectionException::resolve($this->reason);
-        }
+        queue()->enqueue(function () use ($onRejected) {
+            if (null === $onRejected) {
+                throw UnhandledRejectionException::resolve($this->reason);
+            }
 
-        $result = $onRejected($this->reason);
+            $result = $onRejected($this->reason);
 
-        if ($result instanceof self) {
-            throw UnhandledRejectionException::resolve($result->reason);
-        }
+            if ($result instanceof self) {
+                throw UnhandledRejectionException::resolve($result->reason);
+            }
 
-        if ($result instanceof ExtendedPromiseInterface) {
-            $result->done();
-        }
+            if ($result instanceof ExtendedPromiseInterface) {
+                $result->done();
+            }
+        });
     }
 
     public function otherwise(callable $onRejected)

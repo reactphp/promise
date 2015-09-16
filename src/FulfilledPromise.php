@@ -21,11 +21,15 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
             return $this;
         }
 
-        try {
-            return resolve($onFulfilled($this->value));
-        } catch (\Exception $exception) {
-            return new RejectedPromise($exception);
-        }
+        return new Promise(function (callable $resolve, callable $reject) use ($onFulfilled) {
+            queue()->enqueue(function () use ($resolve, $reject, $onFulfilled) {
+                try {
+                    $resolve($onFulfilled($this->value));
+                } catch (\Exception $exception) {
+                    $reject($exception);
+                }
+            });
+        });
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -34,11 +38,13 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
             return;
         }
 
-        $result = $onFulfilled($this->value);
+        queue()->enqueue(function () use ($onFulfilled) {
+            $result = $onFulfilled($this->value);
 
-        if ($result instanceof ExtendedPromiseInterface) {
-            $result->done();
-        }
+            if ($result instanceof ExtendedPromiseInterface) {
+                $result->done();
+            }
+        });
     }
 
     public function otherwise(callable $onRejected)
