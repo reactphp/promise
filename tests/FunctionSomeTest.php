@@ -2,12 +2,12 @@
 
 namespace React\Promise;
 
-use React\Promise\Exception\RangeException;
+use React\Promise\Exception\LengthException;
 
 class FunctionSomeTest extends TestCase
 {
     /** @test */
-    public function shouldRejectWithRangeExceptionWithEmptyInputArray()
+    public function shouldRejectWithLengthExceptionWithEmptyInputArray()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -15,7 +15,7 @@ class FunctionSomeTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->callback(function($exception){
-                    return $exception instanceof RangeException &&
+                    return $exception instanceof LengthException &&
                            'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
             );
@@ -27,7 +27,7 @@ class FunctionSomeTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithRangeExceptionWithInputArrayContainingNotEnoughItems()
+    public function shouldRejectWithLengthExceptionWithInputArrayContainingNotEnoughItems()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -35,7 +35,7 @@ class FunctionSomeTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->callback(function($exception){
-                    return $exception instanceof RangeException &&
+                    return $exception instanceof LengthException &&
                            'Input array must contain at least 4 items but contains only 3 items.' === $exception->getMessage();
                 })
             );
