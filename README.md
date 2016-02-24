@@ -504,6 +504,11 @@ further interest in the results of the operation.
 Once a promise is settled (either resolved or rejected), calling `cancel()` on
 a promise has no effect.
 
+#### Implementations
+
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+
 Examples
 --------
 

@@ -145,4 +145,12 @@ class RejectedPromiseTest extends TestCase
                 $mock
             );
     }
+
+    /** @test */
+    public function shouldNotBeAffectedByCancellation()
+    {
+        $p = new RejectedPromise(1);
+        $p->cancel();
+        $p->then($this->expectCallableNever(), $this->expectCallableOnce());
+    }
 }

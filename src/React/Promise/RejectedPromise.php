@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class RejectedPromise implements PromiseInterface
+class RejectedPromise implements PromiseInterface, CancellablePromiseInterface
 {
     private $reason;
 
@@ -26,5 +26,9 @@ class RejectedPromise implements PromiseInterface
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }
+    }
+
+    public function cancel()
+    {
     }
 }
