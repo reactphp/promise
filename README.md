@@ -113,6 +113,18 @@ $deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
 ```
 
+The constructor of the `Deferred` accepts an optional `$canceller` argument.
+See [Promise](#promise-1) for more information.
+
+
+``` php
+$deferred = new React\Promise\Deferred(function ($resolve, $reject, $progress) {
+    throw new \Exception('Promise cancelled');
+});
+
+$deferred->cancel();
+```
+
 ### Promise
 
 The Promise represents the eventual outcome, which is either fulfillment
@@ -135,7 +147,13 @@ $resolver = function (callable $resolve, callable $reject, callable $notify) {
     // or $notify($progressNotification);
 };
 
-$promise = new React\Promise\Promise($resolver);
+$canceller = function (callable $resolve, callable $reject, callable $progress) {
+    // Cancel/abort any running operations like network connections, streams etc.
+
+    $reject(new \Exception('Promise cancelled'));
+};
+
+$promise = new React\Promise\Promise($resolver, $canceller);
 ```
 
 The promise constructor receives a resolver function which will be called
@@ -151,6 +169,9 @@ immediately with 3 arguments:
 
 If the resolver throws an exception, the promise will be rejected with that
 thrown exception as the rejection reason.
+
+The resolver function will be called immediately, the canceller function only
+once all consumers called the `cancel()` method of the promise.
 
 A Promise has a single method `then()` which registers new fulfilled, error and
 progress handlers with this Promise (all parameters are optional):
@@ -506,6 +527,8 @@ a promise has no effect.
 
 #### Implementations
 
+* [Deferred](#deferred-1)
+* [Promise](#promise-1)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
 * [LazyPromise](#lazypromise)

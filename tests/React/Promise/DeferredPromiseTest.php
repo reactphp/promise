@@ -20,4 +20,16 @@ class DeferredPromiseTest extends TestCase
         $p = new DeferredPromise($mock);
         $p->then(1, 2, 3);
     }
+
+    /** @test */
+    public function shouldForwardCancelToDeferred()
+    {
+        $mock = $this->getMock('React\\Promise\\Deferred');
+        $mock
+            ->expects($this->once())
+            ->method('cancel');
+
+        $p = new DeferredPromise($mock);
+        $p->cancel();
+    }
 }

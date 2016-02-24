@@ -2,11 +2,11 @@
 
 namespace React\Promise;
 
-class Promise implements PromiseInterface
+class Promise implements PromiseInterface, CancellablePromiseInterface
 {
     private $deferred;
 
-    public function __construct($resolver)
+    public function __construct($resolver, $canceller = null)
     {
         if (!is_callable($resolver)) {
             throw new \InvalidArgumentException(
@@ -17,13 +17,18 @@ class Promise implements PromiseInterface
             );
         }
 
-        $this->deferred = new Deferred();
+        $this->deferred = new Deferred($canceller);
         $this->call($resolver);
     }
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
         return $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
+    }
+
+    public function cancel()
+    {
+        $this->deferred->cancel();
     }
 
     private function call($callback)
