@@ -508,6 +508,7 @@ a promise has no effect.
 
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
 
 Examples
 --------
