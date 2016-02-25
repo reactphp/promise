@@ -128,11 +128,14 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
             return;
         }
 
+        $canceller = $this->canceller;
+        $this->canceller = null;
+
         try {
             $that = $this;
 
             call_user_func(
-                $this->canceller,
+                $canceller,
                 function ($value = null) use ($that) {
                     $that->resolve($value);
                 },

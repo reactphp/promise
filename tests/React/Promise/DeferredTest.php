@@ -115,6 +115,14 @@ class DeferredTest extends TestCase
     }
 
     /** @test */
+    public function shouldInvokeCancellationHandlerOnlyOnceWhenCallingCancelMultipleTimes()
+    {
+        $d = new Deferred($this->expectCallableOnce());
+        $d->cancel();
+        $d->cancel();
+    }
+
+    /** @test */
     public function shouldResolveWhenCancellationHandlerResolves()
     {
         $d = new Deferred(function ($resolve) {
