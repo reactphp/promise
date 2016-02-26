@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+* 2.2.2 (2016-02-26)
+
+  * Fix cancellation handlers called multiple times (#47 by @clue).
+
 * 2.2.1 (2015-07-03)
 
   * Fix stack error when resolving a promise in its own fulfillment or rejection
