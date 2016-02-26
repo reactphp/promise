@@ -91,7 +91,10 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return;
         }
 
-        $this->call($this->canceller);
+        $canceller = $this->canceller;
+        $this->canceller = null;
+
+        $this->call($canceller);
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
