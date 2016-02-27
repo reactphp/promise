@@ -37,6 +37,8 @@ Table of Contents
      * [When::reject()](#whenreject)
      * [When::lazy()](#whenlazy)
    * [Promisor](#promisor)
+   * [CancellablePromiseInterface](#cancellablepromiseinterface)
+     * [CancellablePromiseInterface::cancel()](#cancellablepromiseinterfacecancel)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How Promise forwarding works](#how-promise-forwarding-works)
@@ -111,6 +113,18 @@ $deferred->reject(mixed $reason = null);
 $deferred->progress(mixed $update = null);
 ```
 
+The constructor of the `Deferred` accepts an optional `$canceller` argument.
+See [Promise](#promise-1) for more information.
+
+
+``` php
+$deferred = new React\Promise\Deferred(function ($resolve, $reject, $progress) {
+    throw new \Exception('Promise cancelled');
+});
+
+$deferred->cancel();
+```
+
 ### Promise
 
 The Promise represents the eventual outcome, which is either fulfillment
@@ -133,7 +147,13 @@ $resolver = function (callable $resolve, callable $reject, callable $notify) {
     // or $notify($progressNotification);
 };
 
-$promise = new React\Promise\Promise($resolver);
+$canceller = function (callable $resolve, callable $reject, callable $progress) {
+    // Cancel/abort any running operations like network connections, streams etc.
+
+    $reject(new \Exception('Promise cancelled'));
+};
+
+$promise = new React\Promise\Promise($resolver, $canceller);
 ```
 
 The promise constructor receives a resolver function which will be called
@@ -149,6 +169,9 @@ immediately with 3 arguments:
 
 If the resolver throws an exception, the promise will be rejected with that
 thrown exception as the rejection reason.
+
+The resolver function will be called immediately, the canceller function only
+once all consumers called the `cancel()` method of the promise.
 
 A Promise has a single method `then()` which registers new fulfilled, error and
 progress handlers with this Promise (all parameters are optional):
@@ -483,6 +506,32 @@ $promise->then(function ($value) {
 The `React\Promise\PromisorInterface` provides a common interface for objects
 that provide a promise. `React\Promise\Deferred` implements it, but since it
 is part of the public API anyone can implement it.
+
+### CancellablePromiseInterface
+
+A cancellable promise provides a mechanism for consumers to notify the creator
+of the promise that they are not longer interested in the result of an
+operation.
+
+#### CancellablePromiseInterface::cancel()
+
+``` php
+$promise->cancel();
+```
+
+The `cancel()` method notifies the creator of the promise that there is no
+further interest in the results of the operation.
+
+Once a promise is settled (either resolved or rejected), calling `cancel()` on
+a promise has no effect.
+
+#### Implementations
+
+* [Deferred](#deferred-1)
+* [Promise](#promise-1)
+* [FulfilledPromise](#fulfilledpromise)
+* [RejectedPromise](#rejectedpromise)
+* [LazyPromise](#lazypromise)
 
 Examples
 --------

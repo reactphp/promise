@@ -140,4 +140,12 @@ class FulfilledPromiseTest extends TestCase
                 $mock2
             );
     }
+
+    /** @test */
+    public function shouldNotBeAffectedByCancellation()
+    {
+        $p = new FulfilledPromise(1);
+        $p->cancel();
+        $p->then($this->expectCallableOnce());
+    }
 }

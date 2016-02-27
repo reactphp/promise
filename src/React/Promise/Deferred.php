@@ -2,13 +2,31 @@
 
 namespace React\Promise;
 
-class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
+class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface, CancellablePromiseInterface
 {
     private $completed;
     private $promise;
     private $resolver;
     private $handlers = array();
     private $progressHandlers = array();
+    private $canceller;
+
+    private $requiredCancelRequests = 0;
+    private $cancelRequests = 0;
+
+    public function __construct($canceller = null)
+    {
+        if ($canceller !== null && !is_callable($canceller)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The canceller argument must be null or of type callable, %s given.',
+                    gettype($canceller)
+                )
+            );
+        }
+
+        $this->canceller = $canceller;
+    }
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
@@ -16,7 +34,24 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
             return $this->completed->then($fulfilledHandler, $errorHandler, $progressHandler);
         }
 
-        $deferred = new static();
+        $canceller = null;
+        if ($this->canceller !== null) {
+            $this->requiredCancelRequests++;
+
+            $that = $this;
+            $current =& $this->cancelRequests;
+            $required =& $this->requiredCancelRequests;
+
+            $canceller = function () use ($that, &$current, &$required) {
+                if (++$current < $required) {
+                    return;
+                }
+
+                $that->cancel();
+            };
+        }
+
+        $deferred = new static($canceller);
 
         if (is_callable($progressHandler)) {
             $progHandler = function ($update) use ($deferred, $progressHandler) {
@@ -94,6 +129,35 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
         }
 
         return $this->resolver;
+    }
+
+    public function cancel()
+    {
+        if (null === $this->canceller || null !== $this->completed) {
+            return;
+        }
+
+        $canceller = $this->canceller;
+        $this->canceller = null;
+
+        try {
+            $that = $this;
+
+            call_user_func(
+                $canceller,
+                function ($value = null) use ($that) {
+                    $that->resolve($value);
+                },
+                function ($reason = null) use ($that) {
+                    $that->reject($reason);
+                },
+                function ($update = null) use ($that) {
+                    $that->progress($update);
+                }
+            );
+        } catch (\Exception $e) {
+            $this->reject($e);
+        }
     }
 
     protected function processQueue($queue, $value)

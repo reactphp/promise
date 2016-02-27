@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class LazyPromise implements PromiseInterface
+class LazyPromise implements PromiseInterface, CancellablePromiseInterface
 {
     private $factory;
     private $promise;
@@ -14,6 +14,19 @@ class LazyPromise implements PromiseInterface
 
     public function then($fulfilledHandler = null, $errorHandler = null, $progressHandler = null)
     {
+        return $this->promise()->then($fulfilledHandler, $errorHandler, $progressHandler);
+    }
+
+    public function cancel()
+    {
+        $promise = $this->promise();
+        if ($promise instanceof CancellablePromiseInterface) {
+            $promise->cancel();
+        }
+    }
+
+    private function promise()
+    {
         if (null === $this->promise) {
             try {
                 $this->promise = resolve(call_user_func($this->factory));
@@ -21,7 +34,6 @@ class LazyPromise implements PromiseInterface
                 $this->promise = new RejectedPromise($exception);
             }
         }
-
-        return $this->promise->then($fulfilledHandler, $errorHandler, $progressHandler);
+        return $this->promise;
     }
 }

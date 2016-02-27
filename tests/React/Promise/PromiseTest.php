@@ -81,4 +81,22 @@ class PromiseTest extends TestCase
 
         $notify(1);
     }
+
+    /** @test */
+    public function shouldInvokeCancellationHandlerAndStayPendingWhenCallingCancel()
+    {
+        $promise = new Promise(function() { }, $this->expectCallableOnce());
+        $promise->cancel();
+
+        $promise->then($this->expectCallableNever(), $this->expectCallableNever());
+    }
+
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     */
+    public function shouldThrowIfCancellerIsNotACallable()
+    {
+        new Promise(function () { }, false);
+    }
 }

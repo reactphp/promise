@@ -15,4 +15,9 @@ class DeferredPromise implements PromiseInterface
     {
         return $this->deferred->then($fulfilledHandler, $errorHandler, $progressHandler);
     }
+
+    public function cancel()
+    {
+        $this->deferred->cancel();
+    }
 }
