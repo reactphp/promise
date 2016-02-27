@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+* 1.2.0 (2016-02-27)
+
+  This release makes the API more compatible with 2.0 while preserving full
+  backward compatibility.
+
+  * Introduce new CancellablePromiseInterface implemented by all promises.
+  * Add new .cancel() method (part of the CancellablePromiseInterface).
+
+
 * 1.1.0 (2015-07-01)
 
   This release makes the API more compatible with 2.0 while preserving full
