@@ -16,6 +16,15 @@ class Deferred implements PromiseInterface, ResolverInterface, PromisorInterface
 
     public function __construct($canceller = null)
     {
+        if ($canceller !== null && !is_callable($canceller)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The canceller argument must be null or of type callable, %s given.',
+                    gettype($canceller)
+                )
+            );
+        }
+
         $this->canceller = $canceller;
     }
 

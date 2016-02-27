@@ -90,4 +90,13 @@ class PromiseTest extends TestCase
 
         $promise->then($this->expectCallableNever(), $this->expectCallableNever());
     }
+
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     */
+    public function shouldThrowIfCancellerIsNotACallable()
+    {
+        new Promise(function () { }, false);
+    }
 }

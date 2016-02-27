@@ -201,4 +201,13 @@ class DeferredTest extends TestCase
         $p1->cancel();
         $p2->cancel();
     }
+
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     */
+    public function shouldThrowIfCancellerIsNotACallable()
+    {
+        new Deferred(false);
+    }
 }
