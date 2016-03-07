@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+* 1.2.1 (2016-03-07)
+
+  * Fix `DeferredPromise` to also implement the `CancellablePromiseInterface`.
+
 * 1.2.0 (2016-02-27)
 
   This release makes the API more compatible with 2.0 while preserving full
