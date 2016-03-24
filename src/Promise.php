@@ -104,6 +104,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 $progressHandler = function ($update) use ($notify, $onProgress) {
                     try {
                         $notify($onProgress($update));
+                    } catch (\Throwable $e) {
+                        $notify($e);
                     } catch (\Exception $e) {
                         $notify($e);
                     }
@@ -186,6 +188,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                     $this->notify($update);
                 }
             );
+        } catch (\Throwable $e) {
+            $this->reject($e);
         } catch (\Exception $e) {
             $this->reject($e);
         }
