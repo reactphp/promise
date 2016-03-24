@@ -82,35 +82,3 @@ class PromiseTest extends TestCase
         $adapter->resolve(new SimpleRejectedTestPromise());
     }
 }
-
-class SimpleFulfilledTestPromise implements PromiseInterface
-{
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        try {
-            if ($onFulfilled) {
-                $onFulfilled('foo');
-            }
-
-            return new self('foo');
-        } catch (\Exception $exception) {
-            return new RejectedPromise($exception);
-        }
-    }
-}
-
-class SimpleRejectedTestPromise implements PromiseInterface
-{
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
-    {
-        try {
-            if ($onRejected) {
-                $onRejected('foo');
-            }
-
-            return new self('foo');
-        } catch (\Exception $exception) {
-            return new RejectedPromise($exception);
-        }
-    }
-}
