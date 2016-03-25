@@ -462,7 +462,10 @@ Creates a promise for the supplied `$promiseOrValue`.
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
-If `$promiseOrValue` is a promise, it will simply be returned.
+If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
+a trusted promise that follows the state of the thenable is returned.
+
+If `$promiseOrValue` is a promise, it will be returned as is.
 
 Note: The promise returned is always a promise implementing
 [ExtendedPromiseInterface](#extendedpromiseinterface). If you pass in a custom
