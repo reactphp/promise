@@ -4,17 +4,23 @@ namespace React\Promise;
 
 function resolve($promiseOrValue = null)
 {
-    if (!$promiseOrValue instanceof PromiseInterface) {
-        return new FulfilledPromise($promiseOrValue);
-    }
-
     if ($promiseOrValue instanceof ExtendedPromiseInterface) {
         return $promiseOrValue;
     }
 
-    return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
-        $promiseOrValue->then($resolve, $reject, $notify);
-    });
+    if (method_exists($promiseOrValue, 'then')) {
+        $canceller = null;
+
+        if (method_exists($promiseOrValue, 'cancel')) {
+            $canceller = [$promiseOrValue, 'cancel'];
+        }
+
+        return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
+            $promiseOrValue->then($resolve, $reject, $notify);
+        }, $canceller);
+    }
+
+    return new FulfilledPromise($promiseOrValue);
 }
 
 function reject($promiseOrValue = null)
