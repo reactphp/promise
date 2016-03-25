@@ -39,6 +39,7 @@ class CancellationQueue
 
             try {
                 $cancellable->cancel();
+            } catch (\Throwable $exception) {
             } catch (\Exception $exception) {
             }
 
