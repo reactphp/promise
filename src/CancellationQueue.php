@@ -43,6 +43,7 @@ class CancellationQueue
 
             try {
                 $promise->cancel();
+            } catch (\Throwable $exception) {
             } catch (\Exception $exception) {
             }
 
