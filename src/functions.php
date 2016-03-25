@@ -103,7 +103,7 @@ function some($promisesOrValues, $howMany)
                     );
                 }
 
-                $toResolve = min($howMany, $len);
+                $toResolve = $howMany;
                 $toReject  = ($len - $toResolve) + 1;
                 $values    = [];
                 $reasons   = [];
