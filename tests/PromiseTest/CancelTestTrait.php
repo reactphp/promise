@@ -190,6 +190,31 @@ trait CancelTestTrait
     }
 
     /** @test */
+    public function cancelShouldNotTriggerCancellerWhenCancellingOneChildrenMultipleTimes()
+    {
+        $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
+
+        $child1 = $adapter->promise()
+            ->then()
+            ->then();
+
+        $child2 = $adapter->promise()
+            ->then();
+
+        $child1->cancel();
+        $child1->cancel();
+    }
+
+    /** @test */
+    public function cancelShouldTriggerCancellerOnlyOnceWhenCancellingMultipleTimes()
+    {
+        $adapter = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $adapter->promise()->cancel();
+        $adapter->promise()->cancel();
+    }
+
+    /** @test */
     public function cancelShouldAlwaysTriggerCancellerWhenCalledOnRootPromise()
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableOnce());

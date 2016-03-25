@@ -1,6 +1,25 @@
 CHANGELOG
 =========
 
+* 2.3.0 (2016-03-24)
+
+  * Allow cancellation of promises returned by functions working on promise
+    collections (#36).
+  * Handle \Throwable in the same way as \Exception (#51 by @joshdifabio).
+
+* 2.2.2 (2016-02-26)
+
+  * Fix cancellation handlers called multiple times (#47 by @clue).
+
+* 2.2.2 (2016-02-26)
+
+  * Fix cancellation handlers called multiple times (#47 by @clue).
+
+* 2.2.1 (2015-07-03)
+
+  * Fix stack error when resolving a promise in its own fulfillment or rejection
+    handlers.
+
 * 2.2.0 (2014-12-30)
 
   * Introduce new ExtendedPromiseInterface implemented by all promises

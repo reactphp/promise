@@ -25,6 +25,8 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
             queue()->enqueue(function () use ($resolve, $reject, $onRejected) {
                 try {
                     $resolve($onRejected($this->reason));
+                } catch (\Throwable $exception) {
+                    $reject($exception);
                 } catch (\Exception $exception) {
                     $reject($exception);
                 }

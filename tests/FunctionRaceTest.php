@@ -119,4 +119,83 @@ class FunctionRaceTest extends TestCase
             resolve(1)
         )->then($mock);
     }
+
+    /** @test */
+    public function shouldRejectWhenInputPromiseRejects()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(null));
+
+        race(
+            reject()
+        )->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldCancelInputPromise()
+    {
+        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock
+            ->expects($this->once())
+            ->method('cancel');
+
+        race($mock)->cancel();
+    }
+
+    /** @test */
+    public function shouldCancelInputArrayPromises()
+    {
+        $mock1 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock1
+            ->expects($this->once())
+            ->method('cancel');
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        race([$mock1, $mock2])->cancel();
+    }
+
+    /** @test */
+    public function shouldCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $deferred = New Deferred($mock);
+        $deferred->resolve();
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        race([$deferred->promise(), $mock2])->cancel();
+    }
+
+    /** @test */
+    public function shouldCancelOtherPendingInputArrayPromisesIfOnePromiseRejects()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $deferred = New Deferred($mock);
+        $deferred->reject();
+
+        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2
+            ->expects($this->once())
+            ->method('cancel');
+
+        race([$deferred->promise(), $mock2])->cancel();
+    }
 }

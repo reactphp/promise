@@ -25,6 +25,8 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
             queue()->enqueue(function () use ($resolve, $reject, $onFulfilled) {
                 try {
                     $resolve($onFulfilled($this->value));
+                } catch (\Throwable $exception) {
+                    $reject($exception);
                 } catch (\Exception $exception) {
                     $reject($exception);
                 }

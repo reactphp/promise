@@ -14,6 +14,11 @@
         },
         "files": ["src/functions_include.php"]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "React\\Promise\\": "tests/fixtures"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"
