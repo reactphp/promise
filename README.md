@@ -446,6 +446,11 @@ $promise->then(function ($value) {
 Useful functions for creating, joining, mapping and reducing collections of
 promises.
 
+All functions working on promise collections (like `all()`, `race()`, `some()`
+etc.) support cancellation. This means, if you call `cancel()` on the returned
+promise, all promises in the collection are cancelled. If the collection itself
+is a promise which resolves to an array, this promise is also cancelled.
+
 #### resolve()
 
 ```php
@@ -666,16 +671,18 @@ $deferred->promise()
     ->then(function ($x) {
         throw new \Exception($x + 1);
     })
-    ->then(null, function (\Exception $x) {
+    ->otherwise(function (\Exception $x) {
         // Propagate the rejection
         throw $x;
     })
-    ->then(null, function (\Exception $x) {
+    ->otherwise(function (\Exception $x) {
         // Can also propagate by returning another rejection
-        return React\Promise\reject((integer) $x->getMessage() + 1);
+        return React\Promise\reject(
+            new \Exception($x->getMessage() + 1)
+        );
     })
-    ->then(null, function ($x) {
-        echo 'Reject ' . $x; // 3
+    ->otherwise(function ($x) {
+        echo 'Reject ' . $x->getMessage(); // 3
     });
 
 $deferred->resolve(1);  // Prints "Reject 3"
@@ -694,12 +701,12 @@ $deferred->promise()
         return $x + 1;
     })
     ->then(function ($x) {
-        throw \Exception($x + 1);
+        throw new \Exception($x + 1);
     })
-    ->then(null, function (\Exception $x) {
+    ->otherwise(function (\Exception $x) {
         // Handle the rejection, and don't propagate.
         // This is like catch without a rethrow
-        return (integer) $x->getMessage() + 1;
+        return $x->getMessage() + 1;
     })
     ->then(function ($x) {
         echo 'Mixed ' . $x; // 4

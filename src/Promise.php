@@ -91,7 +91,10 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return;
         }
 
-        $this->call($this->canceller);
+        $canceller = $this->canceller;
+        $this->canceller = null;
+
+        $this->call($canceller);
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -101,6 +104,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 $progressHandler = function ($update) use ($notify, $onProgress) {
                     try {
                         $notify($onProgress($update));
+                    } catch (\Throwable $e) {
+                        $notify($e);
                     } catch (\Exception $e) {
                         $notify($e);
                     }
@@ -183,6 +188,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                     $this->notify($update);
                 }
             );
+        } catch (\Throwable $e) {
+            $this->reject($e);
         } catch (\Exception $e) {
             $this->reject($e);
         }

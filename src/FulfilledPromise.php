@@ -23,6 +23,8 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
 
         try {
             return resolve($onFulfilled($this->value));
+        } catch (\Throwable $exception) {
+            return new RejectedPromise($exception);
         } catch (\Exception $exception) {
             return new RejectedPromise($exception);
         }
