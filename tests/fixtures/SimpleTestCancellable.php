@@ -8,11 +8,7 @@ class SimpleTestCancellable
 
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        try {
-            return new self('foo');
-        } catch (\Exception $exception) {
-            return new RejectedPromise($exception);
-        }
+        return new self();
     }
 
     public function cancel()
