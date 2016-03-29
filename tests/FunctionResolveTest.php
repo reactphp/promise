@@ -63,7 +63,7 @@ class FunctionResolveTest extends TestCase
     /** @test */
     public function shouldResolveACancellableThenable()
     {
-        $thenable = new SimpleTestCancellable();
+        $thenable = new SimpleTestCancellableThenable();
 
         $promise = resolve($thenable);
         $promise->cancel();
