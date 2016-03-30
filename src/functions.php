@@ -90,13 +90,26 @@ function some($promisesOrValues, $howMany)
     return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $howMany, $cancellationQueue) {
         resolve($promisesOrValues)
             ->done(function ($array) use ($howMany, $cancellationQueue, $resolve, $reject, $notify) {
-                if (!is_array($array) || !$array || $howMany < 1) {
+                if (!is_array($array) || $howMany < 1) {
                     $resolve([]);
                     return;
                 }
 
-                $len       = count($array);
-                $toResolve = min($howMany, $len);
+                $len = count($array);
+
+                if ($len < $howMany) {
+                    throw new Exception\LengthException(
+                        sprintf(
+                            'Input array must contain at least %d item%s but contains only %s item%s.',
+                            $howMany,
+                            1 === $howMany ? '' : 's',
+                            $len,
+                            1 === $len ? '' : 's'
+                        )
+                    );
+                }
+
+                $toResolve = $howMany;
                 $toReject  = ($len - $toResolve) + 1;
                 $values    = [];
                 $reasons   = [];

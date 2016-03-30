@@ -2,10 +2,30 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\LengthException;
+
 class FunctionAnyTest extends TestCase
 {
     /** @test */
-    public function shouldResolveToNullWithEmptyInputArray()
+    public function shouldRejectWithLengthExceptionWithEmptyInputArray()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with(
+                $this->callback(function($exception){
+                    return $exception instanceof LengthException &&
+                           'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
+                })
+            );
+
+        any([])
+            ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldResolveToNullWithNonArrayInput()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -13,7 +33,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with($this->identicalTo(null));
 
-        any([])
+        any(null)
             ->then($mock);
     }
 

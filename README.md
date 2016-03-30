@@ -523,6 +523,9 @@ will be the resolution value of the triggering item.
 The returned promise will only reject if *all* items in `$promisesOrValues` are
 rejected. The rejection value will be an array of all rejection reasons.
 
+The returned promise will also reject with a `React\Promise\Exception\LengthException`
+if `$promisesOrValues` contains 0 items.
+
 #### some()
 
 ```php
@@ -538,6 +541,9 @@ The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
 reject). The rejection value will be an array of
 `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+
+The returned promise will also reject with a `React\Promise\Exception\LengthException`
+if `$promisesOrValues` contains less items than `$howMany`.
 
 #### map()
 
