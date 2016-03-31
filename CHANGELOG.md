@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+* 2.4.0 (2016-03-31)
+
+    * Support foreign thenables in `resolve()`.
+      Any object that provides a `then()` method is now assimilated to a trusted
+      promise that follows the state of this thenable (#52).
+    * Fix `some()` and `any()` for input arrays containing not enough items
+      (#34).
+
 * 2.3.0 (2016-03-24)
 
     * Allow cancellation of promises returned by functions working on promise
