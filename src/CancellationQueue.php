@@ -5,10 +5,6 @@ namespace React\Promise;
 class CancellationQueue
 {
     private $started = false;
-
-    /**
-     * @var CancellablePromiseInterface[]
-     */
     private $queue = [];
 
     public function __invoke()
@@ -21,13 +17,13 @@ class CancellationQueue
         $this->drain();
     }
 
-    public function enqueue($promise)
+    public function enqueue($cancellable)
     {
-        if (!$promise instanceof CancellablePromiseInterface) {
+        if (!method_exists($cancellable, 'then') || !method_exists($cancellable, 'cancel')) {
             return;
         }
 
-        $length = array_push($this->queue, $promise);
+        $length = array_push($this->queue, $cancellable);
 
         if ($this->started && 1 === $length) {
             $this->drain();
@@ -37,12 +33,13 @@ class CancellationQueue
     private function drain()
     {
         for ($i = key($this->queue); isset($this->queue[$i]); $i++) {
-            $promise = $this->queue[$i];
+            $cancellable = $this->queue[$i];
 
             $exception = null;
 
             try {
-                $promise->cancel();
+                $cancellable->cancel();
+            } catch (\Throwable $exception) {
             } catch (\Exception $exception) {
             }
 

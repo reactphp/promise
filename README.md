@@ -462,7 +462,10 @@ Creates a promise for the supplied `$promiseOrValue`.
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
-If `$promiseOrValue` is a promise, it will simply be returned.
+If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
+a trusted promise that follows the state of the thenable is returned.
+
+If `$promiseOrValue` is a promise, it will be returned as is.
 
 Note: The promise returned is always a promise implementing
 [ExtendedPromiseInterface](#extendedpromiseinterface). If you pass in a custom
@@ -520,6 +523,9 @@ will be the resolution value of the triggering item.
 The returned promise will only reject if *all* items in `$promisesOrValues` are
 rejected. The rejection value will be an array of all rejection reasons.
 
+The returned promise will also reject with a `React\Promise\Exception\LengthException`
+if `$promisesOrValues` contains 0 items.
+
 #### some()
 
 ```php
@@ -535,6 +541,9 @@ The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
 reject). The rejection value will be an array of
 `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+
+The returned promise will also reject with a `React\Promise\Exception\LengthException`
+if `$promisesOrValues` contains less items than `$howMany`.
 
 #### map()
 

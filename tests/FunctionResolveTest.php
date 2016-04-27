@@ -43,6 +43,35 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveAThenable()
+    {
+        $thenable = new SimpleFulfilledTestThenable();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo('foo'));
+
+        resolve($thenable)
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+    }
+
+    /** @test */
+    public function shouldResolveACancellableThenable()
+    {
+        $thenable = new SimpleTestCancellableThenable();
+
+        $promise = resolve($thenable);
+        $promise->cancel();
+
+        $this->assertTrue($thenable->cancelCalled);
+    }
+
+    /** @test */
     public function shouldRejectARejectedPromise()
     {
         $expected = 123;

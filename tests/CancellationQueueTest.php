@@ -5,9 +5,22 @@ namespace React\Promise;
 class CancellationQueueTest extends TestCase
 {
     /** @test */
-    public function ignoresNonCancellablePromises()
+    public function acceptsSimpleCancellableThenable()
     {
-        $p = new SimpleFulfilledTestPromise();
+        $p = new SimpleTestCancellableThenable();
+
+        $cancellationQueue = new CancellationQueue();
+        $cancellationQueue->enqueue($p);
+
+        $cancellationQueue();
+
+        $this->assertTrue($p->cancelCalled);
+    }
+
+    /** @test */
+    public function ignoresSimpleCancellable()
+    {
+        $p = new SimpleTestCancellable();
 
         $cancellationQueue = new CancellationQueue();
         $cancellationQueue->enqueue($p);

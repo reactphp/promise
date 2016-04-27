@@ -2,13 +2,13 @@
 
 namespace React\Promise;
 
-class SimpleRejectedTestPromise implements PromiseInterface
+class SimpleFulfilledTestThenable
 {
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         try {
-            if ($onRejected) {
-                $onRejected('foo');
+            if ($onFulfilled) {
+                $onFulfilled('foo');
             }
 
             return new self();
