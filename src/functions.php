@@ -225,17 +225,11 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
 
 function queue(Queue\QueueInterface $queue = null)
 {
-    static $globalQueue, $globalQueueUsed = false;
+    static $globalQueue;
 
     if ($queue) {
-        if ($globalQueueUsed) {
-            throw new \RuntimeException('Cannot set global queue instance because there is already an instance running.');
-        }
-
-        return $globalQueue = $queue;
+        return ($globalQueue = $queue);
     }
-
-    $globalQueueUsed = true;
 
     if (!$globalQueue) {
         $globalQueue = new Queue\SynchronousQueue();
