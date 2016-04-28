@@ -122,6 +122,44 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
+    public function shouldSupportVeryDeepNestedPromises()
+    {
+        $deferreds = [];
+
+        // @TODO Increase count once global-queue is merged
+        for ($i = 0; $i < 10; $i++) {
+            $deferreds[] = $d = new Deferred();
+            $p = $d->promise();
+
+            $last = $p;
+            for ($j = 0; $j < 10; $j++) {
+                $last = $last->then(function($result) {
+                    return $result;
+                });
+            }
+        }
+
+        $p = null;
+        foreach ($deferreds as $d) {
+            if ($p) {
+                $d->resolve($p);
+            }
+
+            $p = $d->promise();
+        }
+
+        $deferreds[0]->resolve(true);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(true));
+
+        $deferreds[0]->promise()->then($mock);
+    }
+
+    /** @test */
     public function returnsExtendePromiseForSimplePromise()
     {
         $promise = $this->getMock('React\Promise\PromiseInterface');
