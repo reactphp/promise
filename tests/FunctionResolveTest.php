@@ -126,13 +126,12 @@ class FunctionResolveTest extends TestCase
     {
         $deferreds = [];
 
-        // @TODO Increase count once global-queue is merged
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 250; $i++) {
             $deferreds[] = $d = new Deferred();
             $p = $d->promise();
 
             $last = $p;
-            for ($j = 0; $j < 10; $j++) {
+            for ($j = 0; $j < 250; $j++) {
                 $last = $last->then(function($result) {
                     return $result;
                 });
