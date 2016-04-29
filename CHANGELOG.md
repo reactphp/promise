@@ -7,6 +7,7 @@ CHANGELOG
 
     * Introduce a global task queue to eliminate recursion and reduce stack size
       when chaining promises.
+    * BC break: The progression API has been removed (#32).
 
 * 2.4.0 (2016-03-31)
 
