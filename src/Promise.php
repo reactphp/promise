@@ -61,15 +61,13 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result()->done($onFulfilled, $onRejected, $onProgress);
         }
 
-        $handlerId = $this->nextHandlerId;
-
         $this->handlers[$this->nextHandlerId] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
 
         if ($onProgress) {
-            $this->progressHandlers[$handlerId] = $onProgress;
+            $this->progressHandlers[$this->nextHandlerId] = $onProgress;
         }
 
         $this->nextHandlerId++;
