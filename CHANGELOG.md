@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+* 3.0.0 (xxxx-xx-xx)
+
+    New major release.
+
+    * Introduce a global task queue to eliminate recursion and reduce stack size
+      when chaining promises.
+
 * 2.4.0 (2016-03-31)
 
     * Support foreign thenables in `resolve()`.
