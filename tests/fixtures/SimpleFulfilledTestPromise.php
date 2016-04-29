@@ -4,7 +4,7 @@ namespace React\Promise;
 
 class SimpleFulfilledTestPromise implements PromiseInterface
 {
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         try {
             if ($onFulfilled) {

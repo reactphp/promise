@@ -10,12 +10,11 @@ class PromiseTest extends TestCase
 
     public function getPromiseTestAdapter(callable $canceller = null)
     {
-        $resolveCallback = $rejectCallback = $progressCallback = null;
+        $resolveCallback = $rejectCallback = null;
 
-        $promise = new Promise(function ($resolve, $reject, $progress) use (&$resolveCallback, &$rejectCallback, &$progressCallback) {
-            $resolveCallback  = $resolve;
-            $rejectCallback   = $reject;
-            $progressCallback = $progress;
+        $promise = new Promise(function ($resolve, $reject) use (&$resolveCallback, &$rejectCallback) {
+            $resolveCallback = $resolve;
+            $rejectCallback  = $reject;
         }, $canceller);
 
         return new CallbackPromiseAdapter([
@@ -24,7 +23,6 @@ class PromiseTest extends TestCase
             },
             'resolve' => $resolveCallback,
             'reject'  => $rejectCallback,
-            'notify'  => $progressCallback,
             'settle'  => $resolveCallback,
         ]);
     }

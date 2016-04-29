@@ -66,16 +66,6 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
-    public function progressShouldNotInvokeProgressHandlerForSettledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->settle();
-        $adapter->promise()->progress($this->expectCallableNever());
-        $adapter->notify();
-    }
-
-    /** @test */
     public function alwaysShouldReturnAPromiseForSettledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();

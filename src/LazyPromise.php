@@ -12,14 +12,14 @@ class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterfa
         $this->factory = $factory;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
-        return $this->promise()->then($onFulfilled, $onRejected, $onProgress);
+        return $this->promise()->then($onFulfilled, $onRejected);
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
-        return $this->promise()->done($onFulfilled, $onRejected, $onProgress);
+        return $this->promise()->done($onFulfilled, $onRejected);
     }
 
     public function otherwise(callable $onRejected)
@@ -30,11 +30,6 @@ class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterfa
     public function always(callable $onFulfilledOrRejected)
     {
         return $this->promise()->always($onFulfilledOrRejected);
-    }
-
-    public function progress(callable $onProgress)
-    {
-        return $this->promise()->progress($onProgress);
     }
 
     public function cancel()

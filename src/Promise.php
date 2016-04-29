@@ -8,7 +8,6 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     private $result;
 
     private $handlers = [];
-    private $progressHandlers = [];
 
     private $requiredCancelRequests = 0;
     private $cancelRequests = 0;
@@ -19,19 +18,19 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->call($resolver);
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
-            return $this->result()->then($onFulfilled, $onRejected, $onProgress);
+            return $this->result()->then($onFulfilled, $onRejected);
         }
 
         if (null === $this->canceller) {
-            return new static($this->resolver($onFulfilled, $onRejected, $onProgress));
+            return new static($this->resolver($onFulfilled, $onRejected));
         }
 
         $this->requiredCancelRequests++;
 
-        return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function () {
+        return new static($this->resolver($onFulfilled, $onRejected), function () {
             if (++$this->cancelRequests < $this->requiredCancelRequests) {
                 return;
             }
@@ -40,20 +39,16 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         });
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
-            return $this->result()->done($onFulfilled, $onRejected, $onProgress);
+            return $this->result()->done($onFulfilled, $onRejected);
         }
 
         $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
-
-        if ($onProgress) {
-            $this->progressHandlers[] = $onProgress;
-        }
     }
 
     public function otherwise(callable $onRejected)
@@ -80,11 +75,6 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         });
     }
 
-    public function progress(callable $onProgress)
-    {
-        return $this->then(null, null, $onProgress);
-    }
-
     public function cancel()
     {
         if (null === $this->canceller || null !== $this->result) {
@@ -97,30 +87,14 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->call($canceller);
     }
 
-    private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    private function resolver(callable $onFulfilled = null, callable $onRejected = null)
     {
-        return function ($resolve, $reject, $notify) use ($onFulfilled, $onRejected, $onProgress) {
-            if ($onProgress) {
-                $progressHandler = function ($update) use ($notify, $onProgress) {
-                    try {
-                        $notify($onProgress($update));
-                    } catch (\Throwable $e) {
-                        $notify($e);
-                    } catch (\Exception $e) {
-                        $notify($e);
-                    }
-                };
-            } else {
-                $progressHandler = $notify;
-            }
-
-            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
+        return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
+            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
                 $promise
                     ->then($onFulfilled, $onRejected)
-                    ->done($resolve, $reject, $progressHandler);
+                    ->done($resolve, $reject);
             };
-
-            $this->progressHandlers[] = $progressHandler;
         };
     }
 
@@ -142,26 +116,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->settle(reject($reason));
     }
 
-    private function notify($update = null)
-    {
-        if (null !== $this->result) {
-            return;
-        }
-
-        $handlers = $this->progressHandlers;
-
-        queue()->enqueue(function () use ($handlers, $update) {
-            foreach ($handlers as $handler) {
-                $handler($update);
-            }
-        });
-    }
-
     private function settle(ExtendedPromiseInterface $result)
     {
         $handlers = $this->handlers;
 
-        $this->progressHandlers = $this->handlers = [];
+        $this->handlers = [];
         $this->result = $result;
 
         foreach ($handlers as $handler) {
@@ -187,9 +146,6 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 },
                 function ($reason = null) {
                     $this->reject($reason);
-                },
-                function ($update = null) {
-                    $this->notify($update);
                 }
             );
         } catch (\Throwable $e) {

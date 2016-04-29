@@ -15,7 +15,7 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
         $this->value = $value;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null === $onFulfilled) {
             return $this;
@@ -34,7 +34,7 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
         });
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null === $onFulfilled) {
             return;
@@ -61,11 +61,6 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
                 return $value;
             });
         });
-    }
-
-    public function progress(callable $onProgress)
-    {
-        return $this;
     }
 
     public function cancel()

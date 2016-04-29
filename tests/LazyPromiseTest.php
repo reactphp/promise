@@ -22,7 +22,6 @@ class LazyPromiseTest extends TestCase
             },
             'resolve' => [$d, 'resolve'],
             'reject'  => [$d, 'reject'],
-            'notify'  => [$d, 'progress'],
             'settle'  => [$d, 'resolve'],
         ]);
     }

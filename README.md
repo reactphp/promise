@@ -19,14 +19,12 @@ Table of Contents
      * [Deferred::promise()](#deferredpromise)
      * [Deferred::resolve()](#deferredresolve)
      * [Deferred::reject()](#deferredreject)
-     * [Deferred::notify()](#deferrednotify)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
    * [ExtendedPromiseInterface](#extendedpromiseinterface)
         * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
         * [ExtendedPromiseInterface::otherwise()](#extendedpromiseinterfaceotherwise)
         * [ExtendedPromiseInterface::always()](#extendedpromiseinterfacealways)
-        * [ExtendedPromiseInterface::progress()](#extendedpromiseinterfaceprogress)
    * [CancellablePromiseInterface](#cancellablepromiseinterface)
         * [CancellablePromiseInterface::cancel()](#cancellablepromiseinterfacecancel)
    * [Promise](#promise-1)
@@ -49,7 +47,6 @@ Table of Contents
      * [Resolution forwarding](#resolution-forwarding)
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
-     * [Progress event forwarding](#progress-event-forwarding)
    * [done() vs. then()](#done-vs-then)
 5. [Credits](#credits)
 6. [License](#license)
@@ -96,14 +93,11 @@ $promise = $deferred->promise();
 
 $deferred->resolve(mixed $value = null);
 $deferred->reject(mixed $reason = null);
-$deferred->notify(mixed $update = null);
 ```
 
 The `promise` method returns the promise of the deferred.
 
 The `resolve` and `reject` methods control the state of the deferred.
-
-The `notify` method is for progress notification.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
 See [Promise](#promise-1) for more information.
@@ -144,18 +138,6 @@ All consumers are notified by having `$onRejected` (which they registered via
 If `$reason` itself is a promise, the promise will be rejected with the outcome
 of this promise regardless whether it fulfills or rejects.
 
-#### Deferred::notify()
-
-```php
-$deferred->notify(mixed $update = null);
-```
-
-Triggers progress notifications, to indicate to consumers that the computation
-is making progress toward its result.
-
-All consumers are notified by having `$onProgress` (which they registered via
-`$promise->then()`) called with `$update`.
-
 ### PromiseInterface
 
 The promise interface provides the common interface for all promise
@@ -177,22 +159,19 @@ Neither its state nor its result (or error) can be modified.
 #### PromiseInterface::then()
 
 ```php
-$transformedPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
+$transformedPromise = $promise->then(callable $onFulfilled = null, callable $onRejected = null);
 ```
 
 Transforms a promise's value by applying a function to the promise's fulfillment
 or rejection value. Returns a new promise for the transformed result.
 
-The `then()` method registers new fulfilled, rejection and progress handlers
-with a promise (all parameters are optional):
+The `then()` method registers new fulfilled andrejection handlers with a promise
+(all parameters are optional):
 
   * `$onFulfilled` will be invoked once the promise is fulfilled and passed
     the result as the first argument.
   * `$onRejected` will be invoked once the promise is rejected and passed the
     reason as the first argument.
-  * `$onProgress` will be invoked whenever the producer of the promise
-    triggers progress notifications and passed a single argument (whatever it
-    wants) to indicate progress.
 
 It returns a new promise that will fulfill with the return value of either
 `$onFulfilled` or `$onRejected`, whichever is called, or will reject with
@@ -205,7 +184,6 @@ the same call to `then()`:
      never both.
   2. `$onFulfilled` and `$onRejected` will never be called more
      than once.
-  3. `$onProgress` may be called multiple times.
 
 #### See also
 
@@ -229,7 +207,7 @@ and utility methods which are not part of the Promises/A specification.
 #### ExtendedPromiseInterface::done()
 
 ```php
-$promise->done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
+$promise->done(callable $onFulfilled = null, callable $onRejected = null);
 ```
 
 Consumes the promise's ultimate value if the promise fulfills, or handles the
@@ -319,18 +297,6 @@ return doSomething()
     ->always('cleanup');
 ```
 
-#### ExtendedPromiseInterface::progress()
-
-```php
-$promise->progress(callable $onProgress);
-```
-
-Registers a handler for progress updates from promise. It is a shortcut for:
-
-```php
-$promise->then(null, null, $onProgress);
-```
-
 ### CancellablePromiseInterface
 
 A cancellable promise provides a mechanism for consumers to notify the creator
@@ -362,18 +328,16 @@ Creates a promise whose state is controlled by the functions passed to
 `$resolver`.
 
 ```php
-$resolver = function (callable $resolve, callable $reject, callable $notify) {
+$resolver = function (callable $resolve, callable $reject) {
     // Do some work, possibly asynchronously, and then
-    // resolve or reject. You can notify of progress events
-    // along the way if you want/need.
+    // resolve or reject.
 
     $resolve($awesomeResult);
     // or $resolve($anotherPromise);
     // or $reject($nastyError);
-    // or $notify($progressNotification);
 };
 
-$canceller = function (callable $resolve, callable $reject, callable $progress) {
+$canceller = function (callable $resolve, callable $reject) {
     // Cancel/abort any running operations like network connections, streams etc.
 
     $reject(new \Exception('Promise cancelled'));
@@ -391,7 +355,6 @@ function which both will be called with 3 arguments:
     When called with another promise, e.g. `$resolve($otherPromise)`, promise's
     fate will be equivalent to that of `$otherPromise`.
   * `$reject($reason)` - Function that rejects the promise.
-  * `$notify($update)` - Function that issues progress events for the promise.
 
 If the resolver or canceller throw an exception, the promise will be rejected
 with that thrown exception as the rejection reason.
@@ -605,9 +568,6 @@ getAwesomeResultPromise()
         },
         function ($reason) {
             // Deferred rejected, do something with $reason
-        },
-        function ($update) {
-            // Progress notification triggered, do something with $update
         }
     );
 ```
@@ -717,38 +677,6 @@ $deferred->promise()
     });
 
 $deferred->resolve(1);  // Prints "Mixed 4"
-```
-
-#### Progress event forwarding
-
-In the same way as resolution and rejection handlers, your progress handler
-**MUST** return a progress event to be propagated to the next link in the chain.
-If you return nothing, `null` will be propagated.
-
-Also in the same way as resolutions and rejections, if you don't register a
-progress handler, the update will be propagated through.
-
-If your progress handler throws an exception, the exception will be propagated
-to the next link in the chain. The best thing to do is to ensure your progress
-handlers do not throw exceptions.
-
-This gives you the opportunity to transform progress events at each step in the
-chain so that they are meaningful to the next step. It also allows you to choose
-not to transform them, and simply let them propagate untransformed, by not
-registering a progress handler.
-
-```php
-$deferred = new React\Promise\Deferred();
-
-$deferred->promise()
-    ->progress(function ($update) {
-        return $update + 1;
-    })
-    ->progress(function ($update) {
-        echo 'Progress ' . $update; // 2
-    });
-
-$deferred->notify(1);  // Prints "Progress 2"
 ```
 
 ### done() vs. then()

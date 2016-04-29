@@ -113,7 +113,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function notifyShouldInvokeOtherwiseHandler()
+    public function rejectShouldInvokeOtherwiseHandler()
     {
         $adapter = $this->getPromiseTestAdapter();
 

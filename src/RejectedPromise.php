@@ -15,7 +15,7 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
         $this->reason = $reason;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null === $onRejected) {
             return $this;
@@ -34,7 +34,7 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
         });
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         queue()->enqueue(function () use ($onRejected) {
             if (null === $onRejected) {
@@ -69,11 +69,6 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
                 return new RejectedPromise($reason);
             });
         });
-    }
-
-    public function progress(callable $onProgress)
-    {
-        return $this;
     }
 
     public function cancel()

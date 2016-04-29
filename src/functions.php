@@ -15,8 +15,8 @@ function resolve($promiseOrValue = null)
             $canceller = [$promiseOrValue, 'cancel'];
         }
 
-        return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
-            $promiseOrValue->then($resolve, $reject, $notify);
+        return new Promise(function ($resolve, $reject) use ($promiseOrValue) {
+            $promiseOrValue->then($resolve, $reject);
         }, $canceller);
     }
 
@@ -46,9 +46,9 @@ function race($promisesOrValues)
     $cancellationQueue = new CancellationQueue();
     $cancellationQueue->enqueue($promisesOrValues);
 
-    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $cancellationQueue) {
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue) {
         resolve($promisesOrValues)
-            ->done(function ($array) use ($cancellationQueue, $resolve, $reject, $notify) {
+            ->done(function ($array) use ($cancellationQueue, $resolve, $reject) {
                 if (!is_array($array) || !$array) {
                     $resolve();
                     return;
@@ -68,9 +68,9 @@ function race($promisesOrValues)
                     $cancellationQueue->enqueue($promiseOrValue);
 
                     resolve($promiseOrValue)
-                        ->done($fulfiller, $rejecter, $notify);
+                        ->done($fulfiller, $rejecter);
                 }
-            }, $reject, $notify);
+            }, $reject);
     }, $cancellationQueue);
 }
 
@@ -87,9 +87,9 @@ function some($promisesOrValues, $howMany)
     $cancellationQueue = new CancellationQueue();
     $cancellationQueue->enqueue($promisesOrValues);
 
-    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $howMany, $cancellationQueue) {
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $howMany, $cancellationQueue) {
         resolve($promisesOrValues)
-            ->done(function ($array) use ($howMany, $cancellationQueue, $resolve, $reject, $notify) {
+            ->done(function ($array) use ($howMany, $cancellationQueue, $resolve, $reject) {
                 if (!is_array($array) || $howMany < 1) {
                     $resolve([]);
                     return;
@@ -143,9 +143,9 @@ function some($promisesOrValues, $howMany)
                     $cancellationQueue->enqueue($promiseOrValue);
 
                     resolve($promiseOrValue)
-                        ->done($fulfiller, $rejecter, $notify);
+                        ->done($fulfiller, $rejecter);
                 }
-            }, $reject, $notify);
+            }, $reject);
     }, $cancellationQueue);
 }
 
@@ -154,9 +154,9 @@ function map($promisesOrValues, callable $mapFunc)
     $cancellationQueue = new CancellationQueue();
     $cancellationQueue->enqueue($promisesOrValues);
 
-    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
         resolve($promisesOrValues)
-            ->done(function ($array) use ($mapFunc, $cancellationQueue, $resolve, $reject, $notify) {
+            ->done(function ($array) use ($mapFunc, $cancellationQueue, $resolve, $reject) {
                 if (!is_array($array) || !$array) {
                     $resolve([]);
                     return;
@@ -178,11 +178,10 @@ function map($promisesOrValues, callable $mapFunc)
                                     $resolve($values);
                                 }
                             },
-                            $reject,
-                            $notify
+                            $reject
                         );
                 }
-            }, $reject, $notify);
+            }, $reject);
     }, $cancellationQueue);
 }
 
@@ -191,9 +190,9 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
     $cancellationQueue = new CancellationQueue();
     $cancellationQueue->enqueue($promisesOrValues);
 
-    return new Promise(function ($resolve, $reject, $notify) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
         resolve($promisesOrValues)
-            ->done(function ($array) use ($reduceFunc, $initialValue, $cancellationQueue, $resolve, $reject, $notify) {
+            ->done(function ($array) use ($reduceFunc, $initialValue, $cancellationQueue, $resolve, $reject) {
                 if (!is_array($array)) {
                     $array = [];
                 }
@@ -218,8 +217,8 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
                 $cancellationQueue->enqueue($initialValue);
 
                 array_reduce($array, $wrappedReduceFunc, resolve($initialValue))
-                    ->done($resolve, $reject, $notify);
-            }, $reject, $notify);
+                    ->done($resolve, $reject);
+            }, $reject);
     }, $cancellationQueue);
 }
 
