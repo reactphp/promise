@@ -22,6 +22,7 @@ class SynchronousQueue implements QueueInterface
 
             try {
                 $task();
+            } catch (\Throwable $exception) {
             } catch (\Exception $exception) {
             }
 
