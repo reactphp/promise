@@ -148,20 +148,24 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return;
         }
 
-        foreach ($this->progressHandlers as $handler) {
-            $handler($update);
-        }
+        $handlers = $this->progressHandlers;
+
+        queue()->enqueue(function () use ($handlers, $update) {
+            foreach ($handlers as $handler) {
+                $handler($update);
+            }
+        });
     }
 
-    private function settle(ExtendedPromiseInterface $promise)
+    private function settle(ExtendedPromiseInterface $result)
     {
         $handlers = $this->handlers;
 
         $this->progressHandlers = $this->handlers = [];
-        $this->result = $promise;
+        $this->result = $result;
 
         foreach ($handlers as $handler) {
-            $handler($promise);
+            $handler($result);
         }
     }
 

@@ -223,6 +223,21 @@ function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
     }, $cancellationQueue);
 }
 
+function queue(Queue\QueueInterface $queue = null)
+{
+    static $globalQueue;
+
+    if ($queue) {
+        return ($globalQueue = $queue);
+    }
+
+    if (!$globalQueue) {
+        $globalQueue = new Queue\SynchronousQueue();
+    }
+
+    return $globalQueue;
+}
+
 // Internal functions
 function _checkTypehint(callable $callback, $object)
 {
