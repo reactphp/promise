@@ -13,6 +13,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     private $requiredCancelRequests = 0;
     private $cancelRequests = 0;
 
+    private $nextHandlerId = '0';
+
     public function __construct(callable $resolver, callable $canceller = null)
     {
         $this->canceller = $canceller;
@@ -25,13 +27,26 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result()->then($onFulfilled, $onRejected, $onProgress);
         }
 
+        $handlerId = $this->nextHandlerId;
+        $cleanUpFn = function () use ($handlerId) {
+            if (isset($this->handlers[$handlerId])) {
+                unset($this->handlers[$handlerId]);
+            }
+            if (isset($this->progressHandlers[$handlerId])) {
+                unset($this->progressHandlers[$handlerId]);
+            }
+        };
+        $this->nextHandlerId++;
+
         if (null === $this->canceller) {
-            return new static($this->resolver($onFulfilled, $onRejected, $onProgress));
+            return new static($this->resolver($handlerId, $onFulfilled, $onRejected, $onProgress), $cleanUpFn);
         }
 
         $this->requiredCancelRequests++;
 
-        return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function () {
+        return new static($this->resolver($handlerId, $onFulfilled, $onRejected, $onProgress), function () use ($cleanUpFn) {
+            $cleanUpFn();
+
             if (++$this->cancelRequests < $this->requiredCancelRequests) {
                 return;
             }
@@ -46,14 +61,18 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result()->done($onFulfilled, $onRejected, $onProgress);
         }
 
-        $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $handlerId = $this->nextHandlerId;
+
+        $this->handlers[$this->nextHandlerId] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
 
         if ($onProgress) {
-            $this->progressHandlers[] = $onProgress;
+            $this->progressHandlers[$handlerId] = $onProgress;
         }
+
+        $this->nextHandlerId++;
     }
 
     public function otherwise(callable $onRejected)
@@ -97,9 +116,9 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->call($canceller);
     }
 
-    private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+    private function resolver($handlerId, callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
-        return function ($resolve, $reject, $notify) use ($onFulfilled, $onRejected, $onProgress) {
+        return function ($resolve, $reject, $notify) use ($handlerId, $onFulfilled, $onRejected, $onProgress) {
             if ($onProgress) {
                 $progressHandler = function ($update) use ($notify, $onProgress) {
                     try {
@@ -114,13 +133,13 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 $progressHandler = $notify;
             }
 
-            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
+            $this->handlers[$handlerId] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject, $progressHandler);
             };
 
-            $this->progressHandlers[] = $progressHandler;
+            $this->progressHandlers[$handlerId] = $progressHandler;
         };
     }
 
