@@ -227,38 +227,6 @@ class FunctionReduceTest extends TestCase
     }
 
     /** @test */
-    public function shouldAcceptAPromiseForAnArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo('123'));
-
-        reduce(
-            resolve([1, 2, 3]),
-            $this->append(),
-            ''
-        )->then($mock);
-    }
-
-    /** @test */
-    public function shouldResolveToInitialValueWhenInputPromiseDoesNotResolveToAnArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        reduce(
-            resolve(1),
-            $this->plus(),
-            1
-        )->then($mock);
-    }
-
-    /** @test */
     public function shouldProvideCorrectBasisValue()
     {
         $insertIntoArray = function ($arr, $val, $i) {
@@ -286,37 +254,6 @@ class FunctionReduceTest extends TestCase
         $d3->resolve(3);
         $d1->resolve(1);
         $d2->resolve(2);
-    }
-
-    /** @test */
-    public function shouldRejectWhenInputPromiseRejects()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        reduce(
-            reject(),
-            $this->plus(),
-            1
-        )->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function shouldCancelInputPromise()
-    {
-        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
-        $mock
-            ->expects($this->once())
-            ->method('cancel');
-
-        reduce(
-            $mock,
-            $this->plus(),
-            1
-        )->cancel();
     }
 
     /** @test */

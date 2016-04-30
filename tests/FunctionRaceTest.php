@@ -93,59 +93,6 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldAcceptAPromiseForAnArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        race(
-            resolve([1, 2, 3])
-        )->then($mock);
-    }
-
-    /** @test */
-    public function shouldResolveToNullWhenInputPromiseDoesNotResolveToArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        race(
-            resolve(1)
-        )->then($mock);
-    }
-
-    /** @test */
-    public function shouldRejectWhenInputPromiseRejects()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        race(
-            reject()
-        )->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function shouldCancelInputPromise()
-    {
-        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
-        $mock
-            ->expects($this->once())
-            ->method('cancel');
-
-        race($mock)->cancel();
-    }
-
-    /** @test */
     public function shouldCancelInputArrayPromises()
     {
         $mock1 = $this->getMock('React\Promise\CancellablePromiseInterface');

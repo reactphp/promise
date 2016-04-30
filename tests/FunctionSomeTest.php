@@ -47,21 +47,6 @@ class FunctionSomeTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveToEmptyArrayWithNonArrayInput()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo([]));
-
-        some(
-            null,
-            1
-        )->then($mock);
-    }
-
-    /** @test */
     public function shouldResolveValuesArray()
     {
         $mock = $this->createCallableMock();
@@ -121,20 +106,6 @@ class FunctionSomeTest extends TestCase
         )->then($this->expectCallableNever(), $mock);
     }
 
-    /** @test */
-    public function shouldAcceptAPromiseForAnArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo([1, 2]));
-
-        some(
-            resolve([1, 2, 3]),
-            2
-        )->then($mock);
-    }
 
     /** @test */
     public function shouldResolveWithEmptyArrayIfHowManyIsLessThanOne()
@@ -149,47 +120,6 @@ class FunctionSomeTest extends TestCase
             [1],
             0
         )->then($mock);
-    }
-
-    /** @test */
-    public function shouldResolveToEmptyArrayWhenInputPromiseDoesNotResolveToArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo([]));
-
-        some(
-            resolve(1),
-            1
-        )->then($mock);
-    }
-
-    /** @test */
-    public function shouldRejectWhenInputPromiseRejects()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        some(
-            reject(),
-            1
-        )->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function shouldCancelInputPromise()
-    {
-        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
-        $mock
-            ->expects($this->once())
-            ->method('cancel');
-
-        some($mock, 1)->cancel();
     }
 
     /** @test */

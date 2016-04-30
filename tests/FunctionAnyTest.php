@@ -25,19 +25,6 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveToNullWithNonArrayInput()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        any(null)
-            ->then($mock);
-    }
-
-    /** @test */
     public function shouldResolveWithAnInputValue()
     {
         $mock = $this->createCallableMock();
@@ -90,32 +77,6 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldAcceptAPromiseForAnArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        any(resolve([1, 2, 3]))
-            ->then($mock);
-    }
-
-    /** @test */
-    public function shouldResolveToNullArrayWhenInputPromiseDoesNotResolveToArray()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        any(resolve(1))
-            ->then($mock);
-    }
-
-    /** @test */
     public function shouldNotRelyOnArryIndexesWhenUnwrappingToASingleResolutionValue()
     {
         $mock = $this->createCallableMock();
@@ -132,30 +93,6 @@ class FunctionAnyTest extends TestCase
 
         $d2->resolve(2);
         $d1->resolve(1);
-    }
-
-    /** @test */
-    public function shouldRejectWhenInputPromiseRejects()
-    {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
-        any(reject())
-            ->then($this->expectCallableNever(), $mock);
-    }
-
-    /** @test */
-    public function shouldCancelInputPromise()
-    {
-        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
-        $mock
-            ->expects($this->once())
-            ->method('cancel');
-
-        any($mock)->cancel();
     }
 
     /** @test */
