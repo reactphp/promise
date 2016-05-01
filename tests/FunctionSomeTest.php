@@ -216,7 +216,6 @@ class FunctionSomeTest extends TestCase
             ->expects($this->never())
             ->method('__invoke');
 
-
         $deferred = New Deferred($mock);
         $deferred->resolve();
 
@@ -225,6 +224,6 @@ class FunctionSomeTest extends TestCase
             ->expects($this->once())
             ->method('cancel');
 
-        some([$deferred->promise(), $mock2], 1)->cancel();
+        some([$deferred->promise(), $mock2], 1);
     }
 }
