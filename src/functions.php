@@ -128,7 +128,7 @@ function some($promisesOrValues, $howMany)
                         }
                     };
 
-                    $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
+                    $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject, $cancellationQueue) {
                         if ($toResolve < 1 || $toReject < 1) {
                             return;
                         }
@@ -136,6 +136,7 @@ function some($promisesOrValues, $howMany)
                         $reasons[$i] = $reason;
 
                         if (0 === --$toReject) {
+                            $cancellationQueue();
                             $reject($reasons);
                         }
                     };
