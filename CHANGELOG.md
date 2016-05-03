@@ -13,6 +13,11 @@ CHANGELOG
       as input. Before, arrays and promises which resolve to an array were
       supported, other input types resolved to empty arrays or `null`. (#35).
 
+* 2.4.1 (2016-05-03)
+
+    * Fix `some()` not cancelling pending promises when too much input promises
+      reject (16ff799).
+
 * 2.4.0 (2016-03-31)
 
     * Support foreign thenables in `resolve()`.
