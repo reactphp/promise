@@ -7,6 +7,10 @@ A lightweight implementation of
 [![Build Status](https://travis-ci.org/reactphp/promise.svg?branch=master)](http://travis-ci.org/reactphp/promise)
 [![Coverage Status](https://coveralls.io/repos/github/reactphp/promise/badge.svg?branch=master)](https://coveralls.io/github/reactphp/promise?branch=master)
 
+> The master branch contains the code for the upcoming 3.0 release.
+> For the code of the current stable 2.x release, checkout the 
+> [2.0 branch](https://github.com/reactphp/promise/tree/2.0).
+
 Table of Contents
 -----------------
 
