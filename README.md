@@ -169,7 +169,7 @@ $transformedPromise = $promise->then(callable $onFulfilled = null, callable $onR
 Transforms a promise's value by applying a function to the promise's fulfillment
 or rejection value. Returns a new promise for the transformed result.
 
-The `then()` method registers new fulfilled andrejection handlers with a promise
+The `then()` method registers new fulfilled and rejection handlers with a promise
 (all parameters are optional):
 
   * `$onFulfilled` will be invoked once the promise is fulfilled and passed
