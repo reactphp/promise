@@ -9,7 +9,7 @@ A lightweight implementation of
 
 > The master branch contains the code for the upcoming 3.0 release.
 > For the code of the current stable 2.x release, checkout the 
-> [2.0 branch](https://github.com/reactphp/promise/tree/2.0).
+> [2.x branch](https://github.com/reactphp/promise/tree/2.x).
 
 Table of Contents
 -----------------
