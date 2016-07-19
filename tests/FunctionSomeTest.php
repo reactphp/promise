@@ -209,7 +209,7 @@ class FunctionSomeTest extends TestCase
     }
 
     /** @test */
-    public function shouldCancelOtherPendingInputArrayPromisesIfEnoughPromisesFulfill()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfEnoughPromisesFulfill()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -221,14 +221,14 @@ class FunctionSomeTest extends TestCase
 
         $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
         $mock2
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('cancel');
 
         some([$deferred->promise(), $mock2], 1);
     }
 
     /** @test */
-    public function shouldCancelOtherPendingInputArrayPromisesIfEnoughPromisesReject()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfEnoughPromisesReject()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -240,7 +240,7 @@ class FunctionSomeTest extends TestCase
 
         $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
         $mock2
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('cancel');
 
         some([$deferred->promise(), $mock2], 2);

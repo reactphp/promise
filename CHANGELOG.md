@@ -1,6 +1,12 @@
 CHANGELOG for 2.x
 =================
 
+* 2.4.2 (xxxx-xx-xx)
+
+    * Revert automatic cancellation of pending collection promises once the
+      output promise resolves. This was introduced in 42d86b7 and was both
+      unintended and backward incompatible.
+
 * 2.4.1 (2016-05-03)
 
     * Fix `some()` not cancelling pending promises when too much input promises
