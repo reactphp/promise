@@ -4,8 +4,9 @@ CHANGELOG for 2.x
 * 2.4.2 (xxxx-xx-xx)
 
     * Revert automatic cancellation of pending collection promises once the
-      output promise resolves. This was introduced in 42d86b7 and was both
-      unintended and backward incompatible.
+      output promise resolves. This was introduced in 42d86b7 (PR #36, released
+      in [v2.3.0](https://github.com/reactphp/promise/releases/tag/v2.3.0)) and
+      was both unintended and backward incompatible.
 
 * 2.4.1 (2016-05-03)
 
