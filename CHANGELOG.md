@@ -1,7 +1,7 @@
 CHANGELOG for 2.x
 =================
 
-* 2.4.2 (xxxx-xx-xx)
+* 2.5.0 (xxxx-xx-xx)
 
     * Revert automatic cancellation of pending collection promises once the
       output promise resolves. This was introduced in 42d86b7 (PR #36, released
