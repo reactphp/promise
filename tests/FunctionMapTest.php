@@ -141,7 +141,9 @@ class FunctionMapTest extends TestCase
     /** @test */
     public function shouldCancelInputPromise()
     {
-        $mock = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock
             ->expects($this->once())
             ->method('cancel');
@@ -155,12 +157,16 @@ class FunctionMapTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $mock1 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock1 = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock1
             ->expects($this->once())
             ->method('cancel');
 
-        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2 = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock2
             ->expects($this->once())
             ->method('cancel');
