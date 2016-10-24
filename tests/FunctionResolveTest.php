@@ -61,6 +61,20 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveADonable()
+    {
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
+
+        $exception = new \Exception('UnhandledRejectionException');
+
+        $donable = new SimpleRejectedTestDonable($exception);
+
+        resolve($donable)
+            ->then()
+            ->done();
+    }
+
+    /** @test */
     public function shouldResolveACancellableThenable()
     {
         $thenable = new SimpleTestCancellableThenable();

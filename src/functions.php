@@ -15,6 +15,12 @@ function resolve($promiseOrValue = null)
             $canceller = [$promiseOrValue, 'cancel'];
         }
 
+        if (method_exists($promiseOrValue, 'done')) {
+            return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
+                $promiseOrValue->done($resolve, $reject, $notify);
+            }, $canceller);
+        }
+
         return new Promise(function ($resolve, $reject, $notify) use ($promiseOrValue) {
             $promiseOrValue->then($resolve, $reject, $notify);
         }, $canceller);
