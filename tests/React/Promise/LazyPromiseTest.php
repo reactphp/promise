@@ -104,7 +104,9 @@ class LazyPromiseTest extends TestCase
     /** @test */
     public function shouldNotInvokeCancellationHandlerIfPromiseIsNotCancellable()
     {
-        $mock = $this->getMock('React\\Promise\\PromiseInterface');
+        $mock = $this
+            ->getMockBuilder('React\\Promise\\PromiseInterface')
+            ->getMock();
 
         $factory = function () use ($mock){
             return $mock;

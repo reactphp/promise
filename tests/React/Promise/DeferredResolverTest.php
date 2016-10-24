@@ -11,7 +11,9 @@ class DeferredResolverTest extends TestCase
     /** @test */
     public function shouldForwardToDeferred()
     {
-        $mock = $this->getMock('React\\Promise\\Deferred');
+        $mock = $this
+            ->getMockBuilder('React\\Promise\\Deferred')
+            ->getMock();
         $mock
             ->expects($this->once())
             ->method('resolve')
