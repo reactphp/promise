@@ -98,12 +98,16 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $mock1 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock1 = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock1
             ->expects($this->once())
             ->method('cancel');
 
-        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2 = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock2
             ->expects($this->once())
             ->method('cancel');
@@ -123,7 +127,9 @@ class FunctionAnyTest extends TestCase
         $deferred = New Deferred($mock);
         $deferred->resolve();
 
-        $mock2 = $this->getMock('React\Promise\CancellablePromiseInterface');
+        $mock2 = $this
+            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMock();
         $mock2
             ->expects($this->once())
             ->method('cancel');
