@@ -8,6 +8,22 @@ CHANGELOG for 2.x
       in [v2.3.0](https://github.com/reactphp/promise/releases/tag/v2.3.0)) and
       was both unintended and backward incompatible.
 
+      If you need automatic cancellation, you can use something like:
+
+      ```php
+      function allAndCancel(array $promises)
+      {
+           return \React\Promise\all($promises)
+               ->always(function() use ($promises) {
+                   foreach ($promises as $promise) {
+                       if ($promise instanceof \React\Promise\CancellablePromiseInterface) {
+                           $promise->cancel();
+                       }
+                   }
+              });
+      }
+      ```
+
 * 2.4.1 (2016-05-03)
 
     * Fix `some()` not cancelling pending promises when too much input promises
