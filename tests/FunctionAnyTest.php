@@ -116,7 +116,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
     {
         $mock = $this->createCallableMock();
         $mock
@@ -131,7 +131,7 @@ class FunctionAnyTest extends TestCase
             ->getMockBuilder('React\Promise\CancellablePromiseInterface')
             ->getMock();
         $mock2
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('cancel');
 
         some([$deferred->promise(), $mock2], 1)->cancel();

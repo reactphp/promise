@@ -50,21 +50,11 @@ function race(array $promisesOrValues)
     $cancellationQueue = new CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue) {
-        $fulfiller = function ($value) use ($cancellationQueue, $resolve) {
-            $cancellationQueue();
-            $resolve($value);
-        };
-
-        $rejecter = function ($reason) use ($cancellationQueue, $reject) {
-            $cancellationQueue();
-            $reject($reason);
-        };
-
         foreach ($promisesOrValues as $promiseOrValue) {
             $cancellationQueue->enqueue($promiseOrValue);
 
             resolve($promiseOrValue)
-                ->done($fulfiller, $rejecter);
+                ->done($resolve, $reject);
         }
     }, $cancellationQueue);
 }
@@ -108,7 +98,7 @@ function some(array $promisesOrValues, $howMany)
         $reasons   = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
-            $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve, $cancellationQueue) {
+            $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve) {
                 if ($toResolve < 1 || $toReject < 1) {
                     return;
                 }
@@ -116,12 +106,11 @@ function some(array $promisesOrValues, $howMany)
                 $values[$i] = $val;
 
                 if (0 === --$toResolve) {
-                    $cancellationQueue();
                     $resolve($values);
                 }
             };
 
-            $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject, $cancellationQueue) {
+            $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
                 if ($toResolve < 1 || $toReject < 1) {
                     return;
                 }
@@ -129,7 +118,6 @@ function some(array $promisesOrValues, $howMany)
                 $reasons[$i] = $reason;
 
                 if (0 === --$toReject) {
-                    $cancellationQueue();
                     $reject($reasons);
                 }
             };
