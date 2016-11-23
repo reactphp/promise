@@ -61,4 +61,22 @@ class FunctionRejectTest extends TestCase
                 $mock
             );
     }
+
+    /** @test */
+    public function shouldRejectAThenable()
+    {
+        $thenable = new SimpleRejectedTestThenable();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo('foo'));
+
+        reject($thenable)
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+    }
 }
