@@ -155,6 +155,16 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
     private function settle(ExtendedPromiseInterface $promise)
     {
+        if ($promise instanceof LazyPromise) {
+            $promise = $promise->promise();
+        }
+
+        if ($promise === $this) {
+            $promise = new RejectedPromise(
+                new \LogicException('Cannot resolve a promise with itself.')
+            );
+        }
+
         $handlers = $this->handlers;
 
         $this->progressHandlers = $this->handlers = [];
