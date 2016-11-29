@@ -2,7 +2,9 @@
 
 namespace React\Promise;
 
-class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+use Interop\Async\Promise as AsyncInteropPromise;
+
+class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
 {
     private $reason;
 
@@ -72,5 +74,13 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
 
     public function cancel()
     {
+    }
+
+    public function when(callable $onResolved)
+    {
+        $onResolved(
+            UnhandledRejectionException::nullOrResolve($this->reason),
+            null
+        );
     }
 }

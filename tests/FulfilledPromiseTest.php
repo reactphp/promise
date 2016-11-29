@@ -7,7 +7,8 @@ use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 class FulfilledPromiseTest extends TestCase
 {
     use PromiseTest\PromiseSettledTestTrait,
-        PromiseTest\PromiseFulfilledTestTrait;
+        PromiseTest\PromiseFulfilledTestTrait,
+        PromiseTest\AsyncInteropResolvedTestTrait;
 
     public function getPromiseTestAdapter(callable $canceller = null)
     {

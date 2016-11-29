@@ -2,7 +2,9 @@
 
 namespace React\Promise;
 
-class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+use Interop\Async\Promise as AsyncInteropPromise;
+
+class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
 {
     private $factory;
     private $promise;
@@ -40,6 +42,11 @@ class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterfa
     public function cancel()
     {
         return $this->promise()->cancel();
+    }
+
+    public function when(callable $onResolved)
+    {
+        return $this->promise()->when($onResolved);
     }
 
     /**

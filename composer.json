@@ -6,7 +6,8 @@
         {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "async-interop/promise": "^0.2.0"
     },
     "autoload": {
         "psr-4": {

@@ -2,7 +2,9 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+use Interop\Async\Promise as AsyncInteropPromise;
+
+class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
 {
     private $value;
 
@@ -64,5 +66,10 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
 
     public function cancel()
     {
+    }
+
+    public function when(callable $onResolved)
+    {
+        $onResolved(null, $this->value);
     }
 }
