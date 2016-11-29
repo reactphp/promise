@@ -2,13 +2,15 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+use Interop\Async\Promise as AsyncInteropPromise;
+
+class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
 {
     private $value;
 
     public function __construct($value = null)
     {
-        if ($value instanceof PromiseInterface) {
+        if ($value instanceof PromiseInterface || $value instanceof AsyncInteropPromise) {
             throw new \InvalidArgumentException('You cannot create React\Promise\FulfilledPromise with a promise. Use React\Promise\resolve($promiseOrValue) instead.');
         }
 
@@ -65,5 +67,16 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
 
     public function cancel()
     {
+    }
+
+    public function when(callable $onResolved)
+    {
+        try {
+            $onResolved(null, $this->value);
+        } catch (\Throwable $exception) {
+            AsyncInteropPromise\ErrorHandler::notify($exception);
+        } catch (\Exception $exception) {
+            AsyncInteropPromise\ErrorHandler::notify($exception);
+        }
     }
 }

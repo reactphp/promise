@@ -2,10 +2,25 @@
 
 namespace React\Promise;
 
+use Interop\Async\Promise as AsyncInteropPromise;
+
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof ExtendedPromiseInterface) {
         return $promiseOrValue;
+    }
+
+    if ($promiseOrValue instanceof AsyncInteropPromise) {
+        return new Promise(function ($resolve, $reject) use ($promiseOrValue) {
+            $promiseOrValue->when(function ($reason = null, $value = null) use ($resolve, $reject) {
+                if ($reason) {
+                    $reject($reason);
+                    return;
+                }
+
+                $resolve($value);
+            });
+        });
     }
 
     if (method_exists($promiseOrValue, 'then')) {
@@ -28,6 +43,14 @@ function reject($promiseOrValue = null)
     if ($promiseOrValue instanceof PromiseInterface) {
         return resolve($promiseOrValue)->then(function ($value) {
             return new RejectedPromise($value);
+        });
+    }
+
+    if ($promiseOrValue instanceof AsyncInteropPromise) {
+        return new Promise(function ($resolve, $reject) use ($promiseOrValue) {
+            $promiseOrValue->when(function ($reason = null, $value = null) use ($resolve, $reject) {
+                $reject($reason ? $reason : $value);
+            });
         });
     }
 
