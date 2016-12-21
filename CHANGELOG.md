@@ -12,3 +12,8 @@ CHANGELOG for 3.x
       `some()`, `map()`, `reduce()`) now require an array of promises or values
       as input. Before, arrays and promises which resolve to an array were
       supported, other input types resolved to empty arrays or `null`. (#35).
+    * BC break: The interfaces `PromiseInterface`, `ExtendedPromiseInterface`
+      and `CancellablePromiseInterface` have been merged into a single
+      `PromiseInterface`. The `CancellablePromiseInterface` has been kept for
+      backward compatibility but is marked as deprecated and must not be used
+      anymore.

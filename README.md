@@ -25,12 +25,10 @@ Table of Contents
      * [Deferred::reject()](#deferredreject)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
-   * [ExtendedPromiseInterface](#extendedpromiseinterface)
-        * [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
-        * [ExtendedPromiseInterface::otherwise()](#extendedpromiseinterfaceotherwise)
-        * [ExtendedPromiseInterface::always()](#extendedpromiseinterfacealways)
-   * [CancellablePromiseInterface](#cancellablepromiseinterface)
-        * [CancellablePromiseInterface::cancel()](#cancellablepromiseinterfacecancel)
+     * [PromiseInterface::done()](#promiseinterfacedone)
+     * [PromiseInterface::otherwise()](#promiseinterfaceotherwise)
+     * [PromiseInterface::always()](#promiseinterfacealways)
+     * [PromiseInterface::cancel()](#promiseinterfacecancel)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -193,22 +191,10 @@ the same call to `then()`:
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
-* [ExtendedPromiseInterface::done()](#extendedpromiseinterfacedone)
+* [PromiseInterface::done()](#promiseinterfacedone)
 * [done() vs. then()](#done-vs-then)
 
-### ExtendedPromiseInterface
-
-The ExtendedPromiseInterface extends the PromiseInterface with useful shortcut
-and utility methods which are not part of the Promises/A specification.
-
-#### Implementations
-
-* [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
-
-#### ExtendedPromiseInterface::done()
+#### PromiseInterface::done()
 
 ```php
 $promise->done(callable $onFulfilled = null, callable $onRejected = null);
@@ -228,7 +214,7 @@ Since the purpose of `done()` is consumption rather than transformation,
 * [PromiseInterface::then()](#promiseinterfacethen)
 * [done() vs. then()](#done-vs-then)
 
-#### ExtendedPromiseInterface::otherwise()
+#### PromiseInterface::otherwise()
 
 ```php
 $promise->otherwise(callable $onRejected);
@@ -254,7 +240,7 @@ $promise
     )};
 ```
 
-#### ExtendedPromiseInterface::always()
+#### PromiseInterface::always()
 
 ```php
 $newPromise = $promise->always(callable $onFulfilledOrRejected);
@@ -301,13 +287,7 @@ return doSomething()
     ->always('cleanup');
 ```
 
-### CancellablePromiseInterface
-
-A cancellable promise provides a mechanism for consumers to notify the creator
-of the promise that they are not longer interested in the result of an
-operation.
-
-#### CancellablePromiseInterface::cancel()
+#### PromiseInterface::cancel()
 
 ``` php
 $promise->cancel();
@@ -318,13 +298,6 @@ further interest in the results of the operation.
 
 Once a promise is settled (either fulfilled or rejected), calling `cancel()` on
 a promise has no effect.
-
-#### Implementations
-
-* [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
 
 ### Promise
 
@@ -434,11 +407,6 @@ If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
 a trusted promise that follows the state of the thenable is returned.
 
 If `$promiseOrValue` is a promise, it will be returned as is.
-
-Note: The promise returned is always a promise implementing
-[ExtendedPromiseInterface](#extendedpromiseinterface). If you pass in a custom
-promise which only implements [PromiseInterface](#promiseinterface), this
-promise will be assimilated to a extended promise following `$promiseOrValue`.
 
 #### reject()
 

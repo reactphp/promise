@@ -4,7 +4,7 @@ namespace React\Promise;
 
 function resolve($promiseOrValue = null)
 {
-    if ($promiseOrValue instanceof ExtendedPromiseInterface) {
+    if ($promiseOrValue instanceof PromiseInterface) {
         return $promiseOrValue;
     }
 

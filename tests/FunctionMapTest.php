@@ -97,15 +97,21 @@ class FunctionMapTest extends TestCase
     public function shouldCancelInputArrayPromises()
     {
         $mock1 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
+        $mock1
+            ->method('then')
+            ->will($this->returnSelf());
         $mock1
             ->expects($this->once())
             ->method('cancel');
 
         $mock2 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
+        $mock2
+            ->method('then')
+            ->will($this->returnSelf());
         $mock2
             ->expects($this->once())
             ->method('cancel');

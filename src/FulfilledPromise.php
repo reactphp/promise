@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+class FulfilledPromise implements PromiseInterface, CancellablePromiseInterface
 {
     private $value;
 
@@ -43,7 +43,7 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
         queue()->enqueue(function () use ($onFulfilled) {
             $result = $onFulfilled($this->value);
 
-            if ($result instanceof ExtendedPromiseInterface) {
+            if ($result instanceof PromiseInterface) {
                 $result->done();
             }
         });
