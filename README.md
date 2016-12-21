@@ -461,7 +461,7 @@ the value of another promise.
 #### all()
 
 ```php
-$promise = React\Promise\all(array|React\Promise\PromiseInterface $promisesOrValues);
+$promise = React\Promise\all(array $promisesOrValues);
 ```
 
 Returns a promise that will resolve only once all the items in
@@ -472,7 +472,7 @@ will be an array containing the resolution values of each of the items in
 #### race()
 
 ```php
-$promise = React\Promise\race(array|React\Promise\PromiseInterface $promisesOrValues);
+$promise = React\Promise\race(array $promisesOrValues);
 ```
 
 Initiates a competitive race that allows one winner. Returns a promise which is
@@ -481,7 +481,7 @@ resolved in the same way the first settled promise resolves.
 #### any()
 
 ```php
-$promise = React\Promise\any(array|React\Promise\PromiseInterface $promisesOrValues);
+$promise = React\Promise\any(array $promisesOrValues);
 ```
 
 Returns a promise that will resolve when any one of the items in
@@ -497,7 +497,7 @@ if `$promisesOrValues` contains 0 items.
 #### some()
 
 ```php
-$promise = React\Promise\some(array|React\Promise\PromiseInterface $promisesOrValues, integer $howMany);
+$promise = React\Promise\some(array $promisesOrValues, integer $howMany);
 ```
 
 Returns a promise that will resolve when `$howMany` of the supplied items in
@@ -516,7 +516,7 @@ if `$promisesOrValues` contains less items than `$howMany`.
 #### map()
 
 ```php
-$promise = React\Promise\map(array|React\Promise\PromiseInterface $promisesOrValues, callable $mapFunc);
+$promise = React\Promise\map(array $promisesOrValues, callable $mapFunc);
 ```
 
 Traditional map function, similar to `array_map()`, but allows input to contain
@@ -528,7 +528,7 @@ value of a promise or value in `$promisesOrValues`.
 #### reduce()
 
 ```php
-$promise = React\Promise\reduce(array|React\Promise\PromiseInterface $promisesOrValues, callable $reduceFunc , $initialValue = null);
+$promise = React\Promise\reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null);
 ```
 
 Traditional reduce function, similar to `array_reduce()`, but input may contain
