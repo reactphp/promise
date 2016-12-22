@@ -94,4 +94,21 @@ class FunctionAllTest extends TestCase
         all(resolve(1))
             ->then($mock);
     }
+
+    /** @test */
+    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo([1, 2, 3]));
+
+        $deferred = new Deferred();
+
+        all([resolve(1), $deferred->promise(), resolve(3)])
+            ->then($mock);
+
+        $deferred->resolve(2);
+    }
 }

@@ -156,6 +156,7 @@ function map($promisesOrValues, callable $mapFunc)
 
                 foreach ($array as $i => $promiseOrValue) {
                     $cancellationQueue->enqueue($promiseOrValue);
+                    $values[$i] = null;
 
                     resolve($promiseOrValue)
                         ->then($mapFunc)
