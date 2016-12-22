@@ -23,6 +23,7 @@ CHANGELOG for 2.x
               });
       }
       ```
+    * `all()` and `map()` functions now preserve the order of the array.
 
 * 2.4.1 (2016-05-03)
 
