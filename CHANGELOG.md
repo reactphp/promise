@@ -1,7 +1,7 @@
 CHANGELOG for 2.x
 =================
 
-* 2.5.0 (xxxx-xx-xx)
+* 2.5.0 (2016-12-22)
 
     * Revert automatic cancellation of pending collection promises once the
       output promise resolves. This was introduced in 42d86b7 (PR #36, released
@@ -23,7 +23,8 @@ CHANGELOG for 2.x
               });
       }
       ```
-    * `all()` and `map()` functions now preserve the order of the array.
+    * `all()` and `map()` functions now preserve the order of the array (#77).
+    * Fix circular references when resolving a promise with itself (#71).
 
 * 2.4.1 (2016-05-03)
 
