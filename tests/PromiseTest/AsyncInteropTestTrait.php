@@ -83,6 +83,19 @@ trait AsyncInteropTestTrait
         $this->assertTrue($invoked);
     }
 
+    public function testAsyncInteropPromiseExceptionFailureWithoutReason()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->promise()->when(function ($e, $value) use (&$invoked) {
+            $this->assertInstanceOf("Exception", $e);
+            $this->assertNull($value);
+            $invoked = true;
+        });
+        $adapter->reject();
+        $this->assertTrue($invoked);
+    }
+
     public function testFailureAllWhensExecuted()
     {
         $adapter = $this->getPromiseTestAdapter();

@@ -79,7 +79,7 @@ class RejectedPromise implements ExtendedPromiseInterface, CancellablePromiseInt
     public function when(callable $onResolved)
     {
         $onResolved(
-            UnhandledRejectionException::nullOrResolve($this->reason),
+            UnhandledRejectionException::resolve($this->reason),
             null
         );
     }

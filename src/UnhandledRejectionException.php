@@ -15,15 +15,6 @@ class UnhandledRejectionException extends \RuntimeException
         return new static($reason);
     }
 
-    public static function nullOrResolve($reason)
-    {
-        if (null === $reason) {
-            return null;
-        }
-
-        return self::resolve($reason);
-    }
-
     public function __construct($reason)
     {
         $this->reason = $reason;

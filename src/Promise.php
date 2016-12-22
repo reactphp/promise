@@ -105,7 +105,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface, 
             $onResolved(null, $value);
         }, function ($reason) use ($onResolved) {
             $onResolved(
-                UnhandledRejectionException::nullOrResolve($reason),
+                UnhandledRejectionException::resolve($reason),
                 null
             );
         });
