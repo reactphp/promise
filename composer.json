@@ -18,5 +18,9 @@
         "psr-4": {
             "React\\Promise\\": "tests/fixtures"
         }
-    }
+    },
+    "keywords": [
+        "promise",
+        "promises"
+    ]
 }
