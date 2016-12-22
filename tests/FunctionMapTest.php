@@ -79,6 +79,25 @@ class FunctionMapTest extends TestCase
     }
 
     /** @test */
+    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo([2, 4, 6]));
+
+        $deferred = new Deferred();
+
+        map(
+            [resolve(1), $deferred->promise(), resolve(3)],
+            $this->mapper()
+        )->then($mock);
+
+        $deferred->resolve(2);
+    }
+
+    /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
         $mock = $this->createCallableMock();
