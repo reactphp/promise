@@ -109,6 +109,30 @@ class FunctionMapTest extends TestCase
     }
 
     /** @test */
+    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises()
+    {
+        $queue = new \SplQueue();
+        $asyncPromise = new Promise(function ($resolve) use ($queue) {
+            $queue->enqueue(function () use ($resolve, $queue) {
+                $resolve(2);
+            });
+        });
+
+        $result = null;
+
+        map(
+            [resolve(1), $asyncPromise, resolve(3)],
+            $this->mapper()
+        )->then(function ($resolvedValues) use (&$result) {
+            $result = $resolvedValues;
+        });
+
+        call_user_func($queue->dequeue());
+
+        $this->assertSame([2 ,4 ,6], $result);
+    }
+
+    /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
         $mock = $this->createCallableMock();

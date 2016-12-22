@@ -94,4 +94,25 @@ class FunctionAllTest extends TestCase
         all(resolve(1))
             ->then($mock);
     }
+
+    /** @test */
+    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises()
+    {
+        $queue = new \SplQueue();
+        $asyncPromise = new Promise(function ($resolve) use ($queue) {
+            $queue->enqueue(function () use ($resolve, $queue) {
+                $resolve(2);
+            });
+        });
+
+        $result = null;
+
+        all([resolve(1), $asyncPromise, resolve(3)])->then(function ($resolvedValues) use (&$result) {
+            $result = $resolvedValues;
+        });
+
+        call_user_func($queue->dequeue());
+
+        $this->assertSame([1, 2, 3], $result);
+    }
 }
