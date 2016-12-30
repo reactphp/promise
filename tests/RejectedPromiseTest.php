@@ -7,8 +7,7 @@ use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 class RejectedPromiseTest extends TestCase
 {
     use PromiseTest\PromiseSettledTestTrait,
-        PromiseTest\PromiseRejectedTestTrait,
-        PromiseTest\AsyncInteropRejectedTestTrait;
+        PromiseTest\PromiseRejectedTestTrait;
 
     public function getPromiseTestAdapter(callable $canceller = null)
     {

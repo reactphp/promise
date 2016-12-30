@@ -9,6 +9,9 @@
         "php": ">=5.4.0",
         "async-interop/promise": "^0.3.0"
     },
+    "require-dev": {
+        "async-interop/promise-test": "dev-master"
+    },
     "autoload": {
         "psr-4": {
             "React\\Promise\\": "src/"

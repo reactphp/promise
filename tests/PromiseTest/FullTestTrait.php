@@ -10,8 +10,5 @@ trait FullTestTrait
         PromiseRejectedTestTrait,
         ResolveTestTrait,
         RejectTestTrait,
-        CancelTestTrait,
-        AsyncInteropResolvedTestTrait,
-        AsyncInteropRejectedTestTrait,
-        AsyncInteropTestTrait;
+        CancelTestTrait;
 }
