@@ -50,6 +50,6 @@ class FulfilledPromiseTest extends TestCase
     {
         $this->setExpectedException('\InvalidArgumentException');
 
-        return new FulfilledPromise(new FulfilledPromise());
+        return new FulfilledPromise(new SimpleFulfilledAsyncInteropTestPromise());
     }
 }

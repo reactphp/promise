@@ -2,7 +2,9 @@
 
 namespace React\Promise;
 
-interface PromiseInterface
+use Interop\Async\Promise as AsyncInteropPromise;
+
+interface PromiseInterface extends AsyncInteropPromise
 {
     /**
      * @return PromiseInterface

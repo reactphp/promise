@@ -2,9 +2,7 @@
 
 namespace React\Promise;
 
-use Interop\Async\Promise as AsyncInteropPromise;
-
-class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
+class LazyPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $factory;
     private $promise;

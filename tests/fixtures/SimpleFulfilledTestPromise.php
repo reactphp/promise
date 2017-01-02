@@ -18,4 +18,9 @@ class SimpleFulfilledTestPromise implements PromiseInterface
             return new RejectedPromise($exception);
         }
     }
+
+    public function when(callable $onResolved)
+    {
+        $onResolved(null, 'foo');
+    }
 }

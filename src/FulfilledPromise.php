@@ -4,13 +4,13 @@ namespace React\Promise;
 
 use Interop\Async\Promise as AsyncInteropPromise;
 
-class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
+class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $value;
 
     public function __construct($value = null)
     {
-        if ($value instanceof PromiseInterface || $value instanceof AsyncInteropPromise) {
+        if ($value instanceof AsyncInteropPromise) {
             throw new \InvalidArgumentException('You cannot create React\Promise\FulfilledPromise with a promise. Use React\Promise\resolve($promiseOrValue) instead.');
         }
 

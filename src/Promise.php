@@ -2,9 +2,7 @@
 
 namespace React\Promise;
 
-use Interop\Async\Promise as AsyncInteropPromise;
-
-class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface, AsyncInteropPromise
+class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $canceller;
     private $result;
@@ -95,7 +93,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface, 
             return $this->result()->when($onResolved);
         }
 
-        $this->handlers[] = function (AsyncInteropPromise $promise) use ($onResolved) {
+        $this->handlers[] = function (PromiseInterface $promise) use ($onResolved) {
             $promise->when($onResolved);
         };
     }
