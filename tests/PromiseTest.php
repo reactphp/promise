@@ -45,38 +45,4 @@ class PromiseTest extends TestCase
         $promise
             ->then($this->expectCallableNever(), $mock);
     }
-
-    /** @test */
-    public function shouldFulfillIfFullfilledWithSimplePromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo('foo'));
-
-        $adapter->promise()
-            ->then($mock);
-
-        $adapter->resolve(new SimpleFulfilledTestPromise());
-    }
-
-    /** @test */
-    public function shouldRejectIfRejectedWithSimplePromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo('foo'));
-
-        $adapter->promise()
-            ->then($this->expectCallableNever(), $mock);
-
-        $adapter->resolve(new SimpleRejectedTestPromise());
-    }
 }
