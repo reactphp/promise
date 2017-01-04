@@ -15,7 +15,7 @@ install:
   - composer install
 
 script:
-  - phpunit -v --coverage-text --coverage-clover=./build/logs/clover.xml
+  - ./vendor/bin/phpunit -v --coverage-text --coverage-clover=./build/logs/clover.xml
 
 after_script:
   - if [ -f ./build/logs/clover.xml ]; then travis_retry composer require satooshi/php-coveralls --no-interaction --update-with-dependencies; fi
