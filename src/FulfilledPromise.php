@@ -4,7 +4,7 @@ namespace React\Promise;
 
 use AsyncInterop\Promise as AsyncInteropPromise;
 
-class FulfilledPromise implements PromiseInterface
+final class FulfilledPromise implements PromiseInterface
 {
     private $value;
 

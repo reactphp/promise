@@ -4,7 +4,7 @@ namespace React\Promise;
 
 use AsyncInterop\Promise as AsyncInteropPromise;
 
-class RejectedPromise implements PromiseInterface
+final class RejectedPromise implements PromiseInterface
 {
     private $reason;
 
