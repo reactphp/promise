@@ -2,7 +2,7 @@
 
 namespace React\Promise\AsyncInterop;
 
-use Interop\Async\Promise\Test;
+use AsyncInterop\Promise\Test;
 use React\Promise\Deferred;
 use React\Promise\LazyPromise;
 

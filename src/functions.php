@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-use Interop\Async\Promise as AsyncInteropPromise;
+use AsyncInterop\Promise as AsyncInteropPromise;
 
 function resolve($promiseOrValue = null)
 {

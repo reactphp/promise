@@ -7,10 +7,10 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "async-interop/promise": "^0.3.0"
+        "async-interop/promise": "^0.4.0"
     },
     "require-dev": {
-        "async-interop/promise-test": "dev-master"
+        "async-interop/promise-test": "^0.4.1"
     },
     "autoload": {
         "psr-4": {
