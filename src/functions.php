@@ -6,7 +6,7 @@ use AsyncInterop\Promise as AsyncInteropPromise;
 
 function resolve($promiseOrValue = null)
 {
-    if ($promiseOrValue instanceof ExtendedPromiseInterface) {
+    if ($promiseOrValue instanceof PromiseInterface) {
         return $promiseOrValue;
     }
 

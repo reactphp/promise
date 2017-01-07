@@ -194,14 +194,4 @@ class FunctionResolveTest extends TestCase
 
         $deferreds[0]->promise()->then($mock);
     }
-
-    /** @test */
-    public function returnsExtendePromiseForSimplePromise()
-    {
-        $promise = $this
-            ->getMockBuilder('React\Promise\PromiseInterface')
-            ->getMock();
-
-        $this->assertInstanceOf('React\Promise\ExtendedPromiseInterface', resolve($promise));
-    }
 }

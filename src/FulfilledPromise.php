@@ -4,7 +4,7 @@ namespace React\Promise;
 
 use AsyncInterop\Promise as AsyncInteropPromise;
 
-class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
+class FulfilledPromise implements PromiseInterface
 {
     private $value;
 
@@ -45,7 +45,7 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
         queue()->enqueue(function () use ($onFulfilled) {
             $result = $onFulfilled($this->value);
 
-            if ($result instanceof ExtendedPromiseInterface) {
+            if ($result instanceof PromiseInterface) {
                 $result->done();
             }
         });

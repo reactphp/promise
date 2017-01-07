@@ -75,7 +75,7 @@ class CancellationQueueTest extends TestCase
         $this->setExpectedException('\Exception', 'test');
 
         $mock = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
         $mock
             ->expects($this->once())

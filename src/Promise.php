@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
+class Promise implements PromiseInterface
 {
     private $canceller;
     private $result;
@@ -45,7 +45,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result()->done($onFulfilled, $onRejected);
         }
 
-        $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
@@ -101,7 +101,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     private function resolver(callable $onFulfilled = null, callable $onRejected = null)
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
-            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
+            $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject);
@@ -127,7 +127,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->settle(reject($reason));
     }
 
-    private function settle(ExtendedPromiseInterface $result)
+    private function settle(PromiseInterface $result)
     {
         if ($result instanceof LazyPromise) {
             $result = $result->promise();

@@ -96,14 +96,14 @@ class FunctionRaceTest extends TestCase
     public function shouldCancelInputArrayPromises()
     {
         $mock1 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
         $mock1
             ->expects($this->once())
             ->method('cancel');
 
         $mock2 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
         $mock2
             ->expects($this->once())
@@ -124,7 +124,7 @@ class FunctionRaceTest extends TestCase
         $deferred->resolve();
 
         $mock2 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
         $mock2
             ->expects($this->never())
@@ -145,7 +145,7 @@ class FunctionRaceTest extends TestCase
         $deferred->reject();
 
         $mock2 = $this
-            ->getMockBuilder('React\Promise\CancellablePromiseInterface')
+            ->getMockBuilder('React\Promise\PromiseInterface')
             ->getMock();
         $mock2
             ->expects($this->never())
