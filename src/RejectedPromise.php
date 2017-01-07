@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class RejectedPromise implements PromiseInterface
+final class RejectedPromise implements PromiseInterface
 {
     private $reason;
 
