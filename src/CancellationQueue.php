@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class CancellationQueue
+final class CancellationQueue
 {
     private $started = false;
     private $queue = [];

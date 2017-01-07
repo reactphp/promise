@@ -2,7 +2,7 @@
 
 namespace React\Promise;
 
-class FulfilledPromise implements PromiseInterface
+final class FulfilledPromise implements PromiseInterface
 {
     private $value;
 
