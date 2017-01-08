@@ -389,8 +389,7 @@ promises.
 
 All functions working on promise collections (like `all()`, `race()`, `some()`
 etc.) support cancellation. This means, if you call `cancel()` on the returned
-promise, all promises in the collection are cancelled. If the collection itself
-is a promise which resolves to an array, this promise is also cancelled.
+promise, all promises in the collection are cancelled.
 
 #### resolve()
 
