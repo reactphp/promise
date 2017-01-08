@@ -41,24 +41,6 @@ function all(array $promisesOrValues)
     });
 }
 
-function race(array $promisesOrValues)
-{
-    if (!$promisesOrValues) {
-        return resolve();
-    }
-
-    $cancellationQueue = new CancellationQueue();
-
-    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue) {
-        foreach ($promisesOrValues as $promiseOrValue) {
-            $cancellationQueue->enqueue($promiseOrValue);
-
-            resolve($promiseOrValue)
-                ->done($resolve, $reject);
-        }
-    }, $cancellationQueue);
-}
-
 function any(array $promisesOrValues)
 {
     return some($promisesOrValues, 1)
