@@ -4,13 +4,13 @@ namespace React\Promise;
 
 use AsyncInterop\Promise as AsyncInteropPromise;
 
-final class RejectedPromise implements PromiseInterface
+final class RejectedPromise implements PromiseInterface, AsyncInteropPromise
 {
     private $reason;
 
     public function __construct($reason = null)
     {
-        if ($reason instanceof AsyncInteropPromise) {
+        if ($reason instanceof PromiseInterface || $reason instanceof AsyncInteropPromise) {
             throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
         }
 

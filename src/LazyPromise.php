@@ -2,7 +2,9 @@
 
 namespace React\Promise;
 
-final class LazyPromise implements PromiseInterface
+use AsyncInterop\Promise as AsyncInteropPromise;
+
+final class LazyPromise implements PromiseInterface, AsyncInteropPromise
 {
     private $factory;
     private $promise;
