@@ -1,6 +1,11 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\Internal;
+
+use React\Promise\Deferred;
+use React\Promise\SimpleTestCancellable;
+use React\Promise\SimpleTestCancellableThenable;
+use React\Promise\TestCase;
 
 class CancellationQueueTest extends TestCase
 {

@@ -47,7 +47,7 @@ function race(array $promisesOrValues)
         return resolve();
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue) {
         foreach ($promisesOrValues as $promiseOrValue) {
@@ -89,7 +89,7 @@ function some(array $promisesOrValues, $howMany)
         );
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($len, $promisesOrValues, $howMany, $cancellationQueue) {
         $toResolve = $howMany;
@@ -136,7 +136,7 @@ function map(array $promisesOrValues, callable $mapFunc)
         return resolve([]);
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
         $toResolve = count($promisesOrValues);
@@ -164,7 +164,7 @@ function map(array $promisesOrValues, callable $mapFunc)
 
 function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
         $total = count($promisesOrValues);
