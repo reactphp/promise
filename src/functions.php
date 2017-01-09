@@ -204,7 +204,9 @@ function queue(Queue\QueueInterface $queue = null)
     return $globalQueue;
 }
 
-// Internal functions
+/**
+ * @internal
+ */
 function _checkTypehint(callable $callback, $object)
 {
     if (!is_object($object)) {
