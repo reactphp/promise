@@ -17,10 +17,13 @@ final class Deferred implements PromisorInterface
     public function promise()
     {
         if (null === $this->promise) {
+            $canceller = $this->canceller;
+            $this->canceller = null;
+
             $this->promise = new Promise(function ($resolve, $reject) {
                 $this->resolveCallback = $resolve;
                 $this->rejectCallback  = $reject;
-            }, $this->canceller);
+            }, $canceller);
         }
 
         return $this->promise;
