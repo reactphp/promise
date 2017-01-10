@@ -189,21 +189,6 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
     }, $cancellationQueue);
 }
 
-function queue(Queue\QueueInterface $queue = null)
-{
-    static $globalQueue;
-
-    if ($queue) {
-        return ($globalQueue = $queue);
-    }
-
-    if (!$globalQueue) {
-        $globalQueue = new Queue\SynchronousQueue();
-    }
-
-    return $globalQueue;
-}
-
 /**
  * @internal
  */

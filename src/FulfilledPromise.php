@@ -22,7 +22,7 @@ final class FulfilledPromise implements PromiseInterface
         }
 
         return new Promise(function (callable $resolve, callable $reject) use ($onFulfilled) {
-            queue()->enqueue(function () use ($resolve, $reject, $onFulfilled) {
+            Queue::enqueue(function () use ($resolve, $reject, $onFulfilled) {
                 try {
                     $resolve($onFulfilled($this->value));
                 } catch (\Throwable $exception) {
@@ -40,7 +40,7 @@ final class FulfilledPromise implements PromiseInterface
             return;
         }
 
-        queue()->enqueue(function () use ($onFulfilled) {
+        Queue::enqueue(function () use ($onFulfilled) {
             $result = $onFulfilled($this->value);
 
             if ($result instanceof PromiseInterface) {

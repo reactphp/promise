@@ -2,7 +2,7 @@
 
 namespace React\Promise\Queue;
 
-final class SynchronousQueue implements QueueInterface
+final class SynchronousDriver implements DriverInterface
 {
     private $queue = [];
 
