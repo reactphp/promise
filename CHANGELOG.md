@@ -12,6 +12,9 @@ CHANGELOG for 3.x
       `some()`, `map()`, `reduce()`) now require an array of promises or values
       as input. Before, arrays and promises which resolve to an array were
       supported, other input types resolved to empty arrays or `null` (#35).
+    * BC break: `race()` now returns a forever pending promise when called with
+      an empty array (#83).
+      The behavior is now also in line with the ES6 specification.
     * BC break: The interfaces `PromiseInterface`, `ExtendedPromiseInterface`
       and `CancellablePromiseInterface` have been merged into a single
       `PromiseInterface` (#75).
