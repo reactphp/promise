@@ -76,7 +76,7 @@ final class Promise implements PromiseInterface
 
     public function cancel()
     {
-        if (null === $this->canceller || null !== $this->result) {
+        if (null === $this->canceller) {
             return;
         }
 
@@ -130,6 +130,7 @@ final class Promise implements PromiseInterface
         $handlers = $this->handlers;
 
         $this->handlers = [];
+        $this->canceller = null;
         $this->result = $result;
 
         foreach ($handlers as $handler) {
