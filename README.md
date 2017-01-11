@@ -37,7 +37,6 @@ Table of Contents
      * [resolve()](#resolve)
      * [reject()](#reject)
      * [all()](#all)
-     * [race()](#race)
      * [any()](#any)
      * [some()](#some)
      * [map()](#map)
@@ -387,8 +386,8 @@ $promise->then(function ($value) {
 Useful functions for creating, joining, mapping and reducing collections of
 promises.
 
-All functions working on promise collections (like `all()`, `race()`, `some()`
-etc.) support cancellation. This means, if you call `cancel()` on the returned
+All functions working on promise collections (like `all()`, `some()` etc.) 
+support cancellation. This means, if you call `cancel()` on the returned
 promise, all promises in the collection are cancelled.
 
 #### resolve()
@@ -435,15 +434,6 @@ Returns a promise that will resolve only once all the items in
 `$promisesOrValues` have resolved. The resolution value of the returned promise
 will be an array containing the resolution values of each of the items in
 `$promisesOrValues`.
-
-#### race()
-
-```php
-$promise = React\Promise\race(array $promisesOrValues);
-```
-
-Initiates a competitive race that allows one winner. Returns a promise which is
-resolved in the same way the first settled promise resolves.
 
 #### any()
 
