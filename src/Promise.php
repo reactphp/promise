@@ -9,7 +9,7 @@ final class Promise implements PromiseInterface
 
     private $handlers = [];
 
-    private $requiredCancelRequests = 0;
+    private $remainingCancelRequests = 0;
 
     public function __construct(callable $resolver, callable $canceller = null)
     {
@@ -27,10 +27,10 @@ final class Promise implements PromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected));
         }
 
-        $this->requiredCancelRequests++;
+        $this->remainingCancelRequests++;
 
         return new static($this->resolver($onFulfilled, $onRejected), function () {
-            if (--$this->requiredCancelRequests > 0) {
+            if (--$this->remainingCancelRequests > 0) {
                 return;
             }
 
