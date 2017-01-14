@@ -445,6 +445,9 @@ $promise = React\Promise\race(array $promisesOrValues);
 Initiates a competitive race that allows one winner. Returns a promise which is
 resolved in the same way the first settled promise resolves.
 
+The returned promise will become **infinitely pending** if  `$promisesOrValues`
+contains 0 items.
+
 #### any()
 
 ```php
