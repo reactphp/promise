@@ -348,4 +348,35 @@ trait PromiseFulfilledTestTrait
             })
             ->then(null, $mock);
     }
+
+    /** @test */
+    public function inspectionForAFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+
+        $promise = $adapter->promise();
+
+        $this->assertTrue($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
+        $this->assertSame(1, $promise->value());
+    }
+
+    /** @test */
+    public function inspectionReasonThrowsForAFulfilledPromise()
+    {
+        $this->setExpectedException(
+            'React\Promise\Exception\LogicException',
+            'Cannot get rejection reason of a non-rejected promise.'
+        );
+
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+
+        $adapter->promise()->reason();
+    }
 }

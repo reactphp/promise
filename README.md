@@ -29,6 +29,12 @@ Table of Contents
      * [PromiseInterface::otherwise()](#promiseinterfaceotherwise)
      * [PromiseInterface::always()](#promiseinterfacealways)
      * [PromiseInterface::cancel()](#promiseinterfacecancel)
+     * [PromiseInterface::isFulfilled()](#promiseinterfaceisfulfilled)
+     * [PromiseInterface::isRejected()](#promiseinterfaceisrejected)
+     * [PromiseInterface::isPending()](#promiseinterfaceispending)
+     * [PromiseInterface::isCancelled()](#promiseinterfaceiscancelled)
+     * [PromiseInterface::value()](#promiseinterfacevalue)
+     * [PromiseInterface::reason()](#promiseinterfacereason)
    * [Promise](#promise-1)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
@@ -298,6 +304,61 @@ further interest in the results of the operation.
 
 Once a promise is settled (either fulfilled or rejected), calling `cancel()` on
 a promise has no effect.
+
+#### PromiseInterface::isFulfilled()
+
+``` php
+$isFulfilled = $promise->isFulfilled();
+```
+
+Returns `true` if the promise is already fulfilled, `false` otherwise.
+
+#### PromiseInterface::isRejected()
+
+``` php
+$isRejected = $promise->isRejected();
+```
+
+Returns `true` if the promise is already rejected, `false` otherwise.
+
+#### PromiseInterface::isPending()
+
+``` php
+$isPending = $promise->isPending();
+```
+
+Returns `true` if the promise is still pending (neither fulfilled nor rejected),
+`false` otherwise.
+
+#### PromiseInterface::isCancelled()
+
+``` php
+$isCancelled = $promise->isCancelled();
+```
+
+Returns `true` if the promise is already cancelled, `false` otherwise.
+
+#### PromiseInterface::value()
+
+``` php
+$value = $promise->value();
+```
+
+Returns the fulfillment value of the promise.
+
+Throws a  `React\Promise\Exception\LogicException` if the promise isn't
+fulfilled. 
+
+#### PromiseInterface::reason()
+
+``` php
+$reason = $promise->reason();
+```
+
+Returns the rejection reason of the promise.
+
+Throws a  `React\Promise\Exception\LogicException` if the promise isn't
+rejected. 
 
 ### Promise
 

@@ -2,14 +2,21 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\LogicException;
+
 final class Promise implements PromiseInterface
 {
     private $canceller;
+
+    /**
+     * @var PromiseInterface
+     */
     private $result;
 
     private $handlers = [];
 
     private $remainingCancelRequests = 0;
+    private $isCancelled = false;
 
     public function __construct(callable $resolver, callable $canceller = null)
     {
@@ -76,6 +83,12 @@ final class Promise implements PromiseInterface
 
     public function cancel()
     {
+        if (null !== $this->result) {
+            return;
+        }
+
+        $this->isCancelled = true;
+
         if (null === $this->canceller) {
             return;
         }
@@ -84,6 +97,56 @@ final class Promise implements PromiseInterface
         $this->canceller = null;
 
         $this->call($canceller);
+    }
+
+    public function isFulfilled()
+    {
+        if (null !== $this->result) {
+            return $this->result->isFulfilled();
+        }
+
+        return false;
+    }
+
+    public function isRejected()
+    {
+        if (null !== $this->result) {
+            return $this->result->isRejected();
+        }
+
+        return false;
+    }
+
+    public function isPending()
+    {
+        if (null !== $this->result) {
+            return $this->result->isPending();
+        }
+
+        return true;
+    }
+
+    public function isCancelled()
+    {
+        return $this->isCancelled;
+    }
+
+    public function value()
+    {
+        if (null !== $this->result) {
+            return $this->result->value();
+        }
+
+        throw LogicException::valueFromNonFulfilledPromise();
+    }
+
+    public function reason()
+    {
+        if (null !== $this->result) {
+            return $this->result->reason();
+        }
+
+        throw LogicException::reasonFromNonRejectedPromise();
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null)
@@ -123,7 +186,7 @@ final class Promise implements PromiseInterface
 
         if ($result === $this) {
             $result = new RejectedPromise(
-                new \LogicException('Cannot resolve a promise with itself.')
+                LogicException::circularResolution()
             );
         }
 

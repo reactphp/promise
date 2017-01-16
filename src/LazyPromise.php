@@ -37,6 +37,36 @@ final class LazyPromise implements PromiseInterface
         return $this->promise()->cancel();
     }
 
+    public function isFulfilled()
+    {
+        return $this->promise()->isFulfilled();
+    }
+
+    public function isRejected()
+    {
+        return $this->promise()->isRejected();
+    }
+
+    public function isPending()
+    {
+        return $this->promise()->isPending();
+    }
+
+    public function isCancelled()
+    {
+        return $this->promise()->isCancelled();
+    }
+
+    public function value()
+    {
+        return $this->promise()->value();
+    }
+
+    public function reason()
+    {
+        return $this->promise()->reason();
+    }
+
     /**
      * @internal
      * @see Promise::settle()

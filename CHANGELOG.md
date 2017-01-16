@@ -7,6 +7,9 @@ CHANGELOG for 3.x
 
     * Introduce a global task queue to eliminate recursion and reduce stack size
       when chaining promises (#28).
+    * All promise implementations now support the state inspection methods
+      `isFulfilled()`, `isRejected()`, `isPending()`, `isCancelled()`, 
+      `value()` and `reason()`. 
     * BC break: The progression API has been removed (#32).
     * BC break: The promise-array related functions (`all()`, `race()`, `any()`,
       `some()`, `map()`, `reduce()`) now require an array of promises or values

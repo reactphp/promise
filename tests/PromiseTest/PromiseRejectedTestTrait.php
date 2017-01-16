@@ -509,4 +509,35 @@ trait PromiseRejectedTestTrait
 
         $adapter->promise()->cancel();
     }
+
+    /** @test */
+    public function inspectionForARejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->reject(1);
+
+        $promise = $adapter->promise();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertTrue($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
+        $this->assertSame(1, $promise->reason());
+    }
+
+    /** @test */
+    public function inspectionValueThrowsForARejectedPromise()
+    {
+        $this->setExpectedException(
+            'React\Promise\Exception\LogicException',
+            'Cannot get fulfillment value of a non-fulfilled promise.'
+        );
+
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->reject(1);
+
+        $adapter->promise()->value();
+    }
 }

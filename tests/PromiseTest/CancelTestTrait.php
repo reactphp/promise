@@ -209,4 +209,55 @@ trait CancelTestTrait
 
         $adapter->promise()->cancel();
     }
+
+    /** @test */
+    public function inspectionForACancelledPromiseWhenCancellerFulfills()
+    {
+        $adapter = $this->getPromiseTestAdapter(function ($resolve) {
+            $resolve(1);
+        });
+
+        $promise = $adapter->promise();
+
+        $promise->cancel();
+
+        $this->assertTrue($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertTrue($promise->isCancelled());
+        $this->assertSame(1, $promise->value());
+    }
+
+    /** @test */
+    public function inspectionForACancelledPromiseWhenCancellerRejects()
+    {
+        $adapter = $this->getPromiseTestAdapter(function ($resolve, $reject) {
+            $reject(1);
+        });
+
+        $promise = $adapter->promise();
+
+        $promise->cancel();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertTrue($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertTrue($promise->isCancelled());
+        $this->assertSame(1, $promise->reason());
+    }
+
+    /** @test */
+    public function inspectionForACancelledPromiseWithoutCanceller()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $promise = $adapter->promise();
+
+        $promise->cancel();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertTrue($promise->isPending());
+        $this->assertTrue($promise->isCancelled());
+    }
 }

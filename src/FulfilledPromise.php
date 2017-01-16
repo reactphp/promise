@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\LogicException;
+
 final class FulfilledPromise implements PromiseInterface
 {
     private $value;
@@ -65,5 +67,35 @@ final class FulfilledPromise implements PromiseInterface
 
     public function cancel()
     {
+    }
+
+    public function isFulfilled()
+    {
+        return true;
+    }
+
+    public function isRejected()
+    {
+        return false;
+    }
+
+    public function isPending()
+    {
+        return false;
+    }
+
+    public function isCancelled()
+    {
+        return false;
+    }
+
+    public function value()
+    {
+        return $this->value;
+    }
+
+    public function reason()
+    {
+        throw LogicException::reasonFromNonRejectedPromise();
     }
 }

@@ -28,4 +28,34 @@ interface PromiseInterface
      * @return void
      */
     public function cancel();
+
+    /**
+     * @return bool
+     */
+    public function isFulfilled();
+
+    /**
+     * @return bool
+     */
+    public function isRejected();
+
+    /**
+     * @return bool
+     */
+    public function isPending();
+
+    /**
+     * @return bool
+     */
+    public function isCancelled();
+
+    /**
+     * @return mixed
+     */
+    public function value();
+
+    /**
+     * @return mixed
+     */
+    public function reason();
 }

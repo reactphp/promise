@@ -123,7 +123,7 @@ trait ResolveTestTrait
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with(new \LogicException('Cannot resolve a promise with itself.'));
+            ->with(Promise\Exception\LogicException::circularResolution());
 
         $adapter->promise()
             ->then(
@@ -281,5 +281,55 @@ trait ResolveTestTrait
             ->then(null, $mock);
 
         $adapter->resolve(1);
+    }
+
+    /** @test */
+    public function inspectionForAPromiseResolvedToAFulfilledPromise()
+    {
+        $adapter1 = $this->getPromiseTestAdapter();
+        $adapter2 = $this->getPromiseTestAdapter();
+
+        $adapter1->resolve(1);
+        $adapter2->resolve($adapter1->promise());
+
+        $promise = $adapter2->promise();
+
+        $this->assertTrue($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
+    }
+
+    /** @test */
+    public function inspectionForAPromiseResolvedToARejectedPromise()
+    {
+        $adapter1 = $this->getPromiseTestAdapter();
+        $adapter2 = $this->getPromiseTestAdapter();
+
+        $adapter1->reject();
+        $adapter2->resolve($adapter1->promise());
+
+        $promise = $adapter2->promise();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertTrue($promise->isRejected());
+        $this->assertFalse($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
+    }
+
+    /** @test */
+    public function inspectionForAPromiseResolvedToAPendingPromise()
+    {
+        $adapter1 = $this->getPromiseTestAdapter();
+        $adapter2 = $this->getPromiseTestAdapter();
+
+        $adapter2->resolve($adapter1->promise());
+
+        $promise = $adapter2->promise();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertTrue($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
     }
 }

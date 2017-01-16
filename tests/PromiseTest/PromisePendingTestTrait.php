@@ -65,4 +65,45 @@ trait PromisePendingTestTrait
 
         $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function () {}));
     }
+
+    /** @test */
+    public function inspectionForAPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $promise = $adapter->promise();
+
+        $this->assertFalse($promise->isFulfilled());
+        $this->assertFalse($promise->isRejected());
+        $this->assertTrue($promise->isPending());
+        $this->assertFalse($promise->isCancelled());
+    }
+
+    /** @test */
+    public function inspectionValueThrowsForAPendingPromise()
+    {
+        $this->setExpectedException(
+            'React\Promise\Exception\LogicException',
+            'Cannot get fulfillment value of a non-fulfilled promise.'
+        );
+
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->promise()->value();
+    }
+
+    /** @test */
+    public function inspectionReasonThrowsForPendingPromise()
+    {
+        $this->setExpectedException(
+            'React\Promise\Exception\LogicException',
+            'Cannot get rejection reason of a non-rejected promise.'
+        );
+
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+
+        $adapter->promise()->reason();
+    }
 }
