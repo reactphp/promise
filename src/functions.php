@@ -2,6 +2,10 @@
 
 namespace React\Promise;
 
+/**
+ * @param mixed|null $promiseOrValue
+ * @return PromiseInterface
+ */
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
@@ -23,6 +27,10 @@ function resolve($promiseOrValue = null)
     return new FulfilledPromise($promiseOrValue);
 }
 
+/**
+ * @param mixed|null $promiseOrValue
+ * @return PromiseInterface
+ */
 function reject($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
@@ -34,6 +42,10 @@ function reject($promiseOrValue = null)
     return new RejectedPromise($promiseOrValue);
 }
 
+/**
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function all(array $promisesOrValues)
 {
     return map($promisesOrValues, function ($val) {
@@ -41,6 +53,10 @@ function all(array $promisesOrValues)
     });
 }
 
+/**
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function race(array $promisesOrValues)
 {
     if (!$promisesOrValues) {
@@ -59,6 +75,10 @@ function race(array $promisesOrValues)
     }, $cancellationQueue);
 }
 
+/**
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function any(array $promisesOrValues)
 {
     return some($promisesOrValues, 1)
@@ -67,6 +87,11 @@ function any(array $promisesOrValues)
         });
 }
 
+/**
+ * @param array $promisesOrValues
+ * @param $howMany
+ * @return PromiseInterface
+ */
 function some(array $promisesOrValues, $howMany)
 {
     if ($howMany < 1) {
@@ -130,6 +155,11 @@ function some(array $promisesOrValues, $howMany)
     }, $cancellationQueue);
 }
 
+/**
+ * @param array $promisesOrValues
+ * @param callable $mapFunc
+ * @return PromiseInterface
+ */
 function map(array $promisesOrValues, callable $mapFunc)
 {
     if (!$promisesOrValues) {
@@ -162,6 +192,12 @@ function map(array $promisesOrValues, callable $mapFunc)
     }, $cancellationQueue);
 }
 
+/**
+ * @param array $promisesOrValues
+ * @param callable $reduceFunc
+ * @param mixed|null $initialValue
+ * @return PromiseInterface
+ */
 function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
     $cancellationQueue = new Internal\CancellationQueue();
@@ -189,6 +225,10 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
     }, $cancellationQueue);
 }
 
+/**
+ * @param Queue\QueueInterface|null $queue
+ * @return Queue\QueueInterface|Queue\SynchronousQueue
+ */
 function queue(Queue\QueueInterface $queue = null)
 {
     static $globalQueue;

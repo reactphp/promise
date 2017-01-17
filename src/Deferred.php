@@ -14,6 +14,9 @@ final class Deferred implements PromisorInterface
         $this->canceller = $canceller;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function promise()
     {
         if (null === $this->promise) {
