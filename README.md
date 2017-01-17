@@ -43,6 +43,7 @@ Table of Contents
      * [map()](#map)
      * [reduce()](#reduce)
    * [PromisorInterface](#promisorinterface)
+   * [AsyncInterop\Promise compatibility](#asyncinteroppromise-compatibility)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -157,6 +158,11 @@ Neither its state nor its result (or error) can be modified.
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
 * [LazyPromise](#lazypromise)
+
+All implementations also implement the
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface.
+See [`AsyncInterop\Promise` compatibility](#asyncinteroppromise-compatibility),
+for further information.
 
 #### PromiseInterface::then()
 
@@ -511,6 +517,26 @@ value.
 The `React\Promise\PromisorInterface` provides a common interface for objects
 that provide a promise. `React\Promise\Deferred` implements it, but since it
 is part of the public API anyone can implement it.
+
+### AsyncInterop\Promise compatibility
+
+All promise implementations from React/Promise also implement the
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface and
+its `when()` method.
+
+The `AsyncInterop\Promise` is intended for interoperability with other libraries
+and their combinator and conversion functions.
+
+Note, that although the interface is named *Promise*, it has nothing to do with
+promises commonly known from the
+[CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A),
+[Promises/A+](https://promisesaplus.com) or
+[ECMAScript 2015 (ES6)](http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor)
+specifications.
+
+If you're using React/Promise as your primary value placeholder implementation, 
+it is recommended to **not** use the `when()` method directly but the methods
+provided by the [`PromiseInterface`](#promiseinterface).
 
 Examples
 --------
