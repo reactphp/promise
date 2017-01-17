@@ -17,6 +17,9 @@ final class Promise implements PromiseInterface
         $this->call($resolver);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
@@ -38,6 +41,9 @@ final class Promise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
@@ -50,6 +56,9 @@ final class Promise implements PromiseInterface
         };
     }
 
+    /**
+     * @inheritdoc
+     */
     public function otherwise(callable $onRejected)
     {
         return $this->then(null, function ($reason) use ($onRejected) {
@@ -61,6 +70,9 @@ final class Promise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function always(callable $onFulfilledOrRejected)
     {
         return $this->then(function ($value) use ($onFulfilledOrRejected) {
@@ -74,6 +86,9 @@ final class Promise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function cancel()
     {
         if (null === $this->canceller) {

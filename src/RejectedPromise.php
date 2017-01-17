@@ -15,6 +15,9 @@ final class RejectedPromise implements PromiseInterface
         $this->reason = $reason;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null === $onRejected) {
@@ -34,6 +37,9 @@ final class RejectedPromise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         queue()->enqueue(function () use ($onRejected) {
@@ -53,6 +59,9 @@ final class RejectedPromise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function otherwise(callable $onRejected)
     {
         if (!_checkTypehint($onRejected, $this->reason)) {
@@ -62,6 +71,9 @@ final class RejectedPromise implements PromiseInterface
         return $this->then(null, $onRejected);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function always(callable $onFulfilledOrRejected)
     {
         return $this->then(null, function ($reason) use ($onFulfilledOrRejected) {
@@ -71,6 +83,9 @@ final class RejectedPromise implements PromiseInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function cancel()
     {
     }
