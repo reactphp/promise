@@ -21,7 +21,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "React\\Promise\\": "tests/fixtures"
+            "React\\Promise\\": [
+                "tests/fixtures/",
+                "tests/"
+            ]
         }
     },
     "keywords": [

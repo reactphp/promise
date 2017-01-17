@@ -5,17 +5,11 @@ namespace React\Promise;
 class FunctionRaceTest extends TestCase
 {
     /** @test */
-    public function shouldResolveEmptyInput()
+    public function shouldReturnForeverPendingPromiseForEmptyInput()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(null));
-
         race(
             []
-        )->then($mock);
+        )->then($this->expectCallableNever(), $this->expectCallableNever());
     }
 
     /** @test */

@@ -51,8 +51,11 @@ final class LazyPromise implements PromiseInterface, AsyncInteropPromise
     public function promise()
     {
         if (null === $this->promise) {
+            $factory = $this->factory;
+            $this->factory = null;
+
             try {
-                $this->promise = resolve(call_user_func($this->factory));
+                $this->promise = resolve($factory());
             } catch (\Throwable $exception) {
                 $this->promise = new RejectedPromise($exception);
             } catch (\Exception $exception) {

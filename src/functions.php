@@ -67,10 +67,10 @@ function all(array $promisesOrValues)
 function race(array $promisesOrValues)
 {
     if (!$promisesOrValues) {
-        return resolve();
+        return new Promise(function() {});
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue) {
         foreach ($promisesOrValues as $promiseOrValue) {
@@ -112,7 +112,7 @@ function some(array $promisesOrValues, $howMany)
         );
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($len, $promisesOrValues, $howMany, $cancellationQueue) {
         $toResolve = $howMany;
@@ -159,7 +159,7 @@ function map(array $promisesOrValues, callable $mapFunc)
         return resolve([]);
     }
 
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
         $toResolve = count($promisesOrValues);
@@ -187,7 +187,7 @@ function map(array $promisesOrValues, callable $mapFunc)
 
 function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
-    $cancellationQueue = new CancellationQueue();
+    $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
         $total = count($promisesOrValues);
@@ -227,7 +227,9 @@ function queue(Queue\QueueInterface $queue = null)
     return $globalQueue;
 }
 
-// Internal functions
+/**
+ * @internal
+ */
 function _checkTypehint(callable $callback, $object)
 {
     if (!is_object($object)) {
