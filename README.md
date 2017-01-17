@@ -152,17 +152,17 @@ and an associated value, or rejection (failure) and an associated reason.
 Once in the fulfilled or rejected state, a promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
 
+This interface extends the
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface.
+See [`AsyncInterop\Promise` compatibility](#asyncinteroppromise-compatibility),
+for further information.
+
 #### Implementations
 
 * [Promise](#promise-1)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
 * [LazyPromise](#lazypromise)
-
-All implementations also implement the
-[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface.
-See [`AsyncInterop\Promise` compatibility](#asyncinteroppromise-compatibility),
-for further information.
 
 #### PromiseInterface::then()
 
@@ -520,12 +520,13 @@ is part of the public API anyone can implement it.
 
 ### AsyncInterop\Promise compatibility
 
-All promise implementations from React/Promise also implement the
+The [`PromiseInterface`](#promiseinterface) extends the
 [`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface and
-its `when()` method.
+thereby all promise implementations from React/Promise implement its `when()`
+method.
 
-The `AsyncInterop\Promise` is intended for interoperability with other libraries
-and their combinator and conversion functions.
+The `AsyncInterop\Promise` interface is intended for interoperability with other
+libraries and their combinator and conversion functions.
 
 Note, that although the interface is named *Promise*, it has nothing to do with
 promises commonly known from the
