@@ -408,6 +408,10 @@ Creates a promise for the supplied `$promiseOrValue`.
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
+If `$promiseOrValue` is a
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise), a trusted
+promise that follows the state of the `AsyncInterop\Promise` is returned.
+
 If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
 a trusted promise that follows the state of the thenable is returned.
 
