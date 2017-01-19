@@ -408,14 +408,47 @@ Creates a promise for the supplied `$promiseOrValue`.
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
+```php
+React\Promise\resolve(1)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
 If `$promiseOrValue` is a
 [`AsyncInterop\Promise`](https://github.com/async-interop/promise), a trusted
 promise that follows the state of the `AsyncInterop\Promise` is returned.
 
+```php
+$asyncInteropPromise = getAsyncInteropPromiseWhichResolvesTo1();
+
+assert($asyncInteropPromise instanceof AsyncInterop\Promise);
+
+React\Promise\resolve($asyncInteropPromise)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
 If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
 a trusted promise that follows the state of the thenable is returned.
 
+```php
+$thenable = getThenableWhichResolvesTo1();
+
+assert(method_exists($thenable, 'then'));
+
+React\Promise\resolve($asyncInteropPromise)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
 If `$promiseOrValue` is a promise, it will be returned as is.
+
+```php
+$promise1 = React\Promise\resolve(1);
+$promise2 = React\Promise\resolve($promise1);
+
+assert($promise1 === $promise2);
+```
 
 #### reject()
 
