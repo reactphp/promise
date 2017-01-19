@@ -573,8 +573,9 @@ promises commonly known from the
 specifications.
 
 If you're using React/Promise as your primary value placeholder implementation, 
-it is recommended to **not** use the `when()` method directly but the methods
-provided by the [`PromiseInterface`](#promiseinterface).
+it is recommended to **not** use the `when()` method directly but the high level
+consumption methods `then()`, `done()`, `otherwise()` and `always()` to consume
+a promise's value or reason.
 
 Examples
 --------
