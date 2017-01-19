@@ -565,8 +565,8 @@ method.
 The `AsyncInterop\Promise` interface is intended for interoperability with other
 libraries and their combinator and conversion functions.
 
-Note, that although the interface is named *Promise*, it has nothing to do with
-promises commonly known from the
+Note, that although the `AsyncInterop\Promise` interface is named *Promise*,
+it's API is different from promises commonly known from the
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A),
 [Promises/A+](https://promisesaplus.com) or
 [ECMAScript 2015 (ES6)](http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor)
@@ -576,6 +576,48 @@ If you're using React/Promise as your primary value placeholder implementation,
 it is recommended to **not** use the `when()` method directly but the high level
 consumption methods `then()`, `done()`, `otherwise()` and `always()` to consume
 a promise's value or reason.
+
+#### Examples
+
+You can cast every foreign promise implementing `AsyncInterop\Promise` to a
+trusted promise by passing it through [`resolve()`](#resolve).
+
+It is also possible to return an `AsyncInterop\Promise` instance inside promise
+chains.
+
+```php
+$asyncInteropPromise = OtherLib\doAsyncTaskAndReturnAsyncInteropPromise();
+
+$reactPromise = React\Promise\resolve($asyncInteropPromise)
+    ->then(function ($value) {
+        // You can also return `AsyncInterop\Promise` instances
+        // from promise handlers
+        return NextLib\transformValueAndReturnAsyncInteropPromise($value);
+    })
+    ->then(function ($transformedValue) {
+
+    })
+;
+```
+
+Since promises from React/Promise also implement the `AsyncInterop\Promise`
+interface, you can use these promises with combinator, conversion and coroutine
+implementations of other libraries which support `AsyncInterop\Promise`.
+
+```php
+$observable = Observable::fromPromise(
+    $reactSocketClient->connect('google.com:443')
+);
+
+coroutine(function() {
+    $promiseArray = [
+        $reactSocketClient->connect('google.com:443'),
+        $reactSocketClient->connect('google.de:443')
+    ];
+
+    $stream = (yield first($promiseArray));
+});
+```
 
 Examples
 --------
