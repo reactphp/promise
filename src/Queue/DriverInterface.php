@@ -2,7 +2,7 @@
 
 namespace React\Promise\Queue;
 
-interface QueueInterface
+interface DriverInterface
 {
     public function enqueue(callable $task);
 }

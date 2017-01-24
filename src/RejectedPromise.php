@@ -22,7 +22,7 @@ final class RejectedPromise implements PromiseInterface
         }
 
         return new Promise(function (callable $resolve, callable $reject) use ($onRejected) {
-            queue()->enqueue(function () use ($resolve, $reject, $onRejected) {
+            Queue::enqueue(function () use ($resolve, $reject, $onRejected) {
                 try {
                     $resolve($onRejected($this->reason));
                 } catch (\Throwable $exception) {
@@ -36,7 +36,7 @@ final class RejectedPromise implements PromiseInterface
 
     public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
-        queue()->enqueue(function () use ($onRejected) {
+        Queue::enqueue(function () use ($onRejected) {
             if (null === $onRejected) {
                 throw UnhandledRejectionException::resolve($this->reason);
             }
