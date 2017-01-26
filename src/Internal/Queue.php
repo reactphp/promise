@@ -1,8 +1,11 @@
 <?php
 
-namespace React\Promise\Queue;
+namespace React\Promise\Internal;
 
-final class SynchronousDriver implements DriverInterface
+/**
+ * @internal
+ */
+final class Queue
 {
     private $queue = [];
 

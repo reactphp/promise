@@ -192,6 +192,20 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
 /**
  * @internal
  */
+function enqueue(callable $task)
+{
+    static $queue;
+
+    if (!$queue) {
+        $queue = new Internal\Queue();
+    }
+
+    $queue->enqueue($task);
+}
+
+/**
+ * @internal
+ */
 function _checkTypehint(callable $callback, $object)
 {
     if (!is_object($object)) {
