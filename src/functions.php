@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\CompositeException;
+
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
@@ -23,15 +25,9 @@ function resolve($promiseOrValue = null)
     return new FulfilledPromise($promiseOrValue);
 }
 
-function reject($promiseOrValue = null)
+function reject($reason)
 {
-    if ($promiseOrValue instanceof PromiseInterface) {
-        return resolve($promiseOrValue)->then(function ($value) {
-            return new RejectedPromise($value);
-        });
-    }
-
-    return new RejectedPromise($promiseOrValue);
+    return new RejectedPromise($reason);
 }
 
 function all(array $promisesOrValues)
@@ -118,7 +114,9 @@ function some(array $promisesOrValues, $howMany)
                 $reasons[$i] = $reason;
 
                 if (0 === --$toReject) {
-                    $reject($reasons);
+                    $reject(
+                        CompositeException::tooManyPromisesRejected($reasons)
+                    );
                 }
             };
 
@@ -208,10 +206,6 @@ function enqueue(callable $task)
  */
 function _checkTypehint(callable $callback, $object)
 {
-    if (!is_object($object)) {
-        return true;
-    }
-
     if (is_array($callback)) {
         $callbackReflection = new \ReflectionMethod($callback[0], $callback[1]);
     } elseif (is_object($callback) && !$callback instanceof \Closure) {

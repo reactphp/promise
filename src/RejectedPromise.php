@@ -2,14 +2,16 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\InvalidArgumentException;
+
 final class RejectedPromise implements PromiseInterface
 {
     private $reason;
 
-    public function __construct($reason = null)
+    public function __construct($reason)
     {
-        if ($reason instanceof PromiseInterface) {
-            throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
+        if (!$reason instanceof \Throwable && !$reason instanceof \Exception) {
+            throw InvalidArgumentException::invalidRejectionReason($reason);
         }
 
         $this->reason = $reason;
@@ -38,13 +40,13 @@ final class RejectedPromise implements PromiseInterface
     {
         enqueue(function () use ($onRejected) {
             if (null === $onRejected) {
-                throw UnhandledRejectionException::resolve($this->reason);
+                throw $this->reason;
             }
 
             $result = $onRejected($this->reason);
 
             if ($result instanceof self) {
-                throw UnhandledRejectionException::resolve($result->reason);
+                throw $result->reason;
             }
 
             if ($result instanceof PromiseInterface) {

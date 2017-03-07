@@ -31,6 +31,10 @@ class RejectedPromiseTest extends TestCase
             },
             'settle' => function ($reason = null) use (&$promise) {
                 if (!$promise) {
+                    if (!$reason instanceof \Exception) {
+                        $reason = new \Exception($reason);
+                    }
+
                     $promise = new RejectedPromise($reason);
                 }
             },
@@ -38,10 +42,10 @@ class RejectedPromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldThrowExceptionIfConstructedWithAPromise()
+    public function shouldThrowExceptionIfConstructedWithANonException()
     {
-        $this->setExpectedException('\InvalidArgumentException');
+        $this->setExpectedException('\React\Promise\Exception\InvalidArgumentException');
 
-        return new RejectedPromise(new RejectedPromise());
+        return new RejectedPromise('foo');
     }
 }

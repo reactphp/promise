@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\CompositeException;
 use React\Promise\Exception\LengthException;
 
 class FunctionAnyTest extends TestCase
@@ -53,26 +54,37 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected()
     {
+        $exception1 = new \Exception();
+        $exception2 = new \Exception();
+        $exception3 = new \Exception();
+
+        $compositeException = CompositeException::tooManyPromisesRejected(
+            [0 => $exception1, 1 => $exception2, 2 => $exception3]
+        );
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo([0 => 1, 1 => 2, 2 => 3]));
+            ->with($compositeException);
 
-        any([reject(1), reject(2), reject(3)])
+        any([reject($exception1), reject($exception2), reject($exception3)])
             ->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
     public function shouldResolveWhenFirstInputPromiseResolves()
     {
+        $exception2 = new \Exception();
+        $exception3 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->identicalTo(1));
 
-        any([resolve(1), reject(2), reject(3)])
+        any([resolve(1), reject($exception2), reject($exception3)])
             ->then($mock);
     }
 

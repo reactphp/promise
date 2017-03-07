@@ -50,16 +50,18 @@ trait ResolveTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
         $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
 
-        $adapter->resolve(Promise\reject(1));
+        $adapter->resolve(Promise\reject($exception));
     }
 
     /** @test */
@@ -167,10 +169,10 @@ trait ResolveTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
+        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
         $this->assertNull($adapter->promise()->done(function () {
-            return \React\Promise\reject();
+            return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
         }));
         $adapter->resolve(1);
     }

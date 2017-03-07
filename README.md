@@ -94,7 +94,7 @@ $deferred = new React\Promise\Deferred();
 $promise = $deferred->promise();
 
 $deferred->resolve(mixed $value = null);
-$deferred->reject(mixed $reason = null);
+$deferred->reject(\Throwable|\Exception $reason);
 ```
 
 The `promise` method returns the promise of the deferred.
@@ -129,16 +129,13 @@ this promise once it is resolved.
 #### Deferred::reject()
 
 ```php
-$deferred->reject(mixed $reason = null);
+$deferred->reject(\Throwable|\Exception $reason);
 ```
 
 Rejects the promise returned by `promise()`, signalling that the deferred's
 computation failed.
 All consumers are notified by having `$onRejected` (which they registered via
 `$promise->then()`) called with `$reason`.
-
-If `$reason` itself is a promise, the promise will be rejected with the outcome
-of this promise regardless whether it fulfills or rejects.
 
 ### PromiseInterface
 
@@ -358,8 +355,7 @@ Creates a already rejected promise.
 $promise = React\Promise\RejectedPromise($reason);
 ```
 
-Note, that `$reason` **cannot** be a promise. It's recommended to use
-[reject()](#reject) for creating rejected promises.
+Note, that `$reason` **must** be a `\Throwable` or `\Exception`.
 
 ### LazyPromise
 
@@ -410,20 +406,10 @@ If `$promiseOrValue` is a promise, it will be returned as is.
 #### reject()
 
 ```php
-$promise = React\Promise\reject(mixed $promiseOrValue);
+$promise = React\Promise\reject(\Throwable|\Exception $reason);
 ```
 
-Creates a rejected promise for the supplied `$promiseOrValue`.
-
-If `$promiseOrValue` is a value, it will be the rejection value of the
-returned promise.
-
-If `$promiseOrValue` is a promise, its completion value will be the rejected
-value of the returned promise.
-
-This can be useful in situations where you need to reject a promise without
-throwing an exception. For example, it allows you to propagate a rejection with
-the value of another promise.
+Creates a rejected promise for the supplied `$reason`.
 
 #### all()
 
@@ -523,7 +509,7 @@ function getAwesomeResultPromise()
     $deferred = new React\Promise\Deferred();
 
     // Execute a Node.js-style function using the callback pattern
-    computeAwesomeResultAsynchronously(function ($error, $result) use ($deferred) {
+    computeAwesomeResultAsynchronously(function (\Exception $error, $result) use ($deferred) {
         if ($error) {
             $deferred->reject($error);
         } else {
@@ -540,7 +526,7 @@ getAwesomeResultPromise()
         function ($value) {
             // Deferred resolved, do something with $value
         },
-        function ($reason) {
+        function (\Exception $reason) {
             // Deferred rejected, do something with $reason
         }
     );

@@ -74,15 +74,15 @@ class FunctionResolveTest extends TestCase
     /** @test */
     public function shouldRejectARejectedPromise()
     {
-        $expected = 123;
+        $exception = new \Exception();
 
-        $resolved = new RejectedPromise($expected);
+        $resolved = new RejectedPromise($exception);
 
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($expected));
+            ->with($this->identicalTo($exception));
 
         resolve($resolved)
             ->then(

@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\CompositeException;
 use React\Promise\Exception\LengthException;
 
 class FunctionSomeTest extends TestCase
@@ -91,17 +92,27 @@ class FunctionSomeTest extends TestCase
         )->then($mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group 123
+     */
     public function shouldRejectIfAnyInputPromiseRejectsBeforeDesiredNumberOfInputsAreResolved()
     {
+        $exception2 = new \Exception();
+        $exception3 = new \Exception();
+
+        $compositeException = CompositeException::tooManyPromisesRejected(
+            [1 => $exception2, 2 => $exception3]
+        );
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo([1 => 2, 2 => 3]));
+            ->with($compositeException);
 
         some(
-            [resolve(1), reject(2), reject(3)],
+            [resolve(1), reject($exception2), reject($exception3)],
             2
         )->then($this->expectCallableNever(), $mock);
     }
@@ -172,7 +183,7 @@ class FunctionSomeTest extends TestCase
             ->method('__invoke');
 
         $deferred = New Deferred($mock);
-        $deferred->reject();
+        $deferred->reject(new \Exception());
 
         $mock2 = $this
             ->getMockBuilder('React\Promise\PromiseInterface')

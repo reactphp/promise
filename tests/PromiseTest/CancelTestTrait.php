@@ -47,15 +47,17 @@ trait CancelTestTrait
     /** @test */
     public function cancelShouldRejectPromiseIfCancellerRejects()
     {
-        $adapter = $this->getPromiseTestAdapter(function ($resolve, $reject) {
-            $reject(1);
+        $exception = new \Exception();
+
+        $adapter = $this->getPromiseTestAdapter(function ($resolve, $reject) use ($exception) {
+            $reject($exception);
         });
 
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
         $adapter->promise()
             ->then($this->expectCallableNever(), $mock);

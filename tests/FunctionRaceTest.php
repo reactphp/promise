@@ -66,11 +66,13 @@ class FunctionRaceTest extends TestCase
     /** @test */
     public function shouldRejectIfFirstSettledPromiseRejects()
     {
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception));
 
         $d1 = new Deferred();
         $d2 = new Deferred();
@@ -80,7 +82,7 @@ class FunctionRaceTest extends TestCase
             [$d1->promise(), $d2->promise(), $d3->promise()]
         )->then($this->expectCallableNever(), $mock);
 
-        $d2->reject(2);
+        $d2->reject($exception);
 
         $d1->resolve(1);
         $d3->resolve(3);
@@ -136,7 +138,7 @@ class FunctionRaceTest extends TestCase
             ->method('__invoke');
 
         $deferred = New Deferred($mock);
-        $deferred->reject();
+        $deferred->reject(new \Exception());
 
         $mock2 = $this
             ->getMockBuilder('React\Promise\PromiseInterface')

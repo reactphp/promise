@@ -17,14 +17,17 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception1 = new \Exception();
+        $exception2 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception1));
 
-        $adapter->reject(1);
-        $adapter->reject(2);
+        $adapter->reject($exception1);
+        $adapter->reject($exception2);
 
         $adapter->promise()
             ->then(
@@ -38,13 +41,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject(1);
+        $exception = new \Exception();
+
+        $adapter->reject($exception);
 
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
         $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
@@ -61,7 +66,7 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with(null);
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
@@ -89,12 +94,12 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return $val + 1;
+                function () {
+                    return 2;
                 }
             )
             ->then(
@@ -114,12 +119,12 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return \React\Promise\resolve($val + 1);
+                function () {
+                    return \React\Promise\resolve(2);
                 }
             )
             ->then(
@@ -147,7 +152,7 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
@@ -164,18 +169,20 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return \React\Promise\reject($val + 1);
+                function () use ($exception) {
+                    return \React\Promise\reject($exception);
                 }
             )
             ->then(
@@ -189,13 +196,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject($exception);
         $this->assertNull($adapter->promise()->done(null, $mock));
     }
 
@@ -206,52 +215,9 @@ trait PromiseRejectedTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $this->assertNull($adapter->promise()->done(null, function () {
             throw new \Exception('UnhandledRejectionException');
-        }));
-    }
-
-    /** @test */
-    public function doneShouldThrowUnhandledRejectionExceptionWhenRejectedWithNonExceptionForRejectedPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
-
-        $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done());
-    }
-
-    /** @test */
-    public function unhandledRejectionExceptionThrownByDoneHoldsRejectionValue()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $expected = new \stdClass();
-
-        $adapter->reject($expected);
-
-        try {
-            $adapter->promise()->done();
-        } catch (UnhandledRejectionException $e) {
-            $this->assertSame($expected, $e->getReason());
-            return;
-        }
-
-        $this->fail();
-    }
-
-    /** @test */
-    public function doneShouldThrowUnhandledRejectionExceptionWhenRejectionHandlerRejectsForRejectedPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $this->setExpectedException('React\\Promise\\UnhandledRejectionException');
-
-        $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function () {
-            return \React\Promise\reject();
         }));
     }
 
@@ -262,7 +228,7 @@ trait PromiseRejectedTestTrait
 
         $this->setExpectedException('\Exception', 'UnhandledRejectionException');
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
         }));
@@ -319,13 +285,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject($exception);
         $adapter->promise()->otherwise($mock);
     }
 
@@ -495,7 +463,7 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject();
+        $adapter->reject(new \Exception());
 
         $this->assertNull($adapter->promise()->cancel());
     }
@@ -505,7 +473,7 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
-        $adapter->reject();
+        $adapter->reject(new \Exception());
 
         $adapter->promise()->cancel();
     }
