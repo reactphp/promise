@@ -707,11 +707,6 @@ getJsonResult()
     );
 ```
 
-Note that if a rejection value is not an instance of `\Exception`, it will be
-wrapped in an exception of the type `React\Promise\UnhandledRejectionException`.
-
-You can get the original rejection reason by calling `$exception->getReason()`.
-
 Credits
 -------
 
