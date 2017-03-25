@@ -27,7 +27,7 @@ final class Promise implements PromiseInterface
     public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
-            return $this->result()->then($onFulfilled, $onRejected);
+            return $this->result->then($onFulfilled, $onRejected);
         }
 
         if (null === $this->canceller) {
@@ -48,7 +48,7 @@ final class Promise implements PromiseInterface
     public function done(callable $onFulfilled = null, callable $onRejected = null)
     {
         if (null !== $this->result) {
-            return $this->result()->done($onFulfilled, $onRejected);
+            return $this->result->done($onFulfilled, $onRejected);
         }
 
         $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
@@ -180,15 +180,7 @@ final class Promise implements PromiseInterface
 
     private function settle(PromiseInterface $result)
     {
-        if ($result instanceof LazyPromise) {
-            $result = $result->promise();
-        }
-
-        if ($result === $this) {
-            $result = new RejectedPromise(
-                LogicException::circularResolution()
-            );
-        }
+        $result = $this->unwrap($result);
 
         $handlers = $this->handlers;
 
@@ -201,13 +193,30 @@ final class Promise implements PromiseInterface
         }
     }
 
-    private function result()
+    private function unwrap($promise)
     {
-        while ($this->result instanceof self && null !== $this->result->result) {
-            $this->result = $this->result->result;
+        $promise = $this->extract($promise);
+
+        while ($promise instanceof self && null !== $promise->result) {
+            $promise = $this->extract($promise->result);
         }
 
-        return $this->result;
+        return $promise;
+    }
+
+    private function extract($promise)
+    {
+        if ($promise instanceof LazyPromise) {
+            $promise = $promise->promise();
+        }
+
+        if ($promise === $this) {
+            return new RejectedPromise(
+                LogicException::circularResolution()
+            );
+        }
+
+        return $promise;
     }
 
     private function call(callable $callback)
