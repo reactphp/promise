@@ -1,6 +1,11 @@
 CHANGELOG for 2.x
 =================
 
+* 2.5.1 (2017-03-25)
+
+    * Fix circular references when resolving with a promise which follows
+      itself (#94).
+
 * 2.5.0 (2016-12-22)
 
     * Revert automatic cancellation of pending collection promises once the
