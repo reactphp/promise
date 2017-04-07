@@ -56,6 +56,7 @@ Table of Contents
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
    * [done() vs. then()](#done-vs-then)
+   * [Promise inspection](#promise-inspection)
 5. [Credits](#credits)
 6. [License](#license)
 
@@ -786,6 +787,85 @@ Note that if a rejection value is not an instance of `\Exception`, it will be
 wrapped in an exception of the type `React\Promise\UnhandledRejectionException`.
 
 You can get the original rejection reason by calling `$exception->getReason()`.
+
+### Promise inspection
+
+A promises provide the following methods to inspect its state and resolution
+value:
+
+* [isFulfilled()](#promiseinterfaceisfulfilled)
+* [isRejected()](#promiseinterfaceisrejected)
+* [isPending()](#promiseinterfaceispending)
+* [isCancelled()](#promiseinterfaceiscancelled)
+* [value()](#promiseinterfacevalue)
+* [reason()](#promiseinterfacereason)
+
+These methods allow for optimizations, eg. by avoiding unnecessary `then()`
+nesting to get a promise's value when it is guaranteed that the promise is
+already fulfilled.
+
+Consider the following example where accessing previous values require an
+additional nesting level.
+
+```php
+function getPostWithComments($postId) {
+    $postPromise = getPost($postId);
+
+    return $postPromise->then(function ($post) {
+        // Nested because we need both $post and $comments
+        return getComments($post->id)->then(function ($comments) use ($post) {
+            return new Post($post, $comments);
+        });
+    });
+}
+```
+
+This can be optimized by keeping the nesting level flat.
+
+```php
+function getPostWithComments($postId) {
+    $postPromise = getPost($postId);
+
+    return $postPromise->then(function ($post) {
+        return getComments($post->id);
+    })->then(function ($comments) use ($postPromise) {
+        // Guaranteed that $postPromise is fulfilled, so value() can be called
+        return new Post($postPromise->value(), $comments);
+    });
+}
+```
+
+State inspection also allows to avoid unnecessary creation of resources.
+
+Consider a `timeout()` function which rejects a promise if it isn't resolved
+within a certain time. By checking if the promise is still pending, we can avoid
+creating a nested `Deferred` object and registering a timer with the event loop.
+
+```php
+function timeout(PromiseInterface $promise, $time, LoopInterface $loop)
+{
+    // Return early for a resolved promise
+    // No need to create a nested deferred object and register a timer
+    if (!$promise->isPending()) {
+        return $promise;
+    }
+
+    $deferred = new Deferred();
+
+    $timer = $loop->addTimer($time, function () use ($time, $deferred) {
+        $deferred->reject(
+            new TimeoutException('Timed out after ' . $time . ' seconds')
+        );
+    });
+
+    $promise->then([$deferred, 'resolve'], [$deferred, 'reject']);
+
+    return $deferred->promise()
+        ->always(function() use ($loop, $timer) {
+            $loop->cancelTimer($timer);
+        });
+}
+```
 
 Credits
 -------
