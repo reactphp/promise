@@ -44,7 +44,7 @@ function all(array $promisesOrValues)
 function race(array $promisesOrValues)
 {
     if (!$promisesOrValues) {
-        return new Promise(function() {});
+        return new Promise(function () {});
     }
 
     $cancellationQueue = new Internal\CancellationQueue();

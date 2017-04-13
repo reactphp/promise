@@ -14,7 +14,7 @@ class FunctionAnyTest extends TestCase
             ->expects($this->once())
             ->method('__invoke')
             ->with(
-                $this->callback(function($exception){
+                $this->callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
@@ -98,8 +98,8 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $promise1 = new Promise(function() {}, $this->expectCallableOnce());
-        $promise2 = new Promise(function() {}, $this->expectCallableOnce());
+        $promise1 = new Promise(function () {}, $this->expectCallableOnce());
+        $promise2 = new Promise(function () {}, $this->expectCallableOnce());
 
         any([$promise1, $promise2])->cancel();
     }
@@ -110,7 +110,7 @@ class FunctionAnyTest extends TestCase
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve();
 
-        $promise2 = new Promise(function() {}, $this->expectCallableNever());
+        $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
         some([$deferred->promise(), $promise2], 1)->cancel();
     }

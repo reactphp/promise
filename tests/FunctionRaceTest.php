@@ -89,8 +89,8 @@ class FunctionRaceTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $promise1 = new Promise(function() {}, $this->expectCallableOnce());
-        $promise2 = new Promise(function() {}, $this->expectCallableOnce());
+        $promise1 = new Promise(function () {}, $this->expectCallableOnce());
+        $promise2 = new Promise(function () {}, $this->expectCallableOnce());
 
         race([$promise1, $promise2])->cancel();
     }
@@ -101,7 +101,7 @@ class FunctionRaceTest extends TestCase
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve();
 
-        $promise2 = new Promise(function() {}, $this->expectCallableNever());
+        $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
         race([$deferred->promise(), $promise2])->cancel();
     }
@@ -112,7 +112,7 @@ class FunctionRaceTest extends TestCase
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->reject();
 
-        $promise2 = new Promise(function() {}, $this->expectCallableNever());
+        $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
         race([$deferred->promise(), $promise2])->cancel();
     }

@@ -115,8 +115,8 @@ class FunctionMapTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $promise1 = new Promise(function() {}, $this->expectCallableOnce());
-        $promise2 = new Promise(function() {}, $this->expectCallableOnce());
+        $promise1 = new Promise(function () {}, $this->expectCallableOnce());
+        $promise2 = new Promise(function () {}, $this->expectCallableOnce());
 
         map(
             [$promise1, $promise2],

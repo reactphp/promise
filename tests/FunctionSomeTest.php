@@ -14,7 +14,7 @@ class FunctionSomeTest extends TestCase
             ->expects($this->once())
             ->method('__invoke')
             ->with(
-                $this->callback(function($exception){
+                $this->callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
@@ -34,7 +34,7 @@ class FunctionSomeTest extends TestCase
             ->expects($this->once())
             ->method('__invoke')
             ->with(
-                $this->callback(function($exception){
+                $this->callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 4 items but contains only 3 items.' === $exception->getMessage();
                 })
@@ -125,8 +125,8 @@ class FunctionSomeTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $promise1 = new Promise(function() {}, $this->expectCallableOnce());
-        $promise2 = new Promise(function() {}, $this->expectCallableOnce());
+        $promise1 = new Promise(function () {}, $this->expectCallableOnce());
+        $promise2 = new Promise(function () {}, $this->expectCallableOnce());
 
         some([$promise1, $promise2], 1)->cancel();
     }
@@ -137,7 +137,7 @@ class FunctionSomeTest extends TestCase
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve();
 
-        $promise2 = new Promise(function() {}, $this->expectCallableNever());
+        $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
         some([$deferred->promise(), $promise2], 1);
     }
@@ -148,7 +148,7 @@ class FunctionSomeTest extends TestCase
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->reject();
 
-        $promise2 = new Promise(function() {}, $this->expectCallableNever());
+        $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
         some([$deferred->promise(), $promise2], 2);
     }

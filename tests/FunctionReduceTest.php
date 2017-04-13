@@ -259,8 +259,8 @@ class FunctionReduceTest extends TestCase
     /** @test */
     public function shouldCancelInputArrayPromises()
     {
-        $promise1 = new Promise(function() {}, $this->expectCallableOnce());
-        $promise2 = new Promise(function() {}, $this->expectCallableOnce());
+        $promise1 = new Promise(function () {}, $this->expectCallableOnce());
+        $promise2 = new Promise(function () {}, $this->expectCallableOnce());
 
         reduce(
             [$promise1, $promise2],
