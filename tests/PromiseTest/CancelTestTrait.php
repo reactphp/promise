@@ -118,12 +118,7 @@ trait CancelTestTrait
     /** @test */
     public function cancelShouldCallCancellerFromDeepNestedPromiseChain()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke');
-
-        $adapter = $this->getPromiseTestAdapter($mock);
+        $adapter = $this->getPromiseTestAdapter($this->expectCallableOnce());
 
         $promise = $adapter->promise()
             ->then(function () {

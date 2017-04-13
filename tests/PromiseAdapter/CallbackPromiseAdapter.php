@@ -2,8 +2,6 @@
 
 namespace React\Promise\PromiseAdapter;
 
-use React\Promise;
-
 class CallbackPromiseAdapter implements PromiseAdapterInterface
 {
     private $callbacks;

@@ -132,7 +132,7 @@ class FunctionResolveTest extends TestCase
 
             $last = $p;
             for ($j = 0; $j < 250; $j++) {
-                $last = $last->then(function($result) {
+                $last = $last->then(function ($result) {
                     return $result;
                 });
             }

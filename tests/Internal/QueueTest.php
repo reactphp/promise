@@ -22,7 +22,7 @@ class QueueTest extends TestCase
 
         $nested = $this->expectCallableOnce();
 
-        $task = function() use ($queue, $nested) {
+        $task = function () use ($queue, $nested) {
             $queue->enqueue($nested);
         };
 
