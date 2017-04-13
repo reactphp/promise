@@ -79,16 +79,16 @@ class CancellationQueueTest extends TestCase
     {
         $this->setExpectedException('\Exception', 'test');
 
-        $mock = $this
-            ->getMockBuilder('React\Promise\PromiseInterface')
-            ->getMock();
+        $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
-            ->method('cancel')
+            ->method('__invoke')
             ->will($this->throwException(new \Exception('test')));
 
+        $promise = new SimpleTestCancellableThenable($mock);
+
         $cancellationQueue = new CancellationQueue();
-        $cancellationQueue->enqueue($mock);
+        $cancellationQueue->enqueue($promise);
 
         $cancellationQueue();
     }
