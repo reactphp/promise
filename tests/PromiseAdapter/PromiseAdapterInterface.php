@@ -2,8 +2,6 @@
 
 namespace React\Promise\PromiseAdapter;
 
-use React\Promise;
-
 interface PromiseAdapterInterface
 {
     public function promise();
