@@ -139,7 +139,7 @@ class FunctionSomeTest extends TestCase
             ->expects($this->never())
             ->method('__invoke');
 
-        $deferred = New Deferred($mock);
+        $deferred = new Deferred($mock);
         $deferred->resolve();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());
@@ -155,7 +155,7 @@ class FunctionSomeTest extends TestCase
             ->expects($this->never())
             ->method('__invoke');
 
-        $deferred = New Deferred($mock);
+        $deferred = new Deferred($mock);
         $deferred->reject();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());

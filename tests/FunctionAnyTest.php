@@ -113,7 +113,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke');
 
 
-        $deferred = New Deferred($mock);
+        $deferred = new Deferred($mock);
         $deferred->resolve();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());
