@@ -107,13 +107,7 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->never())
-            ->method('__invoke');
-
-
-        $deferred = new Deferred($mock);
+        $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());

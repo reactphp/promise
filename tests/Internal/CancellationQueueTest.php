@@ -95,11 +95,6 @@ class CancellationQueueTest extends TestCase
 
     private function getCancellableDeferred()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke');
-
-        return new Deferred($mock);
+        return new Deferred($this->expectCallableOnce());
     }
 }

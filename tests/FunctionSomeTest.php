@@ -134,12 +134,7 @@ class FunctionSomeTest extends TestCase
     /** @test */
     public function shouldCancelOtherPendingInputArrayPromisesIfEnoughPromisesFulfill()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->never())
-            ->method('__invoke');
-
-        $deferred = new Deferred($mock);
+        $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());
@@ -150,12 +145,7 @@ class FunctionSomeTest extends TestCase
     /** @test */
     public function shouldNotCancelOtherPendingInputArrayPromisesIfEnoughPromisesReject()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->never())
-            ->method('__invoke');
-
-        $deferred = new Deferred($mock);
+        $deferred = new Deferred($this->expectCallableNever());
         $deferred->reject();
 
         $promise2 = new Promise(function() {}, $this->expectCallableNever());
