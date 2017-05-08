@@ -13,7 +13,7 @@ Table of Contents
 1. [Introduction](#introduction)
 2. [Concepts](#concepts)
    * [Deferred](#deferred)
-   * [Promise](#promise)
+   * [Promise](#promise-1)
 3. [API](#api)
    * [Deferred](#deferred-1)
      * [Deferred::promise()](#deferredpromise)
@@ -29,7 +29,7 @@ Table of Contents
         * [ExtendedPromiseInterface::progress()](#extendedpromiseinterfaceprogress)
    * [CancellablePromiseInterface](#cancellablepromiseinterface)
         * [CancellablePromiseInterface::cancel()](#cancellablepromiseinterfacecancel)
-   * [Promise](#promise-1)
+   * [Promise](#promise-2)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
    * [LazyPromise](#lazypromise)
@@ -106,7 +106,7 @@ The `resolve` and `reject` methods control the state of the deferred.
 The `notify` method is for progress notification.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
-See [Promise](#promise-1) for more information.
+See [Promise](#promise-2) for more information.
 
 #### Deferred::promise()
 
@@ -169,7 +169,7 @@ Neither its state nor its result (or error) can be modified.
 
 #### Implementations
 
-* [Promise](#promise-1)
+* [Promise](#promise-2)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
 * [LazyPromise](#lazypromise)
