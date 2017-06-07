@@ -25,7 +25,7 @@ function resolve($promiseOrValue = null)
 
 function reject($promiseOrValue = null)
 {
-    if ($promiseOrValue instanceof PromiseInterface) {
+    if (method_exists($promiseOrValue, 'then')) {
         return resolve($promiseOrValue)->then(function ($value) {
             return new RejectedPromise($value);
         });
