@@ -7,7 +7,8 @@ use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 class FulfilledPromiseTest extends TestCase
 {
     use PromiseTest\PromiseSettledTestTrait,
-        PromiseTest\PromiseFulfilledTestTrait;
+        PromiseTest\PromiseFulfilledTestTrait,
+        PromiseTest\AsyncInteropResolvedTestTrait;
 
     public function getPromiseTestAdapter(callable $canceller = null)
     {
@@ -42,6 +43,14 @@ class FulfilledPromiseTest extends TestCase
 
     /** @test */
     public function shouldThrowExceptionIfConstructedWithAPromise()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        return new FulfilledPromise(new FulfilledPromise());
+    }
+
+    /** @test */
+    public function shouldThrowExceptionIfConstructedWithAAsyncInteropPromise()
     {
         $this->setExpectedException('\InvalidArgumentException');
 
