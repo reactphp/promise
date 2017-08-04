@@ -6,17 +6,13 @@ php:
   - 5.6
   - 7.0
   - 7.1
-  - nightly
-  - hhvm
+  - nightly # ignore errors, see below
+  - hhvm # ignore errors, see below
 
 # lock distro so new future defaults will not break the build
-dist: precise
+dist: trusty
 
-# also test against HHVM, but require "trusty" and ignore errors
 matrix:
-  include:
-    - php: hhvm
-      dist: trusty
   allow_failures:
     - php: hhvm
     - php: nightly
