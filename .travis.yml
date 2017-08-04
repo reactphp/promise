@@ -9,6 +9,9 @@ php:
   - nightly
   - hhvm
 
+# lock distro so new future defaults will not break the build
+dist: precise
+
 # also test against HHVM, but require "trusty" and ignore errors
 matrix:
   include:
