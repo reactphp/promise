@@ -86,6 +86,17 @@ final class Promise implements PromiseInterface
         $this->call($canceller);
     }
 
+    public function when(callable $onResolved)
+    {
+        if (null !== $this->result) {
+            return $this->result()->when($onResolved);
+        }
+
+        $this->handlers[] = function (PromiseInterface $promise) use ($onResolved) {
+            $promise->when($onResolved);
+        };
+    }
+
     private function resolver(callable $onFulfilled = null, callable $onRejected = null)
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {

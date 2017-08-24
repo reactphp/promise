@@ -72,6 +72,24 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveAFulfilledAsyncInteropPromise()
+    {
+        $promise = new SimpleFulfilledAsyncInteropTestPromise();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo('foo'));
+
+        resolve($promise)
+            ->then(
+                $mock,
+                $this->expectCallableNever()
+            );
+    }
+
+    /** @test */
     public function shouldRejectARejectedPromise()
     {
         $expected = 123;
@@ -85,6 +103,25 @@ class FunctionResolveTest extends TestCase
             ->with($this->identicalTo($expected));
 
         resolve($resolved)
+            ->then(
+                $this->expectCallableNever(),
+                $mock
+            );
+    }
+
+    /** @test */
+    public function shouldRejectARejectedAsyncInteropPromise()
+    {
+        $exception = new \Exception('foo');
+        $promise = new SimpleRejectedAsyncInteropTestPromise($exception);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        resolve($promise)
             ->then(
                 $this->expectCallableNever(),
                 $mock

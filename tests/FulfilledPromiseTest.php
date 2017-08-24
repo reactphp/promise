@@ -44,4 +44,12 @@ class FulfilledPromiseTest extends TestCase
 
         return new FulfilledPromise(new FulfilledPromise());
     }
+
+    /** @test */
+    public function shouldThrowExceptionIfConstructedWithAAsyncInteropPromise()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        return new FulfilledPromise(new SimpleFulfilledAsyncInteropTestPromise());
+    }
 }

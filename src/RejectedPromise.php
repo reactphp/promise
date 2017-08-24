@@ -2,13 +2,15 @@
 
 namespace React\Promise;
 
+use AsyncInterop\Promise as AsyncInteropPromise;
+
 final class RejectedPromise implements PromiseInterface
 {
     private $reason;
 
     public function __construct($reason = null)
     {
-        if ($reason instanceof PromiseInterface) {
+        if ($reason instanceof AsyncInteropPromise) {
             throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
         }
 
@@ -73,5 +75,19 @@ final class RejectedPromise implements PromiseInterface
 
     public function cancel()
     {
+    }
+
+    public function when(callable $onResolved)
+    {
+        try {
+            $onResolved(
+                UnhandledRejectionException::resolve($this->reason),
+                null
+            );
+        } catch (\Throwable $exception) {
+            AsyncInteropPromise\ErrorHandler::notify($exception);
+        } catch (\Exception $exception) {
+            AsyncInteropPromise\ErrorHandler::notify($exception);
+        }
     }
 }

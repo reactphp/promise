@@ -44,4 +44,12 @@ class RejectedPromiseTest extends TestCase
 
         return new RejectedPromise(new RejectedPromise());
     }
+
+    /** @test */
+    public function shouldThrowExceptionIfConstructedWithAAsyncInteropPromise()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        return new RejectedPromise(new SimpleFulfilledAsyncInteropTestPromise());
+    }
 }

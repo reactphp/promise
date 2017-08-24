@@ -43,6 +43,7 @@ Table of Contents
      * [map()](#map)
      * [reduce()](#reduce)
    * [PromisorInterface](#promisorinterface)
+   * [AsyncInterop\Promise compatibility](#asyncinteroppromise-compatibility)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -150,6 +151,11 @@ and an associated value, or rejection (failure) and an associated reason.
 
 Once in the fulfilled or rejected state, a promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
+
+This interface extends the
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface.
+See [`AsyncInterop\Promise` compatibility](#asyncinteroppromise-compatibility),
+for further information.
 
 #### Implementations
 
@@ -402,10 +408,47 @@ Creates a promise for the supplied `$promiseOrValue`.
 If `$promiseOrValue` is a value, it will be the resolution value of the
 returned promise.
 
+```php
+React\Promise\resolve(1)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
+If `$promiseOrValue` is a
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise), a trusted
+promise that follows the state of the `AsyncInterop\Promise` is returned.
+
+```php
+$asyncInteropPromise = getAsyncInteropPromiseWhichResolvesTo1();
+
+assert($asyncInteropPromise instanceof AsyncInterop\Promise);
+
+React\Promise\resolve($asyncInteropPromise)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
 If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
 a trusted promise that follows the state of the thenable is returned.
 
+```php
+$thenable = getThenableWhichResolvesTo1();
+
+assert(method_exists($thenable, 'then'));
+
+React\Promise\resolve($asyncInteropPromise)->then(function ($value) {
+    assert(1 === $value);
+});
+```
+
 If `$promiseOrValue` is a promise, it will be returned as is.
+
+```php
+$promise1 = React\Promise\resolve(1);
+$promise2 = React\Promise\resolve($promise1);
+
+assert($promise1 === $promise2);
+```
 
 #### reject()
 
@@ -511,6 +554,70 @@ value.
 The `React\Promise\PromisorInterface` provides a common interface for objects
 that provide a promise. `React\Promise\Deferred` implements it, but since it
 is part of the public API anyone can implement it.
+
+### AsyncInterop\Promise compatibility
+
+The [`PromiseInterface`](#promiseinterface) extends the
+[`AsyncInterop\Promise`](https://github.com/async-interop/promise) interface and
+thereby all promise implementations from React/Promise implement its `when()`
+method.
+
+The `AsyncInterop\Promise` interface is intended for interoperability with other
+libraries and their combinator and conversion functions.
+
+Note, that although the `AsyncInterop\Promise` interface is named *Promise*,
+it's API is different from promises commonly known from the
+[CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A),
+[Promises/A+](https://promisesaplus.com) or
+[ECMAScript 2015 (ES6)](http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor)
+specifications.
+
+If you're using React/Promise as your primary value placeholder implementation, 
+it is recommended to **not** use the `when()` method directly but the high level
+consumption methods `then()`, `done()`, `otherwise()` and `always()` to consume
+a promise's value or reason.
+
+#### Examples
+
+You can cast every foreign promise implementing `AsyncInterop\Promise` to a
+trusted promise by passing it through [`resolve()`](#resolve).
+
+It is also possible to return an `AsyncInterop\Promise` instance inside promise
+chains.
+
+```php
+$asyncInteropPromise = OtherLib\doAsyncTaskAndReturnAsyncInteropPromise();
+
+$reactPromise = React\Promise\resolve($asyncInteropPromise)
+    ->then(function ($value) {
+        // You can also return `AsyncInterop\Promise` instances
+        // from promise handlers
+        return NextLib\transformValueAndReturnAsyncInteropPromise($value);
+    })
+    ->then(function ($transformedValue) {
+
+    })
+;
+```
+
+Since promises from React/Promise also implement the `AsyncInterop\Promise`
+interface, you can use these promises with combinator, conversion and coroutine
+implementations of other libraries which support `AsyncInterop\Promise`.
+
+```php
+$observable = Observable::fromPromise(
+    $reactSocketClient->connect('google.com:443')
+);
+
+coroutine(function() {
+    $promiseArray = [
+        $reactSocketClient->connect('google.com:443'),
+        $reactSocketClient->connect('google.de:443')
+    ];
+
+    $stream = (yield first($promiseArray));
+});
+```
 
 Examples
 --------

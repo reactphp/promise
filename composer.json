@@ -6,9 +6,11 @@
         {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "async-interop/promise": "^0.4.0"
     },
     "require-dev": {
+        "async-interop/promise-test": "^0.4.1",
         "phpunit/phpunit": "~4.8"
     },
     "autoload": {
