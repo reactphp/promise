@@ -38,13 +38,23 @@ final class RejectedPromise implements PromiseInterface
     {
         enqueue(function () use ($onRejected) {
             if (null === $onRejected) {
-                throw UnhandledRejectionException::resolve($this->reason);
+                return fatalError(
+                    UnhandledRejectionException::resolve($this->reason)
+                );
             }
 
-            $result = $onRejected($this->reason);
+            try {
+                $result = $onRejected($this->reason);
+            } catch (\Throwable $exception) {
+                return fatalError($exception);
+            } catch (\Exception $exception) {
+                return fatalError($exception);
+            }
 
             if ($result instanceof self) {
-                throw UnhandledRejectionException::resolve($result->reason);
+                return fatalError(
+                    UnhandledRejectionException::resolve($result->reason)
+                );
             }
 
             if ($result instanceof PromiseInterface) {

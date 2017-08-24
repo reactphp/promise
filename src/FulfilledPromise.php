@@ -41,7 +41,13 @@ final class FulfilledPromise implements PromiseInterface
         }
 
         enqueue(function () use ($onFulfilled) {
-            $result = $onFulfilled($this->value);
+            try {
+                $result = $onFulfilled($this->value);
+            } catch (\Throwable $exception) {
+                return fatalError($exception);
+            } catch (\Exception $exception) {
+                return fatalError($exception);
+            }
 
             if ($result instanceof PromiseInterface) {
                 $result->done();
