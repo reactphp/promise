@@ -32,7 +32,6 @@ Table of Contents
    * [Promise](#promise-2)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
-   * [LazyPromise](#lazypromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
      * [reject()](#reject)
@@ -156,7 +155,6 @@ Neither its state nor its result (or error) can be modified.
 * [Promise](#promise-2)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
 
 #### PromiseInterface::then()
 
@@ -360,27 +358,6 @@ $promise = React\Promise\RejectedPromise($reason);
 
 Note, that `$reason` **cannot** be a promise. It's recommended to use
 [reject()](#reject) for creating rejected promises.
-
-### LazyPromise
-
-Creates a promise which will be lazily initialized by `$factory` once a consumer
-calls the `then()` method.
-
-```php
-$factory = function () {
-    $deferred = new React\Promise\Deferred();
-
-    // Do some heavy stuff here and resolve the deferred once completed
-
-    return $deferred->promise();
-};
-
-$promise = new React\Promise\LazyPromise($factory);
-
-// $factory will only be executed once we call then()
-$promise->then(function ($value) {
-});
-```
 
 ### Functions
 
