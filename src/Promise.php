@@ -132,19 +132,8 @@ final class Promise implements PromiseInterface
 
     private function unwrap($promise)
     {
-        $promise = $this->extract($promise);
-
         while ($promise instanceof self && null !== $promise->result) {
-            $promise = $this->extract($promise->result);
-        }
-
-        return $promise;
-    }
-
-    private function extract($promise)
-    {
-        if ($promise instanceof LazyPromise) {
-            $promise = $promise->promise();
+            $promise = $promise->result;
         }
 
         if ($promise === $this) {
