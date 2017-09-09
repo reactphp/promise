@@ -234,3 +234,23 @@ function _checkTypehint(callable $callback, $object)
 
     return $expectedException->getClass()->isInstance($object);
 }
+
+/**
+ * @param \Amp\Promise $promise
+ *
+ * @return PromiseInterface
+ */
+function adapt(\Amp\Promise $promise): PromiseInterface
+{
+    $deferred = new Deferred();
+
+    $promise->onResolve(function ($error = null, $result = null) use ($deferred) {
+        if ($error) {
+            $deferred->reject($error);
+        } else {
+            $deferred->resolve($result);
+        }
+    });
+
+    return $deferred->promise();
+}
