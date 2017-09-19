@@ -179,29 +179,41 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function doneShouldThrowExceptionThrownFulfillmentHandler()
+    public function doneShouldTriggerFatalErrorExceptionThrownFulfillmentHandler()
     {
+        $errorCollector = new Promise\ErrorCollector();
+        $errorCollector->start();
+
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
-
         $this->assertNull($adapter->promise()->done(function () {
-            throw new \Exception('UnhandledRejectionException');
+            throw new \Exception('Unhandled Rejection');
         }));
         $adapter->resolve(1);
+
+        $errors = $errorCollector->stop();
+
+        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
+        $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
-    public function doneShouldThrowUnhandledRejectionExceptionWhenFulfillmentHandlerRejects()
+    public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenFulfillmentHandlerRejects()
     {
+        $errorCollector = new Promise\ErrorCollector();
+        $errorCollector->start();
+
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->setExpectedException('\Exception', 'UnhandledRejectionException');
-
         $this->assertNull($adapter->promise()->done(function () {
-            return \React\Promise\reject(new \Exception('UnhandledRejectionException'));
+            return \React\Promise\reject(new \Exception('Unhandled Rejection'));
         }));
         $adapter->resolve(1);
+
+        $errors = $errorCollector->stop();
+
+        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
+        $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */

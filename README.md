@@ -17,7 +17,7 @@ Table of Contents
 1. [Introduction](#introduction)
 2. [Concepts](#concepts)
    * [Deferred](#deferred)
-   * [Promise](#promise)
+   * [Promise](#promise-1)
 3. [API](#api)
    * [Deferred](#deferred-1)
      * [Deferred::promise()](#deferredpromise)
@@ -29,10 +29,9 @@ Table of Contents
      * [PromiseInterface::otherwise()](#promiseinterfaceotherwise)
      * [PromiseInterface::always()](#promiseinterfacealways)
      * [PromiseInterface::cancel()](#promiseinterfacecancel)
-   * [Promise](#promise-1)
+   * [Promise](#promise-2)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
-   * [LazyPromise](#lazypromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
      * [reject()](#reject)
@@ -102,7 +101,7 @@ The `promise` method returns the promise of the deferred.
 The `resolve` and `reject` methods control the state of the deferred.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
-See [Promise](#promise-1) for more information.
+See [Promise](#promise-2) for more information.
 
 #### Deferred::promise()
 
@@ -150,10 +149,9 @@ Neither its state nor its result (or error) can be modified.
 
 #### Implementations
 
-* [Promise](#promise-1)
+* [Promise](#promise-2)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
 
 #### PromiseInterface::then()
 
@@ -200,8 +198,8 @@ $promise->done(callable $onFulfilled = null, callable $onRejected = null);
 Consumes the promise's ultimate value if the promise fulfills, or handles the
 ultimate error.
 
-It will cause a fatal error if either `$onFulfilled` or `$onRejected` throw or
-return a rejected promise.
+It will cause a fatal error (`E_USER_ERROR`) if either `$onFulfilled` or
+`$onRejected` throw or return a rejected promise.
 
 Since the purpose of `done()` is consumption rather than transformation,
 `done()` always returns `null`.
@@ -356,27 +354,6 @@ $promise = React\Promise\RejectedPromise($reason);
 ```
 
 Note, that `$reason` **must** be a `\Throwable` or `\Exception`.
-
-### LazyPromise
-
-Creates a promise which will be lazily initialized by `$factory` once a consumer
-calls the `then()` method.
-
-```php
-$factory = function () {
-    $deferred = new React\Promise\Deferred();
-
-    // Do some heavy stuff here and resolve the deferred once completed
-
-    return $deferred->promise();
-};
-
-$promise = new React\Promise\LazyPromise($factory);
-
-// $factory will only be executed once we call then()
-$promise->then(function ($value) {
-});
-```
 
 ### Functions
 
@@ -660,8 +637,8 @@ by the promise machinery and used to reject the promise returned by `then()`.
 
 Calling `done()` transfers all responsibility for errors to your code. If an
 error (either a thrown exception or returned rejection) escapes the
-`$onFulfilled` or `$onRejected` callbacks you provide to done, it will be
-rethrown in an uncatchable way causing a fatal error.
+`$onFulfilled` or `$onRejected` callbacks you provide to `done()`, it will cause
+a fatal error.
 
 ```php
 function getJsonResult()
