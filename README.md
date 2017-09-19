@@ -208,8 +208,8 @@ $promise->done(callable $onFulfilled = null, callable $onRejected = null);
 Consumes the promise's ultimate value if the promise fulfills, or handles the
 ultimate error.
 
-It will cause a fatal error if either `$onFulfilled` or `$onRejected` throw or
-return a rejected promise.
+It will cause a fatal error (`E_USER_ERROR`) if either `$onFulfilled` or
+`$onRejected` throw or return a rejected promise.
 
 Since the purpose of `done()` is consumption rather than transformation,
 `done()` always returns `null`.
@@ -713,8 +713,8 @@ by the promise machinery and used to reject the promise returned by `then()`.
 
 Calling `done()` transfers all responsibility for errors to your code. If an
 error (either a thrown exception or returned rejection) escapes the
-`$onFulfilled` or `$onRejected` callbacks you provide to done, it will be
-rethrown in an uncatchable way causing a fatal error.
+`$onFulfilled` or `$onRejected` callbacks you provide to `done()`, it will cause
+a fatal error.
 
 ```php
 function getJsonResult()

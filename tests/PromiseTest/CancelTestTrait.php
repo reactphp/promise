@@ -206,6 +206,74 @@ trait CancelTestTrait
     }
 
     /** @test */
+    public function cancelShouldTriggerCancellerWhenFollowerCancels()
+    {
+        $adapter1 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $root = $adapter1->promise();
+
+        $adapter2 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $follower = $adapter2->promise();
+        $adapter2->resolve($root);
+
+        $follower->cancel();
+    }
+
+    /** @test */
+    public function cancelShouldNotTriggerCancellerWhenCancellingOnlyOneFollower()
+    {
+        $adapter1 = $this->getPromiseTestAdapter($this->expectCallableNever());
+
+        $root = $adapter1->promise();
+
+        $adapter2 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $follower1 = $adapter2->promise();
+        $adapter2->resolve($root);
+
+        $adapter3 = $this->getPromiseTestAdapter($this->expectCallableNever());
+        $adapter3->resolve($root);
+
+        $follower1->cancel();
+    }
+
+    /** @test */
+    public function cancelCalledOnFollowerShouldOnlyCancelWhenAllChildrenAndFollowerCancelled()
+    {
+        $adapter1 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $root = $adapter1->promise();
+
+        $child = $root->then();
+
+        $adapter2 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $follower = $adapter2->promise();
+        $adapter2->resolve($root);
+
+        $follower->cancel();
+        $child->cancel();
+    }
+
+    /** @test */
+    public function cancelShouldNotTriggerCancellerWhenCancellingFollowerButNotChildren()
+    {
+        $adapter1 = $this->getPromiseTestAdapter($this->expectCallableNever());
+
+        $root = $adapter1->promise();
+
+        $root->then();
+
+        $adapter2 = $this->getPromiseTestAdapter($this->expectCallableOnce());
+
+        $follower = $adapter2->promise();
+        $adapter2->resolve($root);
+
+        $follower->cancel();
+    }
+
+    /** @test */
     public function inspectionForACancelledPromiseWhenCancellerFulfills()
     {
         $adapter = $this->getPromiseTestAdapter(function ($resolve) {

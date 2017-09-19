@@ -206,6 +206,22 @@ function enqueue(callable $task)
 /**
  * @internal
  */
+function fatalError($error)
+{
+    try {
+        trigger_error($error, E_USER_ERROR);
+    } catch (\Throwable $e) {
+        set_error_handler(null);
+        trigger_error($error, E_USER_ERROR);
+    } catch (\Exception $e) {
+        set_error_handler(null);
+        trigger_error($error, E_USER_ERROR);
+    }
+}
+
+/**
+ * @internal
+ */
 function _checkTypehint(callable $callback, $object)
 {
     if (!is_object($object)) {

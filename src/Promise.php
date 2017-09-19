@@ -15,7 +15,7 @@ final class Promise implements PromiseInterface
 
     private $handlers = [];
 
-    private $remainingCancelRequests = 0;
+    private $requiredCancelRequests = 0;
     private $isCancelled = false;
 
     public function __construct(callable $resolver, callable $canceller = null)
@@ -34,14 +34,14 @@ final class Promise implements PromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected));
         }
 
-        $this->remainingCancelRequests++;
+        $this->requiredCancelRequests++;
 
         return new static($this->resolver($onFulfilled, $onRejected), function () {
-            if (--$this->remainingCancelRequests > 0) {
-                return;
-            }
+            $this->requiredCancelRequests--;
 
-            $this->cancel();
+            if ($this->requiredCancelRequests <= 0) {
+                $this->cancel();
+            }
         });
     }
 
@@ -83,20 +83,39 @@ final class Promise implements PromiseInterface
 
     public function cancel()
     {
+        $canceller = $this->canceller;
+        $this->canceller = null;
+
+        $parentCanceller = null;
+
         if (null !== $this->result) {
-            return;
+            // Go up the promise chain and reach the top most promise which is
+            // itself not following another promise
+            $root = $this->unwrap($this->result);
+
+            // Return if the root promise is already resolved or a
+            // FulfilledPromise or RejectedPromise
+            if (!$root instanceof self || null !== $root->result) {
+                return;
+            }
+
+            $root->requiredCancelRequests--;
+
+            if ($root->requiredCancelRequests <= 0) {
+                $parentCanceller = [$root, 'cancel'];
+            }
         }
 
         $this->isCancelled = true;
 
-        if (null === $this->canceller) {
-            return;
+        if (null !== $canceller) {
+            $this->call($canceller);
         }
 
-        $canceller = $this->canceller;
-        $this->canceller = null;
-
-        $this->call($canceller);
+        // For BC, we call the parent canceller after our own canceller
+        if ($parentCanceller) {
+            $parentCanceller();
+        }
     }
 
     public function isFulfilled()
@@ -182,10 +201,22 @@ final class Promise implements PromiseInterface
     {
         $result = $this->unwrap($result);
 
+        if ($result === $this) {
+            $result = new RejectedPromise(
+                LogicException::circularResolution()
+            );
+        }
+
+        if ($result instanceof self) {
+            $result->requiredCancelRequests++;
+        } else {
+            // Unset canceller only when not following a pending promise
+            $this->canceller = null;
+        }
+
         $handlers = $this->handlers;
 
         $this->handlers = [];
-        $this->canceller = null;
         $this->result = $result;
 
         foreach ($handlers as $handler) {
@@ -197,12 +228,6 @@ final class Promise implements PromiseInterface
     {
         while ($promise instanceof self && null !== $promise->result) {
             $promise = $promise->result;
-        }
-
-        if ($promise === $this) {
-            return new RejectedPromise(
-                LogicException::circularResolution()
-            );
         }
 
         return $promise;
