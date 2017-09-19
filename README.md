@@ -422,7 +422,9 @@ Returns a promise that will resolve when any one of the items in
 will be the resolution value of the triggering item.
 
 The returned promise will only reject if *all* items in `$promisesOrValues` are
-rejected. The rejection value will be an array of all rejection reasons.
+rejected. The rejection value will be a `React\Promise\Exception\CompositeException`
+which holds all rejection reasons. The rejection reasons can be obtained with
+`CompositeException::getExceptions()`.
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains 0 items.
@@ -440,8 +442,9 @@ triggering items.
 
 The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
-reject). The rejection value will be an array of
-`(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+reject). The rejection value will be a `React\Promise\Exception\CompositeException`
+which holds `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+The rejection reasons can be obtained with `CompositeException::getExceptions()`.
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains less items than `$howMany`.
