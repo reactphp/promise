@@ -6,8 +6,16 @@ php:
   - 5.6
   - 7.0
   - 7.1
-  - nightly
-  - hhvm
+  - nightly # ignore errors, see below
+  - hhvm # ignore errors, see below
+
+# lock distro so new future defaults will not break the build
+dist: trusty
+
+matrix:
+  allow_failures:
+    - php: hhvm
+    - php: nightly
 
 install:
   - composer install

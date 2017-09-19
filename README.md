@@ -17,7 +17,7 @@ Table of Contents
 1. [Introduction](#introduction)
 2. [Concepts](#concepts)
    * [Deferred](#deferred)
-   * [Promise](#promise)
+   * [Promise](#promise-1)
 3. [API](#api)
    * [Deferred](#deferred-1)
      * [Deferred::promise()](#deferredpromise)
@@ -35,10 +35,9 @@ Table of Contents
      * [PromiseInterface::isCancelled()](#promiseinterfaceiscancelled)
      * [PromiseInterface::value()](#promiseinterfacevalue)
      * [PromiseInterface::reason()](#promiseinterfacereason)
-   * [Promise](#promise-1)
+   * [Promise](#promise-2)
    * [FulfilledPromise](#fulfilledpromise)
    * [RejectedPromise](#rejectedpromise)
-   * [LazyPromise](#lazypromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
      * [reject()](#reject)
@@ -109,7 +108,7 @@ The `promise` method returns the promise of the deferred.
 The `resolve` and `reject` methods control the state of the deferred.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
-See [Promise](#promise-1) for more information.
+See [Promise](#promise-2) for more information.
 
 #### Deferred::promise()
 
@@ -160,10 +159,9 @@ Neither its state nor its result (or error) can be modified.
 
 #### Implementations
 
-* [Promise](#promise-1)
+* [Promise](#promise-2)
 * [FulfilledPromise](#fulfilledpromise)
 * [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
 
 #### PromiseInterface::then()
 
@@ -422,27 +420,6 @@ $promise = React\Promise\RejectedPromise($reason);
 
 Note, that `$reason` **cannot** be a promise. It's recommended to use
 [reject()](#reject) for creating rejected promises.
-
-### LazyPromise
-
-Creates a promise which will be lazily initialized by `$factory` once a consumer
-calls the `then()` method.
-
-```php
-$factory = function () {
-    $deferred = new React\Promise\Deferred();
-
-    // Do some heavy stuff here and resolve the deferred once completed
-
-    return $deferred->promise();
-};
-
-$promise = new React\Promise\LazyPromise($factory);
-
-// $factory will only be executed once we call then()
-$promise->then(function ($value) {
-});
-```
 
 ### Functions
 
