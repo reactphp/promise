@@ -2,8 +2,6 @@
 
 namespace React\Promise;
 
-use React\Promise\Exception\InvalidArgumentException;
-
 final class RejectedPromise implements PromiseInterface
 {
     private $reason;
@@ -11,7 +9,13 @@ final class RejectedPromise implements PromiseInterface
     public function __construct($reason)
     {
         if (!$reason instanceof \Throwable && !$reason instanceof \Exception) {
-            throw InvalidArgumentException::invalidRejectionReason($reason);
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'A Promise must be rejected with a \Throwable or \Exception instance, got "%s" instead.',
+                    is_object($reason) ? get_class($reason) : gettype($reason)
+                )
+
+            );
         }
 
         $this->reason = $reason;

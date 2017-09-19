@@ -44,7 +44,7 @@ class RejectedPromiseTest extends TestCase
     /** @test */
     public function shouldThrowExceptionIfConstructedWithANonException()
     {
-        $this->setExpectedException('\React\Promise\Exception\InvalidArgumentException');
+        $this->setExpectedException('\InvalidArgumentException');
 
         return new RejectedPromise('foo');
     }
