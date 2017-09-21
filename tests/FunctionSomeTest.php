@@ -101,8 +101,9 @@ class FunctionSomeTest extends TestCase
         $exception2 = new \Exception();
         $exception3 = new \Exception();
 
-        $compositeException = CompositeException::tooManyPromisesRejected(
-            [1 => $exception2, 2 => $exception3]
+        $compositeException = new CompositeException(
+            [1 => $exception2, 2 => $exception3],
+            'Too many promises rejected.'
         );
 
         $mock = $this->createCallableMock();

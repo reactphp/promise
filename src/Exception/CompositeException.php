@@ -27,12 +27,4 @@ class CompositeException extends \Exception
     {
         return $this->exceptions;
     }
-
-    public static function tooManyPromisesRejected(array $reasons)
-    {
-        return new self(
-            $reasons,
-            'Too many promises rejected.'
-        );
-    }
 }

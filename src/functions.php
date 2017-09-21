@@ -115,7 +115,10 @@ function some(array $promisesOrValues, $howMany)
 
                 if (0 === --$toReject) {
                     $reject(
-                        CompositeException::tooManyPromisesRejected($reasons)
+                        new CompositeException(
+                            $reasons,
+                            'Too many promises rejected.'
+                        )
                     );
                 }
             };
