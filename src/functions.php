@@ -189,6 +189,39 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
     }, $cancellationQueue);
 }
 
+function throttle(array $promisesOrValues, $concurrency = 10)
+{
+    $numberOfPromises = count($promisesOrValues);
+    $retVals = [];
+
+    // Modify all promises to also store their resolved value
+    $promisesOrValues = array_map(function ($promiseOrValue) use (&$retVals) {
+        return resolve($promiseOrValue)->then(function ($r) use (&$retVals) {
+            $retVals[] = $r;
+            return $r;
+        });
+    }, $promisesOrValues);
+
+    // Build up the promise-chain
+    $promisesOrValues = array_map(function ($promiseOrValue, $promiseIndex) use ($promisesOrValues, $numberOfPromises, $concurrency) {
+        $nextIndex = $promiseIndex + $concurrency;
+
+        if ($nextIndex >= $numberOfPromises) {
+            return resolve($promiseOrValue);
+        }
+
+        return resolve($promiseOrValue)->then(function ($r) use ($promisesOrValues, $nextIndex) {
+            return resolve($promisesOrValues[$nextIndex]);
+        });
+    }, $promisesOrValues, array_keys($promisesOrValues));
+
+    // Start with the initial set
+    $firstPromises = array_splice($promisesOrValues, 0, $concurrency);
+    return all($firstPromises)->then(function () use (&$retVals) {
+        return $retVals;
+    });
+}
+
 /**
  * @internal
  */
