@@ -29,11 +29,13 @@ class QueueTest extends TestCase
         $queue->enqueue($task);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException Exception
+     * @expectedException test
+     */
     public function rethrowsExceptionsThrownFromTasks()
     {
-        $this->setExpectedException('\Exception', 'test');
-
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())

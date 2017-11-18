@@ -74,11 +74,13 @@ class CancellationQueueTest extends TestCase
         $cancellationQueue();
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException Exception
+     * @expectedExceptionMessage test
+     */
     public function rethrowsExceptionsThrownFromCancel()
     {
-        $this->setExpectedException('\Exception', 'test');
-
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
