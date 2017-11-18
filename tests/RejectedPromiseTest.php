@@ -37,11 +37,12 @@ class RejectedPromiseTest extends TestCase
         ]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     */
     public function shouldThrowExceptionIfConstructedWithAPromise()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-
         return new RejectedPromise(new RejectedPromise());
     }
 }
