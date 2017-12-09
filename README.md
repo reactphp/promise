@@ -145,6 +145,7 @@ If `$reason` itself is a promise, the promise will be rejected with the outcome
 of this promise regardless whether it fulfills or rejects.
 
 #### Deferred::notify()
+**DEPRECATED** Progress notification is deprecated. Will be removed in upcoming versions.  
 
 ```php
 $deferred->notify(mixed $update = null);
