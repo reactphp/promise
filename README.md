@@ -103,7 +103,7 @@ The `promise` method returns the promise of the deferred.
 
 The `resolve` and `reject` methods control the state of the deferred.
 
-The `notify` method is for progress notification.
+The deprecated `notify` method is for progress notification.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
 See [Promise](#promise-2) for more information.
@@ -145,6 +145,8 @@ If `$reason` itself is a promise, the promise will be rejected with the outcome
 of this promise regardless whether it fulfills or rejects.
 
 #### Deferred::notify()
+
+> Deprecated in v2.6.0: Progress support is deprecated and should not be used anymore.
 
 ```php
 $deferred->notify(mixed $update = null);
@@ -190,7 +192,7 @@ with a promise (all parameters are optional):
     the result as the first argument.
   * `$onRejected` will be invoked once the promise is rejected and passed the
     reason as the first argument.
-  * `$onProgress` will be invoked whenever the producer of the promise
+  * `$onProgress` (deprecated) will be invoked whenever the producer of the promise
     triggers progress notifications and passed a single argument (whatever it
     wants) to indicate progress.
 
@@ -205,7 +207,7 @@ the same call to `then()`:
      never both.
   2. `$onFulfilled` and `$onRejected` will never be called more
      than once.
-  3. `$onProgress` may be called multiple times.
+  3. `$onProgress` (deprecated) may be called multiple times.
 
 #### See also
 
@@ -321,6 +323,8 @@ return doSomething()
 
 #### ExtendedPromiseInterface::progress()
 
+> Deprecated in v2.6.0: Progress support is deprecated and should not be used anymore.
+
 ```php
 $promise->progress(callable $onProgress);
 ```
@@ -364,7 +368,7 @@ Creates a promise whose state is controlled by the functions passed to
 ```php
 $resolver = function (callable $resolve, callable $reject, callable $notify) {
     // Do some work, possibly asynchronously, and then
-    // resolve or reject. You can notify of progress events
+    // resolve or reject. You can notify of progress events (deprecated)
     // along the way if you want/need.
 
     $resolve($awesomeResult);
@@ -391,7 +395,7 @@ function which both will be called with 3 arguments:
     When called with another promise, e.g. `$resolve($otherPromise)`, promise's
     fate will be equivalent to that of `$otherPromise`.
   * `$reject($reason)` - Function that rejects the promise.
-  * `$notify($update)` - Function that issues progress events for the promise.
+  * `$notify($update)` - Deprecated function that issues progress events for the promise.
 
 If the resolver or canceller throw an exception, the promise will be rejected
 with that thrown exception as the rejection reason.
@@ -720,6 +724,8 @@ $deferred->resolve(1);  // Prints "Mixed 4"
 ```
 
 #### Progress event forwarding
+
+> Deprecated in v2.6.0: Progress support is deprecated and should not be used anymore.
 
 In the same way as resolution and rejection handlers, your progress handler
 **MUST** return a progress event to be propagated to the next link in the chain.
