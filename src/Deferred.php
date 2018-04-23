@@ -42,6 +42,10 @@ class Deferred implements PromisorInterface
         call_user_func($this->rejectCallback, $reason);
     }
 
+    /**
+     * @deprecated 2.6.0 Progress support is deprecated and should not be used anymore.
+     * @param mixed $update
+     */
     public function notify($update = null)
     {
         $this->promise();
