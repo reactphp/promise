@@ -164,17 +164,6 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->settle(reject($reason));
     }
 
-    private function notify($update = null)
-    {
-        if (null !== $this->result) {
-            return;
-        }
-
-        foreach ($this->progressHandlers as $handler) {
-            $handler($update);
-        }
-    }
-
     private function settle(ExtendedPromiseInterface $promise)
     {
         $promise = $this->unwrap($promise);
@@ -239,6 +228,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             if ($args === 0) {
                 $callback();
             } else {
+                // Store a reference to all progress handlers (will be cleared when settled)
+                // This way, we can use a static progress callback that is not bound to this promise instance.
+                // This helps avoiding garbage cycles if the callback creates an Exception.
+                $progress =& $this->progressHandlers;
+
                 $callback(
                     function ($value = null) {
                         $this->resolve($value);
@@ -246,9 +240,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                     function ($reason = null) {
                         $this->reject($reason);
                     },
-                    function ($update = null) {
-                        $this->notify($update);
-                    }
+                    \Closure::bind(function ($update = null) use (&$progress) {
+                        foreach ($progress as $handler) {
+                            $handler($update);
+                        }
+                    }, null)
                 );
             }
         } catch (\Throwable $e) {
