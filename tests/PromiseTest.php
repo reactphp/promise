@@ -59,6 +59,39 @@ class PromiseTest extends TestCase
         $this->assertSame(0, gc_collect_cycles());
     }
 
+    /**
+     * test that checks number of garbage cycles after throwing from a resolver
+     * that has its arguments explicitly set to null (reassigned arguments only
+     * show up in the stack trace in PHP 7, so we can't test this on legacy PHP)
+     *
+     * @test
+     * @requires PHP 7
+     * @link https://3v4l.org/OiDr4
+     */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithResolveAndRejectUnset()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function ($resolve, $reject) {
+            $resolve = $reject = null;
+            throw new \Exception('foo');
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldIgnoreNotifyAfterReject()
+    {
+        $promise = new Promise(function () { }, function ($resolve, $reject, $notify) {
+            $reject(new \Exception('foo'));
+            $notify(42);
+        });
+
+        $promise->then(null, null, $this->expectCallableNever());
+        $promise->cancel();
+    }
+
     /** @test */
     public function shouldFulfillIfFullfilledWithSimplePromise()
     {
