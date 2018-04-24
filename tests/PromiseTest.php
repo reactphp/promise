@@ -45,4 +45,16 @@ class PromiseTest extends TestCase
         $promise
             ->then($this->expectCallableNever(), $mock);
     }
+
+    /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () {
+            throw new \Exception('foo');
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
 }
