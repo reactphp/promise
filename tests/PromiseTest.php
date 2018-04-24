@@ -52,6 +52,18 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () {
+            throw new \Exception('foo');
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldFulfillIfFullfilledWithSimplePromise()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () {
             throw new Exception('foo');
         });
         unset($promise);
