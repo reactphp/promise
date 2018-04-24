@@ -228,11 +228,6 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             if ($args === 0) {
                 $callback();
             } else {
-                // Store a reference to all progress handlers (will be cleared when settled)
-                // This way, we can use a static progress callback that is not bound to this promise instance.
-                // This helps avoiding garbage cycles if the callback creates an Exception.
-                $progress =& $this->progressHandlers;
-
                 $callback(
                     function ($value = null) {
                         $this->resolve($value);
@@ -240,11 +235,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                     function ($reason = null) {
                         $this->reject($reason);
                     },
-                    \Closure::bind(function ($update = null) use (&$progress) {
-                        foreach ($progress as $handler) {
-                            $handler($update);
-                        }
-                    }, null)
+                    self::notifier($this->progressHandlers)
                 );
             }
         } catch (\Throwable $e) {
@@ -252,5 +243,29 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         } catch (\Exception $e) {
             $this->reject($e);
         }
+    }
+
+    /**
+     * Creates a static progress callback that is not bound to a promise instance.
+     *
+     * Moving the closure creation to a static method allows us to create a
+     * callback that is not bound to a promise instance. By passing its progress
+     * handlers by reference, we can still execute them when requested and still
+     * clear this reference when settling the promise. This helps avoiding
+     * garbage cycles if any callback creates an Exception.
+     *
+     * These assumptions are covered by the test suite, so if you ever feel like
+     * refactoring this, go ahead, any alternative suggestions are welcome!
+     *
+     * @param array $progressHandlers
+     * @return callable
+     */
+    private static function notifier(&$progressHandlers)
+    {
+        return function ($update = null) use (&$progressHandlers) {
+            foreach ($progressHandlers as $handler) {
+                $handler($update);
+            }
+        };
     }
 }
