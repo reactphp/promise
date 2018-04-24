@@ -49,6 +49,18 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () {
+            throw new \Exception('foo');
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
     public function shouldFulfillIfFullfilledWithSimplePromise()
     {
         $adapter = $this->getPromiseTestAdapter();
