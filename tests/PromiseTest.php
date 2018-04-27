@@ -48,7 +48,19 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
+    public function shouldResolveWithoutCreatingGarbageCyclesIfResolverResolvesWithException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function ($resolve) {
+            $resolve(new \Exception('foo'));
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithoutResolver()
     {
         gc_collect_cycles();
         $promise = new Promise(function () {
@@ -59,20 +71,36 @@ class PromiseTest extends TestCase
         $this->assertSame(0, gc_collect_cycles());
     }
 
-    /**
-     * test that checks number of garbage cycles after throwing from a resolver
-     * that has its arguments explicitly set to null (reassigned arguments only
-     * show up in the stack trace in PHP 7, so we can't test this on legacy PHP)
-     *
-     * @test
-     * @requires PHP 7
-     * @link https://3v4l.org/OiDr4
-     */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithResolveAndRejectUnset()
+    /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverRejectsWithException()
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) {
-            $resolve = $reject = null;
+            $reject(new \Exception('foo'));
+        });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
+            $reject(new \Exception('foo'));
+        });
+        $promise->cancel();
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function ($resolve, $reject) {
             throw new \Exception('foo');
         });
         unset($promise);
