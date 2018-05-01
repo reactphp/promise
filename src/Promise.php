@@ -27,15 +27,23 @@ final class Promise implements PromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected));
         }
 
-        $this->requiredCancelRequests++;
+        // keep a reference to this promise instance for the static canceller function.
+        // see also parentCancellerFunction() for more details.
+        $parent = $this;
+        ++$parent->requiredCancelRequests;
 
-        return new static($this->resolver($onFulfilled, $onRejected), function () {
-            $this->requiredCancelRequests--;
+        return new static(
+            $this->resolver($onFulfilled, $onRejected),
+            static function () use (&$parent) {
+                --$parent->requiredCancelRequests;
 
-            if ($this->requiredCancelRequests <= 0) {
-                $this->cancel();
+                if ($parent->requiredCancelRequests <= 0) {
+                    $parent->cancel();
+                }
+
+                $parent = null;
             }
-        });
+        );
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null): void
@@ -119,15 +127,6 @@ final class Promise implements PromiseInterface
                     ->done($resolve, $reject);
             };
         };
-    }
-
-    private function resolve($value = null): void
-    {
-        if (null !== $this->result) {
-            return;
-        }
-
-        $this->settle(resolve($value));
     }
 
     private function reject(\Throwable $reason): void
