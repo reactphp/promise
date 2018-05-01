@@ -98,6 +98,19 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
+            $reject(new \Exception('foo'));
+        });
+        $promise->then()->then()->then()->cancel();
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
     {
         gc_collect_cycles();
