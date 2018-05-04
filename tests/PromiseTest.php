@@ -147,6 +147,24 @@ class PromiseTest extends TestCase
         $this->assertSame(0, gc_collect_cycles());
     }
 
+    /**
+     * @test
+     * @requires PHP 7
+     * @see self::shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException
+     */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException()
+    {
+        gc_collect_cycles();
+
+        $promise = new Promise(function () use (&$promise) {
+            throw new \Exception('foo');
+        });
+
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
     /** @test */
     public function shouldIgnoreNotifyAfterReject()
     {
