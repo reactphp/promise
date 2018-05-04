@@ -16,7 +16,12 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     {
         $this->canceller = $canceller;
 
-        $this->call($resolver);
+        // Explicitly overwrite arguments with null values before invoking
+        // resolver function. This ensure that these arguments do not show up
+        // in the stack trace in PHP 7+ only.
+        $cb = $resolver;
+        $resolver = $canceller = null;
+        $this->call($cb);
     }
 
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
