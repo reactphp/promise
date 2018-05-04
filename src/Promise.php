@@ -15,6 +15,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     public function __construct(callable $resolver, callable $canceller = null)
     {
         $this->canceller = $canceller;
+
         $this->call($resolver);
     }
 
@@ -199,8 +200,13 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         return $promise;
     }
 
-    private function call(callable $callback)
+    private function call(callable $cb)
     {
+        // Explicitly overwrite argument with null value. This ensure that this
+        // argument does not show up in the stack trace in PHP 7+ only.
+        $callback = $cb;
+        $cb = null;
+
         // Use reflection to inspect number of arguments expected by this callback.
         // We did some careful benchmarking here: Using reflection to avoid unneeded
         // function arguments is actually faster than blindly passing them.

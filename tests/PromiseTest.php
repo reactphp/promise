@@ -109,6 +109,32 @@ class PromiseTest extends TestCase
         $this->assertSame(0, gc_collect_cycles());
     }
 
+    /**
+     * Test that checks number of garbage cycles after throwing from a canceller
+     * that explicitly uses a reference to the promise. This is rather synthetic,
+     * actual use cases often have implicit (hidden) references which ought not
+     * to be stored in the stack trace.
+     *
+     * Reassigned arguments only show up in the stack trace in PHP 7, so we can't
+     * avoid this on legacy PHP. As an alternative, consider explicitly unsetting
+     * any references before throwing.
+     *
+     * @test
+     * @requires PHP 7
+     */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException()
+    {
+        gc_collect_cycles();
+
+        $promise = new Promise(function () {}, function () use (&$promise) {
+            throw new \Exception('foo');
+        });
+        $promise->cancel();
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
     /** @test */
     public function shouldIgnoreNotifyAfterReject()
     {
