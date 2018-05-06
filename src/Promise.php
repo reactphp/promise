@@ -28,15 +28,44 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected, $onProgress));
         }
 
-        $this->requiredCancelRequests++;
+        // keep a reference to this promise instance for the static canceller function.
+        // see also parentCancellerFunction() for more details.
+        $parent = $this;
+        ++$parent->requiredCancelRequests;
 
-        return new static($this->resolver($onFulfilled, $onRejected, $onProgress), function () {
-            $this->requiredCancelRequests--;
+        return new static(
+            $this->resolver($onFulfilled, $onRejected, $onProgress),
+            self::parentCancellerFunction($parent)
+        );
+    }
 
-            if ($this->requiredCancelRequests <= 0) {
-                $this->cancel();
+    /**
+     * Creates a static parent canceller callback that is not bound to a promise instance.
+     *
+     * Moving the closure creation to a static method allows us to create a
+     * callback that is not bound to a promise instance. By passing the target
+     * promise instance by reference, we can still execute its cancellation logic
+     * and still clear this reference after invocation (canceller can only ever
+     * be called once). This helps avoiding garbage cycles if the parent canceller
+     * creates an Exception.
+     *
+     * These assumptions are covered by the test suite, so if you ever feel like
+     * refactoring this, go ahead, any alternative suggestions are welcome!
+     *
+     * @param Promise $parent
+     * @return callable
+     */
+    private static function parentCancellerFunction(self &$parent)
+    {
+        return function () use (&$parent) {
+            --$parent->requiredCancelRequests;
+
+            if ($parent->requiredCancelRequests <= 0) {
+                $parent->cancel();
             }
-        });
+
+            $parent = null;
+        };
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
