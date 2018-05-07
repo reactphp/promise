@@ -202,6 +202,8 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
         if ($promise instanceof self) {
             $promise->requiredCancelRequests++;
+        } else {
+            $this->canceller = null;
         }
 
         $handlers = $this->handlers;

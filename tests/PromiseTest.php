@@ -138,7 +138,6 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException()
     {
         gc_collect_cycles();
-
         $promise = new Promise(function () {}, function () use (&$promise) {
             throw new \Exception('foo');
         });
@@ -156,11 +155,25 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException()
     {
         gc_collect_cycles();
-
         $promise = new Promise(function () use (&$promise) {
             throw new \Exception('foo');
         });
+        unset($promise);
 
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /**
+     * @test
+     * @requires PHP 7
+     * @see self::shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException
+     */
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () {
+            throw new \Exception('foo');
+        }, function () use (&$promise) { });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());

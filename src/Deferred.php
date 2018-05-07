@@ -23,6 +23,7 @@ class Deferred implements PromisorInterface
                 $this->rejectCallback  = $reject;
                 $this->notifyCallback  = $notify;
             }, $this->canceller);
+            $this->canceller = null;
         }
 
         return $this->promise;
