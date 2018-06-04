@@ -442,7 +442,7 @@ $factory = function () {
     return $deferred->promise();
 };
 
-$promise = React\Promise\LazyPromise($factory);
+$promise = new React\Promise\LazyPromise($factory);
 
 // $factory will only be executed once we call then()
 $promise->then(function ($value) {
