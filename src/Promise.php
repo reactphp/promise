@@ -11,6 +11,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     private $progressHandlers = [];
 
     private $requiredCancelRequests = 0;
+    private $cancelRequests = 0;
 
     public function __construct(callable $resolver, callable $canceller = null)
     {
@@ -58,15 +59,13 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
      * These assumptions are covered by the test suite, so if you ever feel like
      * refactoring this, go ahead, any alternative suggestions are welcome!
      *
-     * @param Promise $parent
+     * @param self $parent
      * @return callable
      */
     private static function parentCancellerFunction(self &$parent)
     {
         return function () use (&$parent) {
-            --$parent->requiredCancelRequests;
-
-            if ($parent->requiredCancelRequests <= 0) {
+            if (++$parent->cancelRequests >= $parent->requiredCancelRequests) {
                 $parent->cancel();
             }
 
@@ -121,37 +120,14 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
     public function cancel()
     {
+        if (null === $this->canceller || null !== $this->result) {
+            return;
+        }
+
         $canceller = $this->canceller;
         $this->canceller = null;
 
-        $parentCanceller = null;
-
-        if (null !== $this->result) {
-            // Go up the promise chain and reach the top most promise which is
-            // itself not following another promise
-            $root = $this->unwrap($this->result);
-
-            // Return if the root promise is already resolved or a
-            // FulfilledPromise or RejectedPromise
-            if (!$root instanceof self || null !== $root->result) {
-                return;
-            }
-
-            $root->requiredCancelRequests--;
-
-            if ($root->requiredCancelRequests <= 0) {
-                $parentCanceller = [$root, 'cancel'];
-            }
-        }
-
-        if (null !== $canceller) {
-            $this->call($canceller);
-        }
-
-        // For BC, we call the parent canceller after our own canceller
-        if ($parentCanceller) {
-            $parentCanceller();
-        }
+        $this->call($canceller);
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -200,16 +176,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             );
         }
 
-        if ($promise instanceof self) {
-            $promise->requiredCancelRequests++;
-        } else {
-            $this->canceller = null;
-        }
-
         $handlers = $this->handlers;
 
         $this->progressHandlers = $this->handlers = [];
         $this->result = $promise;
+        $this->canceller = null;
 
         foreach ($handlers as $handler) {
             $handler($promise);
