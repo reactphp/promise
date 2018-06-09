@@ -35,42 +35,24 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected, $onProgress));
         }
 
-        // keep a reference to this promise instance for the static canceller function.
-        // see also parentCancellerFunction() for more details.
+        // This promise has a canceller, so we create a new child promise which
+        // has a canceller that invokes the parent canceller if all other
+        // followers are also cancelled. We keep a reference to this promise
+        // instance for the static canceller function and clear this to avoid
+        // keeping a cyclic reference between parent and follower.
         $parent = $this;
         ++$parent->requiredCancelRequests;
 
         return new static(
             $this->resolver($onFulfilled, $onRejected, $onProgress),
-            self::parentCancellerFunction($parent)
-        );
-    }
+            static function () use (&$parent) {
+                if (++$parent->cancelRequests >= $parent->requiredCancelRequests) {
+                    $parent->cancel();
+                }
 
-    /**
-     * Creates a static parent canceller callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing the target
-     * promise instance by reference, we can still execute its cancellation logic
-     * and still clear this reference after invocation (canceller can only ever
-     * be called once). This helps avoiding garbage cycles if the parent canceller
-     * creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param self $parent
-     * @return callable
-     */
-    private static function parentCancellerFunction(self &$parent)
-    {
-        return function () use (&$parent) {
-            if (++$parent->cancelRequests >= $parent->requiredCancelRequests) {
-                $parent->cancel();
+                $parent = null;
             }
-
-            $parent = null;
-        };
+        );
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
@@ -232,14 +214,35 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             if ($args === 0) {
                 $callback();
             } else {
-                // keep a reference to this promise instance for the static resolve/reject functions.
-                // see also resolveFunction() and rejectFunction() for more details.
+                // Keep references to this promise instance for the static resolve/reject functions.
+                // By using static callbacks that are not bound to this instance
+                // and passing the target promise instance by reference, we can
+                // still execute its resolving logic and still clear this
+                // reference when settling the promise. This helps avoiding
+                // garbage cycles if any callback creates an Exception.
+                // These assumptions are covered by the test suite, so if you ever feel like
+                // refactoring this, go ahead, any alternative suggestions are welcome!
                 $target =& $this;
+                $progressHandlers =& $this->progressHandlers;
 
                 $callback(
-                    self::resolveFunction($target),
-                    self::rejectFunction($target),
-                    self::notifyFunction($this->progressHandlers)
+                    static function ($value = null) use (&$target) {
+                        if ($target !== null) {
+                            $target->settle(resolve($value));
+                            $target = null;
+                        }
+                    },
+                    static function ($reason = null) use (&$target) {
+                        if ($target !== null) {
+                            $target->reject($reason);
+                            $target = null;
+                        }
+                    },
+                    static function ($update = null) use (&$progressHandlers) {
+                        foreach ($progressHandlers as $handler) {
+                            $handler($update);
+                        }
+                    }
                 );
             }
         } catch (\Throwable $e) {
@@ -249,79 +252,5 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             $target = null;
             $this->reject($e);
         }
-    }
-
-    /**
-     * Creates a static resolver callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing the target
-     * promise instance by reference, we can still execute its resolving logic
-     * and still clear this reference when settling the promise. This helps
-     * avoiding garbage cycles if any callback creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param Promise $target
-     * @return callable
-     */
-    private static function resolveFunction(self &$target)
-    {
-        return function ($value = null) use (&$target) {
-            if ($target !== null) {
-                $target->settle(resolve($value));
-                $target = null;
-            }
-        };
-    }
-
-    /**
-     * Creates a static rejection callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing the target
-     * promise instance by reference, we can still execute its rejection logic
-     * and still clear this reference when settling the promise. This helps
-     * avoiding garbage cycles if any callback creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param Promise $target
-     * @return callable
-     */
-    private static function rejectFunction(self &$target)
-    {
-        return function ($reason = null) use (&$target) {
-            if ($target !== null) {
-                $target->reject($reason);
-                $target = null;
-            }
-        };
-    }
-
-    /**
-     * Creates a static progress callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing its progress
-     * handlers by reference, we can still execute them when requested and still
-     * clear this reference when settling the promise. This helps avoiding
-     * garbage cycles if any callback creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param array $progressHandlers
-     * @return callable
-     */
-    private static function notifyFunction(&$progressHandlers)
-    {
-        return function ($update = null) use (&$progressHandlers) {
-            foreach ($progressHandlers as $handler) {
-                $handler($update);
-            }
-        };
     }
 }
