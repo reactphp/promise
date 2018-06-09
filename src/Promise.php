@@ -33,8 +33,11 @@ final class Promise implements PromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected));
         }
 
-        // keep a reference to this promise instance for the static canceller function.
-        // see also parentCancellerFunction() for more details.
+        // This promise has a canceller, so we create a new child promise which
+        // has a canceller that invokes the parent canceller if all other
+        // followers are also cancelled. We keep a reference to this promise
+        // instance for the static canceller function and clear this to avoid
+        // keeping a cyclic reference between parent and follower.
         $parent = $this;
         ++$parent->requiredCancelRequests;
 
@@ -205,68 +208,34 @@ final class Promise implements PromiseInterface
             if ($args === 0) {
                 $callback();
             } else {
-                // keep a reference to this promise instance for the static resolve/reject functions.
-                // see also resolveFunction() and rejectFunction() for more details.
+                // Keep references to this promise instance for the static resolve/reject functions.
+                // By using static callbacks that are not bound to this instance
+                // and passing the target promise instance by reference, we can
+                // still execute its resolving logic and still clear this
+                // reference when settling the promise. This helps avoiding
+                // garbage cycles if any callback creates an Exception.
+                // These assumptions are covered by the test suite, so if you ever feel like
+                // refactoring this, go ahead, any alternative suggestions are welcome!
                 $target =& $this;
 
                 $callback(
-                    self::resolveFunction($target),
-                    self::rejectFunction($target)
+                    static function ($value = null) use (&$target) {
+                        if ($target !== null) {
+                            $target->settle(resolve($value));
+                            $target = null;
+                        }
+                    },
+                    static function (\Throwable $reason) use (&$target) {
+                        if ($target !== null) {
+                            $target->reject($reason);
+                            $target = null;
+                        }
+                    }
                 );
             }
         } catch (\Throwable $e) {
             $target = null;
             $this->reject($e);
         }
-    }
-
-    /**
-     * Creates a static resolver callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing the target
-     * promise instance by reference, we can still execute its resolving logic
-     * and still clear this reference when settling the promise. This helps
-     * avoiding garbage cycles if any callback creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param Promise $target
-     * @return callable
-     */
-    private static function resolveFunction(self &$target)
-    {
-        return function ($value = null) use (&$target) {
-            if ($target !== null) {
-                $target->settle(resolve($value));
-                $target = null;
-            }
-        };
-    }
-
-    /**
-     * Creates a static rejection callback that is not bound to a promise instance.
-     *
-     * Moving the closure creation to a static method allows us to create a
-     * callback that is not bound to a promise instance. By passing the target
-     * promise instance by reference, we can still execute its rejection logic
-     * and still clear this reference when settling the promise. This helps
-     * avoiding garbage cycles if any callback creates an Exception.
-     *
-     * These assumptions are covered by the test suite, so if you ever feel like
-     * refactoring this, go ahead, any alternative suggestions are welcome!
-     *
-     * @param Promise $target
-     * @return callable
-     */
-    private static function rejectFunction(self &$target)
-    {
-        return function ($reason = null) use (&$target) {
-            if ($target !== null) {
-                $target->reject($reason);
-                $target = null;
-            }
-        };
     }
 }
