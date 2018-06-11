@@ -62,7 +62,7 @@ final class Promise implements PromiseInterface
             return;
         }
 
-        $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
@@ -70,7 +70,7 @@ final class Promise implements PromiseInterface
 
     public function otherwise(callable $onRejected): PromiseInterface
     {
-        return $this->then(null, function ($reason) use ($onRejected) {
+        return $this->then(null, static function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
                 return new RejectedPromise($reason);
             }
@@ -81,11 +81,11 @@ final class Promise implements PromiseInterface
 
     public function always(callable $onFulfilledOrRejected): PromiseInterface
     {
-        return $this->then(function ($value) use ($onFulfilledOrRejected) {
+        return $this->then(static function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
-        }, function ($reason) use ($onFulfilledOrRejected) {
+        }, static function ($reason) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
                 return new RejectedPromise($reason);
             });
@@ -130,7 +130,7 @@ final class Promise implements PromiseInterface
     private function resolver(callable $onFulfilled = null, callable $onRejected = null): callable
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
-            $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
+            $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject);

@@ -190,6 +190,72 @@ class PromiseTest extends TestCase
         $promise->cancel();
     }
 
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromise()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithThenFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->then()->then()->then();
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithDoneFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->done();
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithOtherwiseFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->otherwise(function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithAlwaysFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->always(function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithProgressFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->then(null, null, function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
     /** @test */
     public function shouldFulfillIfFullfilledWithSimplePromise()
     {
