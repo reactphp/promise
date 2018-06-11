@@ -51,8 +51,9 @@ Table of Contents
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
      * [Progress event forwarding](#progress-event-forwarding)
    * [done() vs. then()](#done-vs-then)
-5. [Credits](#credits)
-6. [License](#license)
+5. [Install](#install)
+6. [Credits](#credits)
+7. [License](#license)
 
 Introduction
 ------------
@@ -832,6 +833,25 @@ Note that if a rejection value is not an instance of `\Exception`, it will be
 wrapped in an exception of the type `React\Promise\UnhandledRejectionException`.
 
 You can get the original rejection reason by calling `$exception->getReason()`.
+
+Install
+-------
+
+The recommended way to install this library is [through Composer](https://getcomposer.org).
+[New to Composer?](https://getcomposer.org/doc/00-intro.md)
+
+This will install the latest supported version:
+
+```bash
+$ composer require react/promise:^2.6
+```
+
+See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
+
+This project aims to run on any platform and thus does not require any PHP
+extensions and supports running on legacy PHP 5.4 through current PHP 7+ and HHVM.
+It's *highly recommended to use PHP 7+* for this project due to its vast
+performance improvements.
 
 Credits
 -------
