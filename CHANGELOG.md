@@ -1,6 +1,11 @@
 CHANGELOG for 2.x
 =================
 
+* 2.7.0 (2018-06-13)
+
+    *   Feature: Improve memory consumption for pending promises by using static internal callbacks without binding to self.
+        (#124 by @clue)
+
 * 2.6.0 (2018-06-11)
 
     *   Feature: Significantly improve memory consumption and performance by only passing resolver args
