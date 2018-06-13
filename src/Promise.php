@@ -61,7 +61,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
             return $this->result->done($onFulfilled, $onRejected, $onProgress);
         }
 
-        $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $this->handlers[] = static function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
@@ -73,7 +73,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
     public function otherwise(callable $onRejected)
     {
-        return $this->then(null, function ($reason) use ($onRejected) {
+        return $this->then(null, static function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
                 return new RejectedPromise($reason);
             }
@@ -84,11 +84,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 
     public function always(callable $onFulfilledOrRejected)
     {
-        return $this->then(function ($value) use ($onFulfilledOrRejected) {
+        return $this->then(static function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
-        }, function ($reason) use ($onFulfilledOrRejected) {
+        }, static function ($reason) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
                 return new RejectedPromise($reason);
             });
@@ -116,7 +116,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
     {
         return function ($resolve, $reject, $notify) use ($onFulfilled, $onRejected, $onProgress) {
             if ($onProgress) {
-                $progressHandler = function ($update) use ($notify, $onProgress) {
+                $progressHandler = static function ($update) use ($notify, $onProgress) {
                     try {
                         $notify($onProgress($update));
                     } catch (\Throwable $e) {
@@ -129,7 +129,7 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
                 $progressHandler = $notify;
             }
 
-            $this->handlers[] = function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
+            $this->handlers[] = static function (ExtendedPromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject, $progressHandler) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject, $progressHandler);
