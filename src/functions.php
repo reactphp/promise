@@ -8,7 +8,9 @@ function resolve($promiseOrValue = null)
         return $promiseOrValue;
     }
 
-    if (method_exists($promiseOrValue, 'then')) {
+    // Check is_object() first to avoid method_exists() triggering
+    // class autoloaders if $promiseOrValue is a string.
+    if (is_object($promiseOrValue) && method_exists($promiseOrValue, 'then')) {
         $canceller = null;
 
         if (method_exists($promiseOrValue, 'cancel')) {
