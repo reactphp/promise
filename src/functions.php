@@ -8,10 +8,10 @@ function resolve($promiseOrValue = null)
         return $promiseOrValue;
     }
 
-    if (method_exists($promiseOrValue, 'then')) {
+    if (\method_exists($promiseOrValue, 'then')) {
         $canceller = null;
 
-        if (method_exists($promiseOrValue, 'cancel')) {
+        if (\method_exists($promiseOrValue, 'cancel')) {
             $canceller = [$promiseOrValue, 'cancel'];
         }
 
@@ -63,7 +63,7 @@ function any(array $promisesOrValues)
 {
     return some($promisesOrValues, 1)
         ->then(function ($val) {
-            return array_shift($val);
+            return \array_shift($val);
         });
 }
 
@@ -73,12 +73,12 @@ function some(array $promisesOrValues, $howMany)
         return resolve([]);
     }
 
-    $len = count($promisesOrValues);
+    $len = \count($promisesOrValues);
 
     if ($len < $howMany) {
         return reject(
             new Exception\LengthException(
-                sprintf(
+                \sprintf(
                     'Input array must contain at least %d item%s but contains only %s item%s.',
                     $howMany,
                     1 === $howMany ? '' : 's',
@@ -139,7 +139,7 @@ function map(array $promisesOrValues, callable $mapFunc)
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
-        $toResolve = count($promisesOrValues);
+        $toResolve = \count($promisesOrValues);
         $values    = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
@@ -167,7 +167,7 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
-        $total = count($promisesOrValues);
+        $total = \count($promisesOrValues);
         $i = 0;
 
         $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $cancellationQueue, $total, &$i) {
@@ -184,7 +184,7 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
 
         $cancellationQueue->enqueue($initialValue);
 
-        array_reduce($promisesOrValues, $wrappedReduceFunc, resolve($initialValue))
+        \array_reduce($promisesOrValues, $wrappedReduceFunc, resolve($initialValue))
             ->done($resolve, $reject);
     }, $cancellationQueue);
 }
@@ -209,13 +209,13 @@ function enqueue(callable $task)
 function fatalError($error)
 {
     try {
-        trigger_error($error, E_USER_ERROR);
+        \trigger_error($error, E_USER_ERROR);
     } catch (\Throwable $e) {
-        set_error_handler(null);
-        trigger_error($error, E_USER_ERROR);
+        \set_error_handler(null);
+        \trigger_error($error, E_USER_ERROR);
     } catch (\Exception $e) {
-        set_error_handler(null);
-        trigger_error($error, E_USER_ERROR);
+        \set_error_handler(null);
+        \trigger_error($error, E_USER_ERROR);
     }
 }
 
@@ -224,13 +224,13 @@ function fatalError($error)
  */
 function _checkTypehint(callable $callback, $object)
 {
-    if (!is_object($object)) {
+    if (!\is_object($object)) {
         return true;
     }
 
-    if (is_array($callback)) {
+    if (\is_array($callback)) {
         $callbackReflection = new \ReflectionMethod($callback[0], $callback[1]);
-    } elseif (is_object($callback) && !$callback instanceof \Closure) {
+    } elseif (\is_object($callback) && !$callback instanceof \Closure) {
         $callbackReflection = new \ReflectionMethod($callback, '__invoke');
     } else {
         $callbackReflection = new \ReflectionFunction($callback);
