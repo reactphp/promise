@@ -25,6 +25,9 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->call($cb);
     }
 
+    /**
+     * @return static
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null !== $this->result) {
