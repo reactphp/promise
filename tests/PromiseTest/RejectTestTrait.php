@@ -52,7 +52,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rrejectShouldThrowWhenCalledWithARejectedPromise()
+    public function rejectShouldThrowWhenCalledWithARejectedPromise()
     {
         $this->setExpectedException('\InvalidArgumentException');
 
