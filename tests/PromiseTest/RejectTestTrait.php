@@ -31,31 +31,34 @@ trait RejectTestTrait
         $adapter->reject($exception);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
     public function rejectShouldThrowWhenCalledWithAnImmediateValue()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->reject(1);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
     public function rejectShouldThrowWhenCalledWithAFulfilledPromise()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->reject(Promise\resolve(1));
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
     public function rejectShouldThrowWhenCalledWithARejectedPromise()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->reject(Promise\reject(1));

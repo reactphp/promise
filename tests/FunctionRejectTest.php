@@ -19,11 +19,12 @@ class FunctionRejectTest extends TestCase
             ->then($this->expectCallableNever(), $mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
     public function shouldThrowWhenCalledWithANonException()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-
         reject(1);
     }
 }
