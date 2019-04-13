@@ -4,16 +4,31 @@ namespace React\Promise;
 
 use React\Promise\Exception\CompositeException;
 
+/**
+ * Creates a promise for the supplied `$promiseOrValue`.
+ *
+ * If `$promiseOrValue` is a value, it will be the resolution value of the
+ * returned promise.
+ *
+ * If `$promiseOrValue` is a thenable (any object that provides a `then()` method),
+ * a trusted promise that follows the state of the thenable is returned.
+ *
+ * If `$promiseOrValue` is a promise, it will be returned as is.
+ *
+ * @param mixed $promiseOrValue
+ * @return PromiseInterface
+ */
+
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
         return $promiseOrValue;
     }
 
-    if (method_exists($promiseOrValue, 'then')) {
+    if (\method_exists($promiseOrValue, 'then')) {
         $canceller = null;
 
-        if (method_exists($promiseOrValue, 'cancel')) {
+        if (\method_exists($promiseOrValue, 'cancel')) {
             $canceller = [$promiseOrValue, 'cancel'];
         }
 
@@ -25,11 +40,36 @@ function resolve($promiseOrValue = null)
     return new FulfilledPromise($promiseOrValue);
 }
 
+/**
+ * Creates a rejected promise for the supplied `$promiseOrValue`.
+ *
+ * If `$promiseOrValue` is a value, it will be the rejection value of the
+ * returned promise.
+ *
+ * If `$promiseOrValue` is a promise, its completion value will be the rejected
+ * value of the returned promise.
+ *
+ * This can be useful in situations where you need to reject a promise without
+ * throwing an exception. For example, it allows you to propagate a rejection with
+ * the value of another promise.
+ *
+ * @param mixed $promiseOrValue
+ * @return PromiseInterface
+ */
 function reject($reason)
 {
     return new RejectedPromise($reason);
 }
 
+/**
+ * Returns a promise that will resolve only once all the items in
+ * `$promisesOrValues` have resolved. The resolution value of the returned promise
+ * will be an array containing the resolution values of each of the items in
+ * `$promisesOrValues`.
+ *
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function all(array $promisesOrValues)
 {
     return map($promisesOrValues, function ($val) {
@@ -37,6 +77,16 @@ function all(array $promisesOrValues)
     });
 }
 
+/**
+ * Initiates a competitive race that allows one winner. Returns a promise which is
+ * resolved in the same way the first settled promise resolves.
+ *
+ * The returned promise will become **infinitely pending** if  `$promisesOrValues`
+ * contains 0 items.
+ *
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function race(array $promisesOrValues)
 {
     if (!$promisesOrValues) {
@@ -55,26 +105,58 @@ function race(array $promisesOrValues)
     }, $cancellationQueue);
 }
 
+/**
+ * Returns a promise that will resolve when any one of the items in
+ * `$promisesOrValues` resolves. The resolution value of the returned promise
+ * will be the resolution value of the triggering item.
+ *
+ * The returned promise will only reject if *all* items in `$promisesOrValues` are
+ * rejected. The rejection value will be an array of all rejection reasons.
+ *
+ * The returned promise will also reject with a `React\Promise\Exception\LengthException`
+ * if `$promisesOrValues` contains 0 items.
+ *
+ * @param array $promisesOrValues
+ * @return PromiseInterface
+ */
 function any(array $promisesOrValues)
 {
     return some($promisesOrValues, 1)
         ->then(function ($val) {
-            return array_shift($val);
+            return \array_shift($val);
         });
 }
 
+/**
+ * Returns a promise that will resolve when `$howMany` of the supplied items in
+ * `$promisesOrValues` resolve. The resolution value of the returned promise
+ * will be an array of length `$howMany` containing the resolution values of the
+ * triggering items.
+ *
+ * The returned promise will reject if it becomes impossible for `$howMany` items
+ * to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
+ * reject). The rejection value will be an array of
+ * `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+ *
+ * The returned promise will also reject with a `React\Promise\Exception\LengthException`
+ * if `$promisesOrValues` contains less items than `$howMany`.
+ *
+ * @param array $promisesOrValues
+ * @param int $howMany
+ * @return PromiseInterface
+ */
 function some(array $promisesOrValues, $howMany)
 {
     if ($howMany < 1) {
         return resolve([]);
     }
 
-    $len = count($promisesOrValues);
+    $len = \count($promisesOrValues);
 
     if ($len < $howMany) {
         return reject(
             new Exception\LengthException(
-                sprintf(
+                \sprintf(
                     'Input array must contain at least %d item%s but contains only %s item%s.',
                     $howMany,
                     1 === $howMany ? '' : 's',
@@ -131,6 +213,17 @@ function some(array $promisesOrValues, $howMany)
     }, $cancellationQueue);
 }
 
+/**
+ * Traditional map function, similar to `array_map()`, but allows input to contain
+ * promises and/or values, and `$mapFunc` may return either a value or a promise.
+ *
+ * The map function receives each item as argument, where item is a fully resolved
+ * value of a promise or value in `$promisesOrValues`.
+ *
+ * @param array $promisesOrValues
+ * @param callable $mapFunc
+ * @return PromiseInterface
+ */
 function map(array $promisesOrValues, callable $mapFunc)
 {
     if (!$promisesOrValues) {
@@ -140,7 +233,7 @@ function map(array $promisesOrValues, callable $mapFunc)
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue) {
-        $toResolve = count($promisesOrValues);
+        $toResolve = \count($promisesOrValues);
         $values    = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
@@ -163,12 +256,23 @@ function map(array $promisesOrValues, callable $mapFunc)
     }, $cancellationQueue);
 }
 
+/**
+ * Traditional reduce function, similar to `array_reduce()`, but input may contain
+ * promises and/or values, and `$reduceFunc` may return either a value or a
+ * promise, *and* `$initialValue` may be a promise or a value for the starting
+ * value.
+ *
+ * @param array $promisesOrValues
+ * @param callable $reduceFunc
+ * @param mixed $initialValue
+ * @return PromiseInterface
+ */
 function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null)
 {
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue) {
-        $total = count($promisesOrValues);
+        $total = \count($promisesOrValues);
         $i = 0;
 
         $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $cancellationQueue, $total, &$i) {
@@ -185,7 +289,7 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
 
         $cancellationQueue->enqueue($initialValue);
 
-        array_reduce($promisesOrValues, $wrappedReduceFunc, resolve($initialValue))
+        \array_reduce($promisesOrValues, $wrappedReduceFunc, resolve($initialValue))
             ->done($resolve, $reject);
     }, $cancellationQueue);
 }
@@ -210,13 +314,13 @@ function enqueue(callable $task)
 function fatalError($error)
 {
     try {
-        trigger_error($error, E_USER_ERROR);
+        \trigger_error($error, E_USER_ERROR);
     } catch (\Throwable $e) {
-        set_error_handler(null);
-        trigger_error($error, E_USER_ERROR);
+        \set_error_handler(null);
+        \trigger_error($error, E_USER_ERROR);
     } catch (\Exception $e) {
-        set_error_handler(null);
-        trigger_error($error, E_USER_ERROR);
+        \set_error_handler(null);
+        \trigger_error($error, E_USER_ERROR);
     }
 }
 
@@ -225,9 +329,13 @@ function fatalError($error)
  */
 function _checkTypehint(callable $callback, $object)
 {
-    if (is_array($callback)) {
+    if (!\is_object($object)) {
+        return true;
+    }
+
+    if (\is_array($callback)) {
         $callbackReflection = new \ReflectionMethod($callback[0], $callback[1]);
-    } elseif (is_object($callback) && !$callback instanceof \Closure) {
+    } elseif (\is_object($callback) && !$callback instanceof \Closure) {
         $callbackReflection = new \ReflectionMethod($callback, '__invoke');
     } else {
         $callbackReflection = new \ReflectionFunction($callback);

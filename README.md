@@ -305,14 +305,16 @@ $resolver = function (callable $resolve, callable $reject) {
     // resolve or reject.
 
     $resolve($awesomeResult);
+    // or throw new Exception('Promise rejected');
     // or $resolve($anotherPromise);
     // or $reject($nastyError);
 };
 
-$canceller = function (callable $resolve, callable $reject) {
+$canceller = function () {
     // Cancel/abort any running operations like network connections, streams etc.
 
-    $reject(new \Exception('Promise cancelled'));
+    // Reject promise by throwing an exception
+    throw new Exception('Promise cancelled');
 };
 
 $promise = new React\Promise\Promise($resolver, $canceller);
@@ -326,7 +328,8 @@ function which both will be called with 3 arguments:
     When called with a non-promise value, fulfills promise with that value.
     When called with another promise, e.g. `$resolve($otherPromise)`, promise's
     fate will be equivalent to that of `$otherPromise`.
-  * `$reject($reason)` - Function that rejects the promise.
+  * `$reject($reason)` - Function that rejects the promise. It is recommended to
+    just throw an exception instead of using `$reject()`.
 
 If the resolver or canceller throw an exception, the promise will be rejected
 with that thrown exception as the rejection reason.
