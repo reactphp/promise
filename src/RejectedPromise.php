@@ -6,10 +6,16 @@ final class RejectedPromise implements PromiseInterface
 {
     private $reason;
 
-    public function __construct($reason = null)
+    public function __construct($reason)
     {
-        if ($reason instanceof PromiseInterface) {
-            throw new \InvalidArgumentException('You cannot create React\Promise\RejectedPromise with a promise. Use React\Promise\reject($promiseOrValue) instead.');
+        if (!$reason instanceof \Throwable && !$reason instanceof \Exception) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'A Promise must be rejected with a \Throwable or \Exception instance, got "%s" instead.',
+                    is_object($reason) ? get_class($reason) : gettype($reason)
+                )
+
+            );
         }
 
         $this->reason = $reason;
@@ -38,9 +44,7 @@ final class RejectedPromise implements PromiseInterface
     {
         enqueue(function () use ($onRejected) {
             if (null === $onRejected) {
-                return fatalError(
-                    UnhandledRejectionException::resolve($this->reason)
-                );
+                return fatalError($this->reason);
             }
 
             try {
@@ -52,9 +56,7 @@ final class RejectedPromise implements PromiseInterface
             }
 
             if ($result instanceof self) {
-                return fatalError(
-                    UnhandledRejectionException::resolve($result->reason)
-                );
+                return fatalError($result->reason);
             }
 
             if ($result instanceof PromiseInterface) {

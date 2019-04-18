@@ -44,3 +44,7 @@ CHANGELOG for 3.x
           \React\Promise\resolve($promise)->cancel();
       }
       ```
+    * BC break: When rejecting a promise, a `\Throwable` or `\Exception`
+      instance is enforced as the rejection reason (#93).
+      This means, it is not longer possible to reject a promise without a reason
+      or with another promise.

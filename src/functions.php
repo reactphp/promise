@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Exception\CompositeException;
+
 /**
  * Creates a promise for the supplied `$promiseOrValue`.
  *
@@ -16,6 +18,7 @@ namespace React\Promise;
  * @param mixed $promiseOrValue
  * @return PromiseInterface
  */
+
 function resolve($promiseOrValue = null)
 {
     if ($promiseOrValue instanceof PromiseInterface) {
@@ -53,15 +56,9 @@ function resolve($promiseOrValue = null)
  * @param mixed $promiseOrValue
  * @return PromiseInterface
  */
-function reject($promiseOrValue = null)
+function reject($reason)
 {
-    if ($promiseOrValue instanceof PromiseInterface) {
-        return resolve($promiseOrValue)->then(function ($value) {
-            return new RejectedPromise($value);
-        });
-    }
-
-    return new RejectedPromise($promiseOrValue);
+    return new RejectedPromise($reason);
 }
 
 /**
@@ -199,7 +196,12 @@ function some(array $promisesOrValues, $howMany)
                 $reasons[$i] = $reason;
 
                 if (0 === --$toReject) {
-                    $reject($reasons);
+                    $reject(
+                        new CompositeException(
+                            $reasons,
+                            'Too many promises rejected.'
+                        )
+                    );
                 }
             };
 

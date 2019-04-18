@@ -93,7 +93,7 @@ $deferred = new React\Promise\Deferred();
 $promise = $deferred->promise();
 
 $deferred->resolve(mixed $value = null);
-$deferred->reject(mixed $reason = null);
+$deferred->reject(\Throwable|\Exception $reason);
 ```
 
 The `promise` method returns the promise of the deferred.
@@ -128,16 +128,13 @@ this promise once it is resolved.
 #### Deferred::reject()
 
 ```php
-$deferred->reject(mixed $reason = null);
+$deferred->reject(\Throwable|\Exception $reason);
 ```
 
 Rejects the promise returned by `promise()`, signalling that the deferred's
 computation failed.
 All consumers are notified by having `$onRejected` (which they registered via
 `$promise->then()`) called with `$reason`.
-
-If `$reason` itself is a promise, the promise will be rejected with the outcome
-of this promise regardless whether it fulfills or rejects.
 
 ### PromiseInterface
 
@@ -359,8 +356,7 @@ Creates a already rejected promise.
 $promise = React\Promise\RejectedPromise($reason);
 ```
 
-Note, that `$reason` **cannot** be a promise. It's recommended to use
-[reject()](#reject) for creating rejected promises.
+Note, that `$reason` **must** be a `\Throwable` or `\Exception`.
 
 ### Functions
 
@@ -390,20 +386,10 @@ If `$promiseOrValue` is a promise, it will be returned as is.
 #### reject()
 
 ```php
-$promise = React\Promise\reject(mixed $promiseOrValue);
+$promise = React\Promise\reject(\Throwable|\Exception $reason);
 ```
 
-Creates a rejected promise for the supplied `$promiseOrValue`.
-
-If `$promiseOrValue` is a value, it will be the rejection value of the
-returned promise.
-
-If `$promiseOrValue` is a promise, its completion value will be the rejected
-value of the returned promise.
-
-This can be useful in situations where you need to reject a promise without
-throwing an exception. For example, it allows you to propagate a rejection with
-the value of another promise.
+Creates a rejected promise for the supplied `$reason`.
 
 #### all()
 
@@ -439,7 +425,9 @@ Returns a promise that will resolve when any one of the items in
 will be the resolution value of the triggering item.
 
 The returned promise will only reject if *all* items in `$promisesOrValues` are
-rejected. The rejection value will be an array of all rejection reasons.
+rejected. The rejection value will be a `React\Promise\Exception\CompositeException`
+which holds all rejection reasons. The rejection reasons can be obtained with
+`CompositeException::getExceptions()`.
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains 0 items.
@@ -457,8 +445,9 @@ triggering items.
 
 The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
-reject). The rejection value will be an array of
-`(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+reject). The rejection value will be a `React\Promise\Exception\CompositeException`
+which holds `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
+The rejection reasons can be obtained with `CompositeException::getExceptions()`.
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains less items than `$howMany`.
@@ -503,7 +492,7 @@ function getAwesomeResultPromise()
     $deferred = new React\Promise\Deferred();
 
     // Execute a Node.js-style function using the callback pattern
-    computeAwesomeResultAsynchronously(function ($error, $result) use ($deferred) {
+    computeAwesomeResultAsynchronously(function (\Exception $error, $result) use ($deferred) {
         if ($error) {
             $deferred->reject($error);
         } else {
@@ -520,7 +509,7 @@ getAwesomeResultPromise()
         function ($value) {
             // Deferred resolved, do something with $value
         },
-        function ($reason) {
+        function (\Exception $reason) {
             // Deferred rejected, do something with $reason
         }
     );
@@ -700,11 +689,6 @@ getJsonResult()
         }
     );
 ```
-
-Note that if a rejection value is not an instance of `\Exception`, it will be
-wrapped in an exception of the type `React\Promise\UnhandledRejectionException`.
-
-You can get the original rejection reason by calling `$exception->getReason()`.
 
 Credits
 -------

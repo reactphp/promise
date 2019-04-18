@@ -18,14 +18,17 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception1 = new \Exception();
+        $exception2 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception1));
 
-        $adapter->reject(1);
-        $adapter->reject(2);
+        $adapter->reject($exception1);
+        $adapter->reject($exception2);
 
         $adapter->promise()
             ->then(
@@ -39,13 +42,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject(1);
+        $exception = new \Exception();
+
+        $adapter->reject($exception);
 
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
         $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
@@ -62,7 +67,7 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with(null);
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
@@ -90,12 +95,12 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return $val + 1;
+                function () {
+                    return 2;
                 }
             )
             ->then(
@@ -115,12 +120,12 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo(2));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return \React\Promise\resolve($val + 1);
+                function () {
+                    return \React\Promise\resolve(2);
                 }
             )
             ->then(
@@ -148,7 +153,7 @@ trait PromiseRejectedTestTrait
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
@@ -165,18 +170,20 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
-                function ($val) {
-                    return \React\Promise\reject($val + 1);
+                function () use ($exception) {
+                    return \React\Promise\reject($exception);
                 }
             )
             ->then(
@@ -190,13 +197,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject($exception);
         $this->assertNull($adapter->promise()->done(null, $mock));
     }
 
@@ -208,7 +217,7 @@ trait PromiseRejectedTestTrait
 
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $this->assertNull($adapter->promise()->done(null, function () {
             throw new \Exception('Unhandled Rejection');
         }));
@@ -220,67 +229,6 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenRejectedWithNonExceptionForRejectedPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(1);
-
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $this->assertNull($adapter->promise()->done());
-
-        $errors = $errorCollector->stop();
-
-        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection: 1', $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function unhandledRejectionExceptionThrownByDoneHoldsRejectionValue()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $expected = new \stdClass();
-
-        $adapter->reject($expected);
-
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $adapter->promise()->done();
-
-        $errors = $errorCollector->stop();
-
-        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection: {}', $errors[0]['errstr']);
-
-        $this->assertArrayHasKey('error', $errors[0]['errcontext']);
-        $this->assertInstanceOf('React\Promise\UnhandledRejectionException', $errors[0]['errcontext']['error']);
-        $this->assertSame($expected, $errors[0]['errcontext']['error']->getReason());
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenRejectionHandlerRejectsForRejectedPromise()
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(1);
-        $this->assertNull($adapter->promise()->done(null, function () {
-            return \React\Promise\reject();
-        }));
-
-        $errors = $errorCollector->stop();
-
-        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection: null', $errors[0]['errstr']);
-    }
-
-    /** @test */
     public function doneShouldTriggerFatalErrorRejectionExceptionWhenRejectionHandlerRejectsWithExceptionForRejectedPromise()
     {
         $errorCollector = new ErrorCollector();
@@ -288,7 +236,7 @@ trait PromiseRejectedTestTrait
 
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject(1);
+        $adapter->reject(new \Exception());
         $this->assertNull($adapter->promise()->done(null, function () {
             return \React\Promise\reject(new \Exception('Unhandled Rejection'));
         }));
@@ -364,13 +312,15 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with($this->identicalTo($exception));
 
-        $adapter->reject(1);
+        $adapter->reject($exception);
         $adapter->promise()->otherwise($mock);
     }
 
@@ -540,7 +490,7 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject();
+        $adapter->reject(new \Exception());
 
         $this->assertNull($adapter->promise()->cancel());
     }
@@ -550,7 +500,7 @@ trait PromiseRejectedTestTrait
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
-        $adapter->reject();
+        $adapter->reject(new \Exception());
 
         $adapter->promise()->cancel();
     }

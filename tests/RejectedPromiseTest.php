@@ -31,6 +31,10 @@ class RejectedPromiseTest extends TestCase
             },
             'settle' => function ($reason = null) use (&$promise) {
                 if (!$promise) {
+                    if (!$reason instanceof \Exception) {
+                        $reason = new \Exception($reason);
+                    }
+
                     $promise = new RejectedPromise($reason);
                 }
             },
@@ -39,10 +43,10 @@ class RejectedPromiseTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
-    public function shouldThrowExceptionIfConstructedWithAPromise()
+    public function shouldThrowExceptionIfConstructedWithANonException()
     {
-        return new RejectedPromise(new RejectedPromise());
+        return new RejectedPromise('foo');
     }
 }

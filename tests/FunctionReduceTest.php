@@ -147,14 +147,16 @@ class FunctionReduceTest extends TestCase
     /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
+        $exception2 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception2));
 
         reduce(
-            [resolve(1), reject(2), resolve(3)],
+            [resolve(1), reject($exception2), resolve(3)],
             $this->plus(),
             resolve(1)
         )->then($this->expectCallableNever(), $mock);

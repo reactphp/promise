@@ -59,13 +59,16 @@ class FunctionAllTest extends TestCase
     /** @test */
     public function shouldRejectIfAnyInputPromiseRejects()
     {
+        $exception2 = new \Exception();
+        $exception3 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception2));
 
-        all([resolve(1), reject(2), resolve(3)])
+        all([resolve(1), reject($exception2), resolve($exception3)])
             ->then($this->expectCallableNever(), $mock);
     }
 

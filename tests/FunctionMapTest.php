@@ -100,14 +100,17 @@ class FunctionMapTest extends TestCase
     /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
+        $exception2 = new \Exception();
+        $exception3 = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception2));
 
         map(
-            [resolve(1), reject(2), resolve(3)],
+            [resolve(1), reject($exception2), resolve($exception3)],
             $this->mapper()
         )->then($this->expectCallableNever(), $mock);
     }

@@ -5,60 +5,26 @@ namespace React\Promise;
 class FunctionRejectTest extends TestCase
 {
     /** @test */
-    public function shouldRejectAnImmediateValue()
+    public function shouldRejectAnException()
     {
-        $expected = 123;
+        $exception = new \Exception();
 
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo($expected));
+            ->with($this->identicalTo($exception));
 
-        reject($expected)
-            ->then(
-                $this->expectCallableNever(),
-                $mock
-            );
+        reject($exception)
+            ->then($this->expectCallableNever(), $mock);
     }
 
-    /** @test */
-    public function shouldRejectAFulfilledPromise()
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function shouldThrowWhenCalledWithANonException()
     {
-        $expected = 123;
-
-        $resolved = new FulfilledPromise($expected);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo($expected));
-
-        reject($resolved)
-            ->then(
-                $this->expectCallableNever(),
-                $mock
-            );
-    }
-
-    /** @test */
-    public function shouldRejectARejectedPromise()
-    {
-        $expected = 123;
-
-        $resolved = new RejectedPromise($expected);
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo($expected));
-
-        reject($resolved)
-            ->then(
-                $this->expectCallableNever(),
-                $mock
-            );
+        reject(1);
     }
 }

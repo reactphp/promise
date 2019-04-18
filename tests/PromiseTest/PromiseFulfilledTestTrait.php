@@ -127,17 +127,19 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
+        $exception = new \Exception();
+
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with($this->identicalTo($exception));
 
         $adapter->resolve(1);
         $adapter->promise()
             ->then(
-                function ($val) {
-                    return \React\Promise\reject($val + 1);
+                function () use ($exception) {
+                    return \React\Promise\reject($exception);
                 },
                 $this->expectCallableNever()
             )
@@ -228,7 +230,7 @@ trait PromiseFulfilledTestTrait
         }));
 
         $errors = $errorCollector->stop();
-        
+
         $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
         $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
@@ -244,13 +246,13 @@ trait PromiseFulfilledTestTrait
         $errorCollector->start();
 
         $this->assertNull($adapter->promise()->done(function () {
-            return \React\Promise\reject();
+            return \React\Promise\reject(new \Exception('Unhandled Rejection'));
         }));
 
         $errors = $errorCollector->stop();
 
         $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection: null', $errors[0]['errstr']);
+        $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
