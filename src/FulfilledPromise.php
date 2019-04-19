@@ -27,8 +27,6 @@ final class FulfilledPromise implements PromiseInterface
                     $resolve($onFulfilled($this->value));
                 } catch (\Throwable $exception) {
                     $reject($exception);
-                } catch (\Exception $exception) {
-                    $reject($exception);
                 }
             });
         });
@@ -44,8 +42,6 @@ final class FulfilledPromise implements PromiseInterface
             try {
                 $result = $onFulfilled($this->value);
             } catch (\Throwable $exception) {
-                return fatalError($exception);
-            } catch (\Exception $exception) {
                 return fatalError($exception);
             }
 

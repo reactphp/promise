@@ -53,10 +53,10 @@ function resolve($promiseOrValue = null)
  * throwing an exception. For example, it allows you to propagate a rejection with
  * the value of another promise.
  *
- * @param mixed $promiseOrValue
+ * @param \Throwable $promiseOrValue
  * @return PromiseInterface
  */
-function reject($reason)
+function reject(\Throwable $reason)
 {
     return new RejectedPromise($reason);
 }
@@ -316,9 +316,6 @@ function fatalError($error)
     try {
         \trigger_error($error, E_USER_ERROR);
     } catch (\Throwable $e) {
-        \set_error_handler(null);
-        \trigger_error($error, E_USER_ERROR);
-    } catch (\Exception $e) {
         \set_error_handler(null);
         \trigger_error($error, E_USER_ERROR);
     }

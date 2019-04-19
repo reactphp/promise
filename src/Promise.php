@@ -205,8 +205,6 @@ final class Promise implements PromiseInterface
             }
         } catch (\Throwable $e) {
             $this->reject($e);
-        } catch (\Exception $e) {
-            $this->reject($e);
         }
     }
 }
