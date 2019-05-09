@@ -40,13 +40,4 @@ class RejectedPromiseTest extends TestCase
             },
         ]);
     }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function shouldThrowExceptionIfConstructedWithANonException()
-    {
-        return new RejectedPromise('foo');
-    }
 }

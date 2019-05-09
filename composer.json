@@ -6,10 +6,10 @@
         {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=7.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8.35 || ~5.7 || ~6.4"
+        "phpunit/phpunit": "~6.4"
     },
     "autoload": {
         "psr-4": {

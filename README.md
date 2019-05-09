@@ -11,6 +11,10 @@ A lightweight implementation of
 > For the code of the current stable 2.x release, checkout the 
 > [2.x branch](https://github.com/reactphp/promise/tree/2.x).
 
+> The upcoming 3.0 release will be the way forward for this package. 
+> However we will still actively support 2.0 and 1.0 for those not yet 
+> on PHP 7+.
+
 Table of Contents
 -----------------
 

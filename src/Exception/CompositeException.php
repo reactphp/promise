@@ -11,20 +11,20 @@ namespace React\Promise\Exception;
  */
 class CompositeException extends \Exception
 {
-    private $exceptions;
+    private $throwables;
 
-    public function __construct(array $exceptions, $message = '', $code = 0, $previous = null)
+    public function __construct(array $throwables, $message = '', $code = 0, $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
-        $this->exceptions = $exceptions;
+        $this->throwables = $throwables;
     }
 
     /**
-     * @return \Throwable[]|\Exception[]
+     * @return \Throwable[]
      */
-    public function getExceptions()
+    public function getThrowables()
     {
-        return $this->exceptions;
+        return $this->throwables;
     }
 }

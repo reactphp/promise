@@ -26,7 +26,6 @@ final class Queue
             try {
                 $task();
             } catch (\Throwable $exception) {
-            } catch (\Exception $exception) {
             }
 
             unset($this->queue[$i]);
