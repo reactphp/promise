@@ -41,19 +41,19 @@ function resolve($promiseOrValue = null)
 }
 
 /**
- * Creates a rejected promise for the supplied `$promiseOrValue`.
+ * Creates a rejected promise for the supplied `$reason`.
  *
- * If `$promiseOrValue` is a value, it will be the rejection value of the
+ * If `$reason` is a value, it will be the rejection value of the
  * returned promise.
  *
- * If `$promiseOrValue` is a promise, its completion value will be the rejected
+ * If `$reason` is a promise, its completion value will be the rejected
  * value of the returned promise.
  *
  * This can be useful in situations where you need to reject a promise without
  * throwing an exception. For example, it allows you to propagate a rejection with
  * the value of another promise.
  *
- * @param \Throwable $promiseOrValue
+ * @param \Throwable $reason
  * @return PromiseInterface
  */
 function reject(\Throwable $reason)
@@ -188,7 +188,7 @@ function some(array $promisesOrValues, $howMany)
                 }
             };
 
-            $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
+            $rejecter = function (\Throwable $reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
                 if ($toResolve < 1 || $toReject < 1) {
                     return;
                 }
@@ -324,12 +324,8 @@ function fatalError($error)
 /**
  * @internal
  */
-function _checkTypehint(callable $callback, $object)
+function _checkTypehint(callable $callback, \Throwable $reason)
 {
-    if (!\is_object($object)) {
-        return true;
-    }
-
     if (\is_array($callback)) {
         $callbackReflection = new \ReflectionMethod($callback[0], $callback[1]);
     } elseif (\is_object($callback) && !$callback instanceof \Closure) {
@@ -344,11 +340,11 @@ function _checkTypehint(callable $callback, $object)
         return true;
     }
 
-    $expectedException = $parameters[0];
+    $expectedClass = $parameters[0]->getClass();
 
-    if (!$expectedException->getClass()) {
+    if (!$expectedClass) {
         return true;
     }
 
-    return $expectedException->getClass()->isInstance($object);
+    return $expectedClass->isInstance($reason);
 }

@@ -62,7 +62,7 @@ final class RejectedPromise implements PromiseInterface
 
     public function always(callable $onFulfilledOrRejected)
     {
-        return $this->then(null, function ($reason) use ($onFulfilledOrRejected) {
+        return $this->then(null, function (\Throwable $reason) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
                 return new RejectedPromise($reason);
             });
