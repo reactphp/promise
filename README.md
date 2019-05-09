@@ -97,7 +97,7 @@ $deferred = new React\Promise\Deferred();
 $promise = $deferred->promise();
 
 $deferred->resolve(mixed $value = null);
-$deferred->reject(\Throwable|\Exception $reason);
+$deferred->reject(\Throwable $reason);
 ```
 
 The `promise` method returns the promise of the deferred.
@@ -132,7 +132,7 @@ this promise once it is resolved.
 #### Deferred::reject()
 
 ```php
-$deferred->reject(\Throwable|\Exception $reason);
+$deferred->reject(\Throwable $reason);
 ```
 
 Rejects the promise returned by `promise()`, signalling that the deferred's
@@ -234,7 +234,7 @@ $promise
         // Only catch \RuntimeException instances
         // All other types of errors will propagate automatically
     })
-    ->otherwise(function ($reason) {
+    ->otherwise(function (\Throwable $reason) {
         // Catch other errors
     )};
 ```
@@ -270,7 +270,7 @@ Consider the following synchronous code:
 ```php
 try {
   return doSomething();
-} catch(\Exception $e) {
+} catch (\Throwable $e) {
     return handleError($e);
 } finally {
     cleanup();
@@ -360,7 +360,7 @@ Creates a already rejected promise.
 $promise = React\Promise\RejectedPromise($reason);
 ```
 
-Note, that `$reason` **must** be a `\Throwable` or `\Exception`.
+Note, that `$reason` **must** be a `\Throwable`.
 
 ### Functions
 
@@ -390,7 +390,7 @@ If `$promiseOrValue` is a promise, it will be returned as is.
 #### reject()
 
 ```php
-$promise = React\Promise\reject(\Throwable|\Exception $reason);
+$promise = React\Promise\reject(\Throwable $reason);
 ```
 
 Creates a rejected promise for the supplied `$reason`.
@@ -431,7 +431,7 @@ will be the resolution value of the triggering item.
 The returned promise will only reject if *all* items in `$promisesOrValues` are
 rejected. The rejection value will be a `React\Promise\Exception\CompositeException`
 which holds all rejection reasons. The rejection reasons can be obtained with
-`CompositeException::getExceptions()`.
+`CompositeException::getThrowables()`.
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains 0 items.
@@ -496,7 +496,7 @@ function getAwesomeResultPromise()
     $deferred = new React\Promise\Deferred();
 
     // Execute a Node.js-style function using the callback pattern
-    computeAwesomeResultAsynchronously(function (\Exception $error, $result) use ($deferred) {
+    computeAwesomeResultAsynchronously(function (\Throwable $error, $result) use ($deferred) {
         if ($error) {
             $deferred->reject($error);
         } else {
@@ -513,7 +513,7 @@ getAwesomeResultPromise()
         function ($value) {
             // Deferred resolved, do something with $value
         },
-        function (\Exception $reason) {
+        function (\Throwable $reason) {
             // Deferred rejected, do something with $reason
         }
     );
