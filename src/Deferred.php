@@ -36,7 +36,7 @@ final class Deferred implements PromisorInterface
         \call_user_func($this->resolveCallback, $value);
     }
 
-    public function reject($reason)
+    public function reject(\Throwable $reason)
     {
         $this->promise();
 

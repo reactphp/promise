@@ -129,7 +129,7 @@ final class Promise implements PromiseInterface
         $this->settle(resolve($value));
     }
 
-    private function reject($reason)
+    private function reject(\Throwable $reason)
     {
         if (null !== $this->result) {
             return;
@@ -198,7 +198,7 @@ final class Promise implements PromiseInterface
                     function ($value = null) {
                         $this->resolve($value);
                     },
-                    function ($reason) {
+                    function (\Throwable $reason) {
                         $this->reject($reason);
                     }
                 );

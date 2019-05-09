@@ -188,7 +188,7 @@ function some(array $promisesOrValues, $howMany)
                 }
             };
 
-            $rejecter = function ($reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
+            $rejecter = function (\Throwable $reason) use ($i, &$reasons, &$toReject, $toResolve, $reject) {
                 if ($toResolve < 1 || $toReject < 1) {
                     return;
                 }
