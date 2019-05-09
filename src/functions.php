@@ -41,19 +41,19 @@ function resolve($promiseOrValue = null)
 }
 
 /**
- * Creates a rejected promise for the supplied `$promiseOrValue`.
+ * Creates a rejected promise for the supplied `$reason`.
  *
- * If `$promiseOrValue` is a value, it will be the rejection value of the
+ * If `$reason` is a value, it will be the rejection value of the
  * returned promise.
  *
- * If `$promiseOrValue` is a promise, its completion value will be the rejected
+ * If `$reason` is a promise, its completion value will be the rejected
  * value of the returned promise.
  *
  * This can be useful in situations where you need to reject a promise without
  * throwing an exception. For example, it allows you to propagate a rejection with
  * the value of another promise.
  *
- * @param \Throwable $promiseOrValue
+ * @param \Throwable $reason
  * @return PromiseInterface
  */
 function reject(\Throwable $reason)
