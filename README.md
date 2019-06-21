@@ -431,6 +431,8 @@ Note, that `$reason` **cannot** be a promise. It's recommended to use
 
 ### LazyPromise
 
+> Deprecated in v2.8.0: LazyPromise is deprecated and should not be used anymore.
+
 Creates a promise which will be lazily initialized by `$factory` once a consumer
 calls the `then()` method.
 
