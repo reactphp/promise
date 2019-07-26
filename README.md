@@ -346,7 +346,7 @@ once all consumers called the `cancel()` method of the promise.
 Creates a already fulfilled promise.
 
 ```php
-$promise = React\Promise\FulfilledPromise($value);
+$promise = new ($value);
 ```
 
 Note, that `$value` **cannot** be a promise. It's recommended to use
@@ -357,7 +357,7 @@ Note, that `$value` **cannot** be a promise. It's recommended to use
 Creates a already rejected promise.
 
 ```php
-$promise = React\Promise\RejectedPromise($reason);
+$promise = new ($reason);
 ```
 
 Note, that `$reason` **must** be a `\Throwable` or `\Exception`.
