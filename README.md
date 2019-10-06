@@ -395,6 +395,11 @@ $promise = React\Promise\reject(\Throwable $reason);
 
 Creates a rejected promise for the supplied `$reason`.
 
+Note that the [`\Throwable`](https://www.php.net/manual/en/class.throwable.php) interface introduced in PHP 7 covers 
+both user land [`\Exception`](https://www.php.net/manual/en/class.exception.php)'s and 
+[`\Error`](https://www.php.net/manual/en/class.error.php) internal PHP errors. By enforcing `\Throwable` as reason to 
+reject a promise, any language error or user land exception can be used to reject a promise.
+
 #### all()
 
 ```php
