@@ -9,5 +9,5 @@ interface PromisorInterface
      *
      * @return PromiseInterface
      */
-    public function promise();
+    public function promise(): PromiseInterface;
 }

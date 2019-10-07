@@ -23,7 +23,7 @@ class CompositeException extends \Exception
     /**
      * @return \Throwable[]
      */
-    public function getThrowables()
+    public function getThrowables(): array
     {
         return $this->throwables;
     }

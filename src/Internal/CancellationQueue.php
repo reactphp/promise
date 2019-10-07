@@ -10,7 +10,7 @@ final class CancellationQueue
     private $started = false;
     private $queue = [];
 
-    public function __invoke()
+    public function __invoke(): void
     {
         if ($this->started) {
             return;
@@ -20,7 +20,7 @@ final class CancellationQueue
         $this->drain();
     }
 
-    public function enqueue($cancellable)
+    public function enqueue($cancellable): void
     {
         if (!\method_exists($cancellable, 'then') || !\method_exists($cancellable, 'cancel')) {
             return;
@@ -33,7 +33,7 @@ final class CancellationQueue
         }
     }
 
-    private function drain()
+    private function drain(): void
     {
         for ($i = \key($this->queue); isset($this->queue[$i]); $i++) {
             $cancellable = $this->queue[$i];
