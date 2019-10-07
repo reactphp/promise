@@ -2,12 +2,17 @@
 
 namespace React\Promise\PromiseTest;
 
+use Exception;
 use React\Promise\ErrorCollector;
+use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use stdClass;
+use function React\Promise\reject;
+use function React\Promise\resolve;
 
 trait PromiseFulfilledTestTrait
 {
     /**
-     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     * @return PromiseAdapterInterface
      */
     abstract public function getPromiseTestAdapter(callable $canceller = null);
 
@@ -112,7 +117,7 @@ trait PromiseFulfilledTestTrait
         $adapter->promise()
             ->then(
                 function ($val) {
-                    return \React\Promise\resolve($val + 1);
+                    return resolve($val + 1);
                 },
                 $this->expectCallableNever()
             )
@@ -127,7 +132,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
@@ -139,7 +144,7 @@ trait PromiseFulfilledTestTrait
         $adapter->promise()
             ->then(
                 function () use ($exception) {
-                    return \React\Promise\reject($exception);
+                    return reject($exception);
                 },
                 $this->expectCallableNever()
             )
@@ -154,7 +159,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
@@ -187,7 +192,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve();
 
-        $this->assertNull($adapter->promise()->cancel());
+        self::assertNull($adapter->promise()->cancel());
     }
 
     /** @test */
@@ -212,7 +217,7 @@ trait PromiseFulfilledTestTrait
             ->with($this->identicalTo(1));
 
         $adapter->resolve(1);
-        $this->assertNull($adapter->promise()->done($mock));
+        self::assertNull($adapter->promise()->done($mock));
     }
 
     /** @test */
@@ -225,14 +230,14 @@ trait PromiseFulfilledTestTrait
         $errorCollector = new ErrorCollector();
         $errorCollector->start();
 
-        $this->assertNull($adapter->promise()->done(function () {
-            throw new \Exception('Unhandled Rejection');
+        self::assertNull($adapter->promise()->done(function () {
+            throw new Exception('Unhandled Rejection');
         }));
 
         $errors = $errorCollector->stop();
 
-        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
+        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
+        self::assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
@@ -245,14 +250,14 @@ trait PromiseFulfilledTestTrait
         $errorCollector = new ErrorCollector();
         $errorCollector->start();
 
-        $this->assertNull($adapter->promise()->done(function () {
-            return \React\Promise\reject(new \Exception('Unhandled Rejection'));
+        self::assertNull($adapter->promise()->done(function () {
+            return reject(new Exception('Unhandled Rejection'));
         }));
 
         $errors = $errorCollector->stop();
 
-        $this->assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        $this->assertContains('Unhandled Rejection', $errors[0]['errstr']);
+        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
+        self::assertContains('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
@@ -269,7 +274,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $value = new \stdClass();
+        $value = new stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -288,7 +293,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $value = new \stdClass();
+        $value = new stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -309,7 +314,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $value = new \stdClass();
+        $value = new stdClass();
 
         $mock = $this->createCallableMock();
         $mock
@@ -320,7 +325,7 @@ trait PromiseFulfilledTestTrait
         $adapter->resolve($value);
         $adapter->promise()
             ->always(function () {
-                return \React\Promise\resolve(1);
+                return resolve(1);
             })
             ->then($mock);
     }
@@ -330,7 +335,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
@@ -351,7 +356,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
@@ -362,7 +367,7 @@ trait PromiseFulfilledTestTrait
         $adapter->resolve(1);
         $adapter->promise()
             ->always(function () use ($exception) {
-                return \React\Promise\reject($exception);
+                return reject($exception);
             })
             ->then(null, $mock);
     }

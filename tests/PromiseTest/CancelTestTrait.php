@@ -2,12 +2,14 @@
 
 namespace React\Promise\PromiseTest;
 
+use Exception;
 use React\Promise;
+use React\Promise\PromiseAdapter\PromiseAdapterInterface;
 
 trait CancelTestTrait
 {
     /**
-     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     * @return PromiseAdapterInterface
      */
     abstract public function getPromiseTestAdapter(callable $canceller = null);
 
@@ -21,9 +23,9 @@ trait CancelTestTrait
 
         $adapter->promise()->cancel();
 
-        $this->assertCount(2, $args);
-        $this->assertTrue(is_callable($args[0]));
-        $this->assertTrue(is_callable($args[1]));
+        self::assertCount(2, $args);
+        self::assertTrue(is_callable($args[0]));
+        self::assertTrue(is_callable($args[1]));
     }
 
     /** @test */
@@ -36,7 +38,7 @@ trait CancelTestTrait
 
         $adapter->promise()->cancel();
 
-        $this->assertSame(0, $args);
+        self::assertSame(0, $args);
     }
 
     /** @test */
@@ -61,7 +63,7 @@ trait CancelTestTrait
     /** @test */
     public function cancelShouldRejectPromiseIfCancellerRejects()
     {
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $adapter = $this->getPromiseTestAdapter(function ($resolve, $reject) use ($exception) {
             $reject($exception);
@@ -82,7 +84,7 @@ trait CancelTestTrait
     /** @test */
     public function cancelShouldRejectPromiseWithExceptionIfCancellerThrows()
     {
-        $e = new \Exception();
+        $e = new Exception();
 
         $adapter = $this->getPromiseTestAdapter(function () use ($e) {
             throw $e;

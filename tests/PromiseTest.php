@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+use Exception;
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 
 class PromiseTest extends TestCase
@@ -30,7 +31,7 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectIfResolverThrowsException()
     {
-        $exception = new \Exception('foo');
+        $exception = new Exception('foo');
 
         $promise = new Promise(function () use ($exception) {
             throw $exception;
@@ -38,9 +39,9 @@ class PromiseTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception));
+            ->with(self::identicalTo($exception));
 
         $promise
             ->then($this->expectCallableNever(), $mock);
@@ -51,10 +52,10 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () {
-            throw new \Exception('foo');
+            throw new Exception('foo');
         });
         unset($promise);
 
-        $this->assertSame(0, gc_collect_cycles());
+        self::assertSame(0, gc_collect_cycles());
     }
 }

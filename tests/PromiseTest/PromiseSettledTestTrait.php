@@ -2,10 +2,13 @@
 
 namespace React\Promise\PromiseTest;
 
+use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
+
 trait PromiseSettledTestTrait
 {
     /**
-     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     * @return PromiseAdapterInterface
      */
     abstract public function getPromiseTestAdapter(callable $canceller = null);
 
@@ -15,7 +18,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then());
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then());
     }
 
     /** @test */
@@ -24,7 +27,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then(null, null, null));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then(null, null));
     }
 
     /** @test */
@@ -34,7 +37,7 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
 
-        $this->assertNull($adapter->promise()->cancel());
+        self::assertNull($adapter->promise()->cancel());
     }
 
     /** @test */
@@ -53,7 +56,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertNull($adapter->promise()->done(null, function () {}));
+        self::assertNull($adapter->promise()->done(null, function () {}));
     }
 
     /** @test */
@@ -62,7 +65,7 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertNull($adapter->promise()->done(null, function () {}, null));
+        self::assertNull($adapter->promise()->done(null, function () {}, null));
     }
 
     /** @test */
@@ -71,6 +74,6 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
     }
 }

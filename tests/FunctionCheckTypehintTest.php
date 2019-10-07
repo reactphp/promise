@@ -2,76 +2,79 @@
 
 namespace React\Promise;
 
+use Exception;
+use InvalidArgumentException;
+
 class FunctionCheckTypehintTest extends TestCase
 {
     /** @test */
     public function shouldAcceptClosureCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint(function (\InvalidArgumentException $e) {}, new \InvalidArgumentException()));
-        $this->assertFalse(_checkTypehint(function (\InvalidArgumentException $e) {}, new \Exception()));
+        self::assertTrue(_checkTypehint(function (InvalidArgumentException $e) {}, new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(function (InvalidArgumentException $e) {}, new Exception()));
     }
 
     /** @test */
     public function shouldAcceptFunctionStringCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint('React\Promise\testCallbackWithTypehint', new \InvalidArgumentException()));
-        $this->assertFalse(_checkTypehint('React\Promise\testCallbackWithTypehint', new \Exception()));
+        self::assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(new TestCallbackWithTypehintClass(), new Exception()));
     }
 
     /** @test */
     public function shouldAcceptInvokableObjectCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new \InvalidArgumentException()));
-        $this->assertFalse(_checkTypehint(new TestCallbackWithTypehintClass(), new \Exception()));
+        self::assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(new TestCallbackWithTypehintClass(), new Exception()));
     }
 
     /** @test */
     public function shouldAcceptObjectMethodCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
-        $this->assertFalse(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new \Exception()));
+        self::assertTrue(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new Exception()));
     }
 
     /** @test */
     public function shouldAcceptStaticClassCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint(['React\Promise\TestCallbackWithTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
-        $this->assertFalse(_checkTypehint(['React\Promise\TestCallbackWithTypehintClass', 'testCallbackStatic'], new \Exception()));
+        self::assertTrue(_checkTypehint([TestCallbackWithTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([TestCallbackWithTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
     /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint(function (\InvalidArgumentException $e) {
-        }, new \InvalidArgumentException()));
+        self::assertTrue(_checkTypehint(function (InvalidArgumentException $e) {
+        }, new InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptFunctionStringCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint('React\Promise\testCallbackWithoutTypehint', new \InvalidArgumentException()));
+        self::assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptInvokableObjectCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint(new TestCallbackWithoutTypehintClass(), new \InvalidArgumentException()));
+        self::assertTrue(_checkTypehint(new TestCallbackWithoutTypehintClass(), new InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptObjectMethodCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint([new TestCallbackWithoutTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
+        self::assertTrue(_checkTypehint([new TestCallbackWithoutTypehintClass(), 'testCallback'], new InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptStaticClassCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint(['React\Promise\TestCallbackWithoutTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
+        self::assertTrue(_checkTypehint([TestCallbackWithoutTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
     }
 }
 
-function testCallbackWithTypehint(\InvalidArgumentException $e)
+function testCallbackWithTypehint(InvalidArgumentException $e)
 {
 }
 
@@ -81,15 +84,15 @@ function testCallbackWithoutTypehint()
 
 class TestCallbackWithTypehintClass
 {
-    public function __invoke(\InvalidArgumentException $e)
+    public function __invoke(InvalidArgumentException $e)
     {
     }
 
-    public function testCallback(\InvalidArgumentException $e)
+    public function testCallback(InvalidArgumentException $e)
     {
     }
 
-    public static function testCallbackStatic(\InvalidArgumentException $e)
+    public static function testCallbackStatic(InvalidArgumentException $e)
     {
     }
 }

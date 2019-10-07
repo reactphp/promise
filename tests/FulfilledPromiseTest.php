@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use InvalidArgumentException;
+use LogicException;
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 
 class FulfilledPromiseTest extends TestCase
@@ -16,7 +18,7 @@ class FulfilledPromiseTest extends TestCase
         return new CallbackPromiseAdapter([
             'promise' => function () use (&$promise) {
                 if (!$promise) {
-                    throw new \LogicException('FulfilledPromise must be resolved before obtaining the promise');
+                    throw new LogicException('FulfilledPromise must be resolved before obtaining the promise');
                 }
 
                 return $promise;
@@ -27,7 +29,7 @@ class FulfilledPromiseTest extends TestCase
                 }
             },
             'reject' => function () {
-                throw new \LogicException('You cannot call reject() for React\Promise\FulfilledPromise');
+                throw new LogicException('You cannot call reject() for React\Promise\FulfilledPromise');
             },
             'settle' => function ($value = null) use (&$promise) {
                 if (!$promise) {
@@ -39,10 +41,10 @@ class FulfilledPromiseTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
      */
     public function shouldThrowExceptionIfConstructedWithAPromise()
     {
+        $this->expectException(InvalidArgumentException::class);
         return new FulfilledPromise(new FulfilledPromise());
     }
 }

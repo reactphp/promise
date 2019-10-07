@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use Exception;
+
 class FunctionMapTest extends TestCase
 {
     protected function mapper()
@@ -23,9 +25,9 @@ class FunctionMapTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([2, 4, 6]));
+            ->with(self::identicalTo([2, 4, 6]));
 
         map(
             [1, 2, 3],
@@ -38,9 +40,9 @@ class FunctionMapTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([2, 4, 6]));
+            ->with(self::identicalTo([2, 4, 6]));
 
         map(
             [resolve(1), resolve(2), resolve(3)],
@@ -53,9 +55,9 @@ class FunctionMapTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([2, 4, 6]));
+            ->with(self::identicalTo([2, 4, 6]));
 
         map(
             [1, resolve(2), 3],
@@ -68,9 +70,9 @@ class FunctionMapTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([2, 4, 6]));
+            ->with(self::identicalTo([2, 4, 6]));
 
         map(
             [1, 2, 3],
@@ -83,9 +85,9 @@ class FunctionMapTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([2, 4, 6]));
+            ->with(self::identicalTo([2, 4, 6]));
 
         $deferred = new Deferred();
 
@@ -100,14 +102,14 @@ class FunctionMapTest extends TestCase
     /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
-        $exception2 = new \Exception();
-        $exception3 = new \Exception();
+        $exception2 = new Exception();
+        $exception3 = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception2));
+            ->with(self::identicalTo($exception2));
 
         map(
             [resolve(1), reject($exception2), resolve($exception3)],

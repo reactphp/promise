@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+use Exception;
 use React\Promise\Exception\CompositeException;
 use React\Promise\Exception\LengthException;
 
@@ -12,10 +13,10 @@ class FunctionAnyTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with(
-                $this->callback(function ($exception) {
+                self::callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
@@ -30,9 +31,9 @@ class FunctionAnyTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         any([1, 2, 3])
             ->then($mock);
@@ -43,9 +44,9 @@ class FunctionAnyTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         any([resolve(1), resolve(2), resolve(3)])
             ->then($mock);
@@ -54,9 +55,9 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected()
     {
-        $exception1 = new \Exception();
-        $exception2 = new \Exception();
-        $exception3 = new \Exception();
+        $exception1 = new Exception();
+        $exception2 = new Exception();
+        $exception3 = new Exception();
 
         $compositeException = new CompositeException(
             [0 => $exception1, 1 => $exception2, 2 => $exception3],
@@ -65,7 +66,7 @@ class FunctionAnyTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with($compositeException);
 
@@ -76,14 +77,14 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldResolveWhenFirstInputPromiseResolves()
     {
-        $exception2 = new \Exception();
-        $exception3 = new \Exception();
+        $exception2 = new Exception();
+        $exception3 = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         any([resolve(1), reject($exception2), reject($exception3)])
             ->then($mock);
@@ -94,9 +95,9 @@ class FunctionAnyTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with(self::identicalTo(2));
 
         $d1 = new Deferred();
         $d2 = new Deferred();

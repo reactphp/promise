@@ -2,6 +2,7 @@
 
 namespace React\Promise\Internal;
 
+use Exception;
 use React\Promise\Deferred;
 use React\Promise\SimpleTestCancellable;
 use React\Promise\SimpleTestCancellableThenable;
@@ -19,7 +20,7 @@ class CancellationQueueTest extends TestCase
 
         $cancellationQueue();
 
-        $this->assertTrue($p->cancelCalled);
+        self::assertTrue($p->cancelCalled);
     }
 
     /** @test */
@@ -32,7 +33,7 @@ class CancellationQueueTest extends TestCase
 
         $cancellationQueue();
 
-        $this->assertFalse($p->cancelCalled);
+        self::assertFalse($p->cancelCalled);
     }
 
     /** @test */
@@ -76,16 +77,16 @@ class CancellationQueueTest extends TestCase
 
     /**
      * @test
-     * @expectedException Exception
-     * @expectedExceptionMessage test
      */
     public function rethrowsExceptionsThrownFromCancel()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('test');
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->will($this->throwException(new \Exception('test')));
+            ->will(self::throwException(new Exception('test')));
 
         $promise = new SimpleTestCancellableThenable($mock);
 

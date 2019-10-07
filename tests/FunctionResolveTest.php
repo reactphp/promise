@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use Exception;
+
 class FunctionResolveTest extends TestCase
 {
     /** @test */
@@ -11,9 +13,9 @@ class FunctionResolveTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($expected));
+            ->with(self::identicalTo($expected));
 
         resolve($expected)
             ->then(
@@ -31,9 +33,9 @@ class FunctionResolveTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($expected));
+            ->with(self::identicalTo($expected));
 
         resolve($resolved)
             ->then(
@@ -49,9 +51,9 @@ class FunctionResolveTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo('foo'));
+            ->with(self::identicalTo('foo'));
 
         resolve($thenable)
             ->then(
@@ -68,21 +70,21 @@ class FunctionResolveTest extends TestCase
         $promise = resolve($thenable);
         $promise->cancel();
 
-        $this->assertTrue($thenable->cancelCalled);
+        self::assertTrue($thenable->cancelCalled);
     }
 
     /** @test */
     public function shouldRejectARejectedPromise()
     {
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $resolved = new RejectedPromise($exception);
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception));
+            ->with(self::identicalTo($exception));
 
         resolve($resolved)
             ->then(
@@ -114,9 +116,9 @@ class FunctionResolveTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(true));
+            ->with(self::identicalTo(true));
 
         $result->then($mock);
     }
@@ -151,9 +153,9 @@ class FunctionResolveTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(true));
+            ->with(self::identicalTo(true));
 
         $deferreds[0]->promise()->then($mock);
     }
