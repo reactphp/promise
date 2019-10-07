@@ -447,10 +447,10 @@ if `$promisesOrValues` contains 0 items.
 $promise = React\Promise\some(array $promisesOrValues, integer $howMany);
 ```
 
-Returns a promise that will resolve when `$howMany` of the supplied items in
-`$promisesOrValues` resolve. The resolution value of the returned promise
-will be an array of length `$howMany` containing the resolution values of the
-triggering items.
+Returns a promise that will resolve when at least `$howMany` of the supplied items in
+`$promisesOrValues` fulfill. The resolution value of the returned promise
+will be an array of length `$howMany` containing the resolution values of
+`$howMany` fulfilled promises that were resolved first.
 
 The returned promise will reject if it becomes impossible for `$howMany` items
 to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
