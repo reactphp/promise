@@ -32,7 +32,7 @@ interface PromiseInterface
      * @param callable|null $onRejected
      * @return PromiseInterface
      */
-    public function then(callable $onFulfilled = null, callable $onRejected = null);
+    public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
     /**
      * Consumes the promise's ultimate value if the promise fulfills, or handles the
@@ -48,7 +48,7 @@ interface PromiseInterface
      * @param callable|null $onRejected
      * @return void
      */
-    public function done(callable $onFulfilled = null, callable $onRejected = null);
+    public function done(callable $onFulfilled = null, callable $onRejected = null): void;
 
     /**
      * Registers a rejection handler for promise. It is a shortcut for:
@@ -63,7 +63,7 @@ interface PromiseInterface
      * @param callable $onRejected
      * @return PromiseInterface
      */
-    public function otherwise(callable $onRejected);
+    public function otherwise(callable $onRejected): PromiseInterface;
 
     /**
      * Allows you to execute "cleanup" type tasks in a promise chain.
@@ -110,7 +110,7 @@ interface PromiseInterface
      * @param callable $onFulfilledOrRejected
      * @return PromiseInterface
      */
-    public function always(callable $onFulfilledOrRejected);
+    public function always(callable $onFulfilledOrRejected): PromiseInterface;
 
     /**
      * The `cancel()` method notifies the creator of the promise that there is no
@@ -121,5 +121,5 @@ interface PromiseInterface
      *
      * @return void
      */
-    public function cancel();
+    public function cancel(): void;
 }

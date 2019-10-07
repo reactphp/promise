@@ -14,13 +14,13 @@ final class Deferred implements PromisorInterface
         $this->canceller = $canceller;
     }
 
-    public function promise()
+    public function promise(): PromiseInterface
     {
         if (null === $this->promise) {
             $canceller = $this->canceller;
             $this->canceller = null;
 
-            $this->promise = new Promise(function ($resolve, $reject) {
+            $this->promise = new Promise(function ($resolve, $reject): void {
                 $this->resolveCallback = $resolve;
                 $this->rejectCallback  = $reject;
             }, $canceller);
@@ -29,14 +29,14 @@ final class Deferred implements PromisorInterface
         return $this->promise;
     }
 
-    public function resolve($value = null)
+    public function resolve($value = null): void
     {
         $this->promise();
 
         \call_user_func($this->resolveCallback, $value);
     }
 
-    public function reject(\Throwable $reason)
+    public function reject(\Throwable $reason): void
     {
         $this->promise();
 

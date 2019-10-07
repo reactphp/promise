@@ -17,7 +17,7 @@ final class Promise implements PromiseInterface
         $this->call($resolver);
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
         if (null !== $this->result) {
             return $this->result->then($onFulfilled, $onRejected);
@@ -38,10 +38,11 @@ final class Promise implements PromiseInterface
         });
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null): void
     {
         if (null !== $this->result) {
-            return $this->result->done($onFulfilled, $onRejected);
+            $this->result->done($onFulfilled, $onRejected);
+            return;
         }
 
         $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
@@ -50,7 +51,7 @@ final class Promise implements PromiseInterface
         };
     }
 
-    public function otherwise(callable $onRejected)
+    public function otherwise(callable $onRejected): PromiseInterface
     {
         return $this->then(null, function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
@@ -61,7 +62,7 @@ final class Promise implements PromiseInterface
         });
     }
 
-    public function always(callable $onFulfilledOrRejected)
+    public function always(callable $onFulfilledOrRejected): PromiseInterface
     {
         return $this->then(function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
@@ -74,7 +75,7 @@ final class Promise implements PromiseInterface
         });
     }
 
-    public function cancel()
+    public function cancel(): void
     {
         $canceller = $this->canceller;
         $this->canceller = null;
@@ -109,7 +110,7 @@ final class Promise implements PromiseInterface
         }
     }
 
-    private function resolver(callable $onFulfilled = null, callable $onRejected = null)
+    private function resolver(callable $onFulfilled = null, callable $onRejected = null): callable
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
             $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
@@ -120,7 +121,7 @@ final class Promise implements PromiseInterface
         };
     }
 
-    private function resolve($value = null)
+    private function resolve($value = null): void
     {
         if (null !== $this->result) {
             return;
@@ -129,7 +130,7 @@ final class Promise implements PromiseInterface
         $this->settle(resolve($value));
     }
 
-    private function reject(\Throwable $reason)
+    private function reject(\Throwable $reason): void
     {
         if (null !== $this->result) {
             return;
@@ -138,7 +139,7 @@ final class Promise implements PromiseInterface
         $this->settle(reject($reason));
     }
 
-    private function settle(PromiseInterface $result)
+    private function settle(PromiseInterface $result): void
     {
         $result = $this->unwrap($result);
 
@@ -165,7 +166,7 @@ final class Promise implements PromiseInterface
         }
     }
 
-    private function unwrap($promise)
+    private function unwrap($promise): PromiseInterface
     {
         while ($promise instanceof self && null !== $promise->result) {
             $promise = $promise->result;
@@ -174,7 +175,7 @@ final class Promise implements PromiseInterface
         return $promise;
     }
 
-    private function call(callable $callback)
+    private function call(callable $callback): void
     {
         // Use reflection to inspect number of arguments expected by this callback.
         // We did some careful benchmarking here: Using reflection to avoid unneeded

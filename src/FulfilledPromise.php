@@ -15,14 +15,14 @@ final class FulfilledPromise implements PromiseInterface
         $this->value = $value;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
         if (null === $onFulfilled) {
             return $this;
         }
 
-        return new Promise(function (callable $resolve, callable $reject) use ($onFulfilled) {
-            enqueue(function () use ($resolve, $reject, $onFulfilled) {
+        return new Promise(function (callable $resolve, callable $reject) use ($onFulfilled): void {
+            enqueue(function () use ($resolve, $reject, $onFulfilled): void {
                 try {
                     $resolve($onFulfilled($this->value));
                 } catch (\Throwable $exception) {
@@ -32,7 +32,7 @@ final class FulfilledPromise implements PromiseInterface
         });
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null)
+    public function done(callable $onFulfilled = null, callable $onRejected = null): void
     {
         if (null === $onFulfilled) {
             return;
@@ -51,21 +51,21 @@ final class FulfilledPromise implements PromiseInterface
         });
     }
 
-    public function otherwise(callable $onRejected)
+    public function otherwise(callable $onRejected): PromiseInterface
     {
         return $this;
     }
 
-    public function always(callable $onFulfilledOrRejected)
+    public function always(callable $onFulfilledOrRejected): PromiseInterface
     {
-        return $this->then(function ($value) use ($onFulfilledOrRejected) {
+        return $this->then(function ($value) use ($onFulfilledOrRejected): PromiseInterface {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
         });
     }
 
-    public function cancel()
+    public function cancel(): void
     {
     }
 }
