@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use Exception;
+
 class FunctionReduceTest extends TestCase
 {
     protected function plus()
@@ -23,9 +25,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(6));
+            ->with(self::identicalTo(6));
 
         reduce(
             [1, 2, 3],
@@ -38,9 +40,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(7));
+            ->with(self::identicalTo(7));
 
         reduce(
             [1, 2, 3],
@@ -54,9 +56,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(7));
+            ->with(self::identicalTo(7));
 
         reduce(
             [1, 2, 3],
@@ -70,9 +72,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(6));
+            ->with(self::identicalTo(6));
 
         reduce(
             [resolve(1), resolve(2), resolve(3)],
@@ -85,9 +87,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(7));
+            ->with(self::identicalTo(7));
 
         reduce(
             [resolve(1), resolve(2), resolve(3)],
@@ -101,9 +103,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(7));
+            ->with(self::identicalTo(7));
 
         reduce(
             [resolve(1), resolve(2), resolve(3)],
@@ -117,9 +119,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         reduce(
             [],
@@ -133,9 +135,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         reduce(
             [],
@@ -147,13 +149,13 @@ class FunctionReduceTest extends TestCase
     /** @test */
     public function shouldRejectWhenInputContainsRejection()
     {
-        $exception2 = new \Exception();
+        $exception2 = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception2));
+            ->with(self::identicalTo($exception2));
 
         reduce(
             [resolve(1), reject($exception2), resolve(3)],
@@ -171,9 +173,9 @@ class FunctionReduceTest extends TestCase
         // We're following PHP's array_reduce behavior and resolve with NULL.
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(null));
+            ->with(self::identicalTo(null));
 
         reduce(
             [],
@@ -186,9 +188,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(3));
+            ->with(self::identicalTo(3));
 
         reduce(
             [null, null, 1, null, 1, 1],
@@ -201,9 +203,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(4));
+            ->with(self::identicalTo(4));
 
         reduce(
             [null, null, 1, null, 1, 1],
@@ -217,9 +219,9 @@ class FunctionReduceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo('123'));
+            ->with(self::identicalTo('123'));
 
         reduce(
             [1, 2, 3],
@@ -243,9 +245,9 @@ class FunctionReduceTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2, 3]));
+            ->with(self::identicalTo([1, 2, 3]));
 
         reduce(
             [$d1->promise(), $d2->promise(), $d3->promise()],

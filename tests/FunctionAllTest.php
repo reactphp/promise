@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use Exception;
+
 class FunctionAllTest extends TestCase
 {
     /** @test */
@@ -9,9 +11,9 @@ class FunctionAllTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([]));
+            ->with(self::identicalTo([]));
 
         all([])
             ->then($mock);
@@ -22,9 +24,9 @@ class FunctionAllTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2, 3]));
+            ->with(self::identicalTo([1, 2, 3]));
 
         all([1, 2, 3])
             ->then($mock);
@@ -35,9 +37,9 @@ class FunctionAllTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2, 3]));
+            ->with(self::identicalTo([1, 2, 3]));
 
         all([resolve(1), resolve(2), resolve(3)])
             ->then($mock);
@@ -48,9 +50,9 @@ class FunctionAllTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([null, 1, null, 1, 1]));
+            ->with(self::identicalTo([null, 1, null, 1, 1]));
 
         all([null, 1, null, 1, 1])
             ->then($mock);
@@ -59,14 +61,14 @@ class FunctionAllTest extends TestCase
     /** @test */
     public function shouldRejectIfAnyInputPromiseRejects()
     {
-        $exception2 = new \Exception();
-        $exception3 = new \Exception();
+        $exception2 = new Exception();
+        $exception3 = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception2));
+            ->with(self::identicalTo($exception2));
 
         all([resolve(1), reject($exception2), resolve($exception3)])
             ->then($this->expectCallableNever(), $mock);
@@ -77,9 +79,9 @@ class FunctionAllTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2, 3]));
+            ->with(self::identicalTo([1, 2, 3]));
 
         $deferred = new Deferred();
 

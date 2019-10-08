@@ -2,10 +2,13 @@
 
 namespace React\Promise\PromiseTest;
 
+use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
+
 trait PromisePendingTestTrait
 {
     /**
-     * @return \React\Promise\PromiseAdapter\PromiseAdapterInterface
+     * @return PromiseAdapterInterface
      */
     abstract public function getPromiseTestAdapter(callable $canceller = null);
 
@@ -14,7 +17,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then());
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then());
     }
 
     /** @test */
@@ -22,7 +25,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->then(null, null, null));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then(null, null));
     }
 
     /** @test */
@@ -30,7 +33,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertNull($adapter->promise()->cancel());
+        self::assertNull($adapter->promise()->cancel());
     }
 
     /** @test */
@@ -38,7 +41,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertNull($adapter->promise()->done());
+        self::assertNull($adapter->promise()->done());
     }
 
     /** @test */
@@ -46,7 +49,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertNull($adapter->promise()->done(null, null, null));
+        self::assertNull($adapter->promise()->done(null, null));
     }
 
     /** @test */
@@ -63,6 +66,6 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $this->assertInstanceOf('React\\Promise\\PromiseInterface', $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
     }
 }

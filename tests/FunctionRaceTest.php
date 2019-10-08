@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use Exception;
+
 class FunctionRaceTest extends TestCase
 {
     /** @test */
@@ -17,9 +19,9 @@ class FunctionRaceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(1));
+            ->with(self::identicalTo(1));
 
         race(
             [1, 2, 3]
@@ -31,9 +33,9 @@ class FunctionRaceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(2));
+            ->with(self::identicalTo(2));
 
         $d1 = new Deferred();
         $d2 = new Deferred();
@@ -54,9 +56,9 @@ class FunctionRaceTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo(null));
+            ->with(self::identicalTo(null));
 
         race(
             [null, 1, null, 2, 3]
@@ -66,13 +68,13 @@ class FunctionRaceTest extends TestCase
     /** @test */
     public function shouldRejectIfFirstSettledPromiseRejects()
     {
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo($exception));
+            ->with(self::identicalTo($exception));
 
         $d1 = new Deferred();
         $d2 = new Deferred();
@@ -112,7 +114,7 @@ class FunctionRaceTest extends TestCase
     public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseRejects()
     {
         $deferred = new Deferred($this->expectCallableNever());
-        $deferred->reject(new \Exception());
+        $deferred->reject(new Exception());
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 

@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+use Exception;
 use React\Promise\Exception\CompositeException;
 use React\Promise\Exception\LengthException;
 
@@ -12,10 +13,10 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with(
-                $this->callback(function ($exception) {
+                self::callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
@@ -32,10 +33,10 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with(
-                $this->callback(function ($exception) {
+                self::callback(function ($exception) {
                     return $exception instanceof LengthException &&
                            'Input array must contain at least 4 items but contains only 3 items.' === $exception->getMessage();
                 })
@@ -52,9 +53,9 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2]));
+            ->with(self::identicalTo([1, 2]));
 
         some(
             [1, 2, 3],
@@ -67,9 +68,9 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([1, 2]));
+            ->with(self::identicalTo([1, 2]));
 
         some(
             [resolve(1), resolve(2), resolve(3)],
@@ -82,9 +83,9 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([null, 1]));
+            ->with(self::identicalTo([null, 1]));
 
         some(
             [null, 1, null, 2, 3],
@@ -98,8 +99,8 @@ class FunctionSomeTest extends TestCase
      */
     public function shouldRejectIfAnyInputPromiseRejectsBeforeDesiredNumberOfInputsAreResolved()
     {
-        $exception2 = new \Exception();
-        $exception3 = new \Exception();
+        $exception2 = new Exception();
+        $exception3 = new Exception();
 
         $compositeException = new CompositeException(
             [1 => $exception2, 2 => $exception3],
@@ -108,7 +109,7 @@ class FunctionSomeTest extends TestCase
 
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with($compositeException);
 
@@ -124,9 +125,9 @@ class FunctionSomeTest extends TestCase
     {
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with($this->identicalTo([]));
+            ->with(self::identicalTo([]));
 
         some(
             [1],
@@ -158,7 +159,7 @@ class FunctionSomeTest extends TestCase
     public function shouldNotCancelOtherPendingInputArrayPromisesIfEnoughPromisesReject()
     {
         $deferred = new Deferred($this->expectCallableNever());
-        $deferred->reject(new \Exception());
+        $deferred->reject(new Exception());
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 

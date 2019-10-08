@@ -2,12 +2,13 @@
 
 namespace React\Promise\Internal;
 
+use Exception;
 use React\Promise\TestCase;
 
 class QueueTest extends TestCase
 {
     /** @test */
-    public function excutesTasks()
+    public function executesTasks()
     {
         $queue = new Queue();
 
@@ -16,7 +17,7 @@ class QueueTest extends TestCase
     }
 
     /** @test */
-    public function excutesNestedEnqueuedTasks()
+    public function executesNestedEnqueuedTasks()
     {
         $queue = new Queue();
 
@@ -31,16 +32,16 @@ class QueueTest extends TestCase
 
     /**
      * @test
-     * @expectedException Exception
-     * @expectedException test
      */
     public function rethrowsExceptionsThrownFromTasks()
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('test');
         $mock = $this->createCallableMock();
         $mock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->will($this->throwException(new \Exception('test')));
+            ->will(self::throwException(new Exception('test')));
 
         $queue = new Queue();
         $queue->enqueue($mock);
