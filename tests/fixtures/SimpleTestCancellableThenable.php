@@ -22,7 +22,7 @@ class SimpleTestCancellableThenable
         $this->cancelCalled = true;
 
         if (is_callable($this->onCancel)) {
-            call_user_func($this->onCancel);
+            ($this->onCancel)();
         }
     }
 }
