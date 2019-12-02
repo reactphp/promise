@@ -14,7 +14,13 @@ final class Promise implements PromiseInterface
     public function __construct(callable $resolver, callable $canceller = null)
     {
         $this->canceller = $canceller;
-        $this->call($resolver);
+
+        // Explicitly overwrite arguments with null values before invoking
+        // resolver function. This ensure that these arguments do not show up
+        // in the stack trace in PHP 7+ only.
+        $cb = $resolver;
+        $resolver = $canceller = null;
+        $this->call($cb);
     }
 
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
@@ -27,15 +33,26 @@ final class Promise implements PromiseInterface
             return new static($this->resolver($onFulfilled, $onRejected));
         }
 
-        $this->requiredCancelRequests++;
+        // This promise has a canceller, so we create a new child promise which
+        // has a canceller that invokes the parent canceller if all other
+        // followers are also cancelled. We keep a reference to this promise
+        // instance for the static canceller function and clear this to avoid
+        // keeping a cyclic reference between parent and follower.
+        $parent = $this;
+        ++$parent->requiredCancelRequests;
 
-        return new static($this->resolver($onFulfilled, $onRejected), function () {
-            $this->requiredCancelRequests--;
+        return new static(
+            $this->resolver($onFulfilled, $onRejected),
+            static function () use (&$parent) {
+                --$parent->requiredCancelRequests;
 
-            if ($this->requiredCancelRequests <= 0) {
-                $this->cancel();
+                if ($parent->requiredCancelRequests <= 0) {
+                    $parent->cancel();
+                }
+
+                $parent = null;
             }
-        });
+        );
     }
 
     public function done(callable $onFulfilled = null, callable $onRejected = null): void
@@ -45,7 +62,7 @@ final class Promise implements PromiseInterface
             return;
         }
 
-        $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
+        $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
             $promise
                 ->done($onFulfilled, $onRejected);
         };
@@ -53,7 +70,7 @@ final class Promise implements PromiseInterface
 
     public function otherwise(callable $onRejected): PromiseInterface
     {
-        return $this->then(null, function ($reason) use ($onRejected) {
+        return $this->then(null, static function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
                 return new RejectedPromise($reason);
             }
@@ -64,11 +81,11 @@ final class Promise implements PromiseInterface
 
     public function always(callable $onFulfilledOrRejected): PromiseInterface
     {
-        return $this->then(function ($value) use ($onFulfilledOrRejected) {
+        return $this->then(static function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
-        }, function ($reason) use ($onFulfilledOrRejected) {
+        }, static function ($reason) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
                 return new RejectedPromise($reason);
             });
@@ -113,21 +130,12 @@ final class Promise implements PromiseInterface
     private function resolver(callable $onFulfilled = null, callable $onRejected = null): callable
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
-            $this->handlers[] = function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
+            $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
                 $promise
                     ->then($onFulfilled, $onRejected)
                     ->done($resolve, $reject);
             };
         };
-    }
-
-    private function resolve($value = null): void
-    {
-        if (null !== $this->result) {
-            return;
-        }
-
-        $this->settle(resolve($value));
     }
 
     private function reject(\Throwable $reason): void
@@ -175,8 +183,13 @@ final class Promise implements PromiseInterface
         return $promise;
     }
 
-    private function call(callable $callback): void
+    private function call(callable $cb): void
     {
+        // Explicitly overwrite argument with null value. This ensure that this
+        // argument does not show up in the stack trace in PHP 7+ only.
+        $callback = $cb;
+        $cb = null;
+
         // Use reflection to inspect number of arguments expected by this callback.
         // We did some careful benchmarking here: Using reflection to avoid unneeded
         // function arguments is actually faster than blindly passing them.
@@ -195,16 +208,33 @@ final class Promise implements PromiseInterface
             if ($args === 0) {
                 $callback();
             } else {
+                // Keep references to this promise instance for the static resolve/reject functions.
+                // By using static callbacks that are not bound to this instance
+                // and passing the target promise instance by reference, we can
+                // still execute its resolving logic and still clear this
+                // reference when settling the promise. This helps avoiding
+                // garbage cycles if any callback creates an Exception.
+                // These assumptions are covered by the test suite, so if you ever feel like
+                // refactoring this, go ahead, any alternative suggestions are welcome!
+                $target =& $this;
+
                 $callback(
-                    function ($value = null) {
-                        $this->resolve($value);
+                    static function ($value = null) use (&$target) {
+                        if ($target !== null) {
+                            $target->settle(resolve($value));
+                            $target = null;
+                        }
                     },
-                    function (\Throwable $reason) {
-                        $this->reject($reason);
+                    static function (\Throwable $reason) use (&$target) {
+                        if ($target !== null) {
+                            $target->reject($reason);
+                            $target = null;
+                        }
                     }
                 );
             }
         } catch (\Throwable $e) {
+            $target = null;
             $this->reject($e);
         }
     }
