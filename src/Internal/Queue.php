@@ -19,19 +19,10 @@ final class Queue
     private function drain(): void
     {
         for ($i = \key($this->queue); isset($this->queue[$i]); $i++) {
-            $task = $this->queue[$i];
-
-            $exception = null;
-
             try {
-                $task();
-            } catch (\Throwable $exception) {
-            }
-
-            unset($this->queue[$i]);
-
-            if ($exception) {
-                throw $exception;
+                ($this->queue[$i])();
+            } finally {
+                unset($this->queue[$i]);
             }
         }
 
