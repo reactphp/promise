@@ -23,6 +23,10 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
     {
+        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
+            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
+        }
+
         gc_collect_cycles();
         $deferred = new Deferred(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -36,6 +40,10 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
     {
+        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
+            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
+        }
+
         gc_collect_cycles();
         $deferred = new Deferred(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -49,6 +57,10 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndExplicitlyRejectWithException()
     {
+        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
+            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
+        }
+
         gc_collect_cycles();
         $deferred = new Deferred(function () use (&$deferred) { });
         $deferred->reject(new \Exception('foo'));
