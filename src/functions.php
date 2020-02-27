@@ -295,6 +295,34 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
 }
 
 /**
+ * Sequential execution of given promises or values.
+ *
+ * @param array $promisesOrValues
+ *
+ * @return PromiseInterface
+ */
+function seq(array $promisesOrValues): PromiseInterface
+{
+    $promise = new FulfilledPromise();
+    $results = [];
+
+    foreach ($promisesOrValues as $promiseOrValue) {
+        $promise = $promise
+            ->then(function() use ($promiseOrValue) {
+                return $promiseOrValue;
+            })
+            ->then(function($result) use (&$results) {
+                $results[] = $result;
+            });
+    }
+
+    return $promise
+        ->then(function() use ($results) {
+            return $results;
+        });
+}
+
+/**
  * @internal
  */
 function enqueue(callable $task): void
