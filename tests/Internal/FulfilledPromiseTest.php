@@ -1,15 +1,18 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\Internal;
 
 use InvalidArgumentException;
 use LogicException;
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
+use React\Promise\PromiseTest\PromiseFulfilledTestTrait;
+use React\Promise\PromiseTest\PromiseSettledTestTrait;
+use React\Promise\TestCase;
 
 class FulfilledPromiseTest extends TestCase
 {
-    use PromiseTest\PromiseSettledTestTrait,
-        PromiseTest\PromiseFulfilledTestTrait;
+    use PromiseSettledTestTrait,
+        PromiseFulfilledTestTrait;
 
     public function getPromiseTestAdapter(callable $canceller = null)
     {

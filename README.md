@@ -34,8 +34,6 @@ Table of Contents
      * [PromiseInterface::always()](#promiseinterfacealways)
      * [PromiseInterface::cancel()](#promiseinterfacecancel)
    * [Promise](#promise-2)
-   * [FulfilledPromise](#fulfilledpromise)
-   * [RejectedPromise](#rejectedpromise)
    * [Functions](#functions)
      * [resolve()](#resolve)
      * [reject()](#reject)
@@ -144,18 +142,14 @@ All consumers are notified by having `$onRejected` (which they registered via
 
 The promise interface provides the common interface for all promise
 implementations.
+See [Promise](#promise-2) for the only public implementation exposed by this
+package.
 
 A promise represents an eventual outcome, which is either fulfillment (success)
 and an associated value, or rejection (failure) and an associated reason.
 
 Once in the fulfilled or rejected state, a promise becomes immutable.
 Neither its state nor its result (or error) can be modified.
-
-#### Implementations
-
-* [Promise](#promise-2)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
 
 #### PromiseInterface::then()
 
@@ -340,27 +334,6 @@ with that thrown exception as the rejection reason.
 
 The resolver function will be called immediately, the canceller function only
 once all consumers called the `cancel()` method of the promise.
-
-### FulfilledPromise
-
-Creates a already fulfilled promise.
-
-```php
-$promise = new React\Promise\FulfilledPromise($value);
-```
-
-Note, that `$value` **cannot** be a promise. It's recommended to use
-[resolve()](#resolve) for creating resolved promises.
-
-### RejectedPromise
-
-Creates a already rejected promise.
-
-```php
-$promise = new React\Promise\RejectedPromise($reason);
-```
-
-Note, that `$reason` **must** be a `\Throwable`.
 
 ### Functions
 
