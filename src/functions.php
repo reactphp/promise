@@ -25,7 +25,7 @@ function resolve($promiseOrValue = null): PromiseInterface
         return $promiseOrValue;
     }
 
-    if (\method_exists($promiseOrValue, 'then')) {
+    if (\is_object($promiseOrValue) && \method_exists($promiseOrValue, 'then')) {
         $canceller = null;
 
         if (\method_exists($promiseOrValue, 'cancel')) {
