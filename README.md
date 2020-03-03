@@ -173,9 +173,9 @@ Neither its state nor its result (or error) can be modified.
 #### Implementations
 
 * [Promise](#promise-2)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
+* [FulfilledPromise](#fulfilledpromise) (deprecated)
+* [RejectedPromise](#rejectedpromise) (deprecated)
+* [LazyPromise](#lazypromise) (deprecated)
 
 #### PromiseInterface::then()
 
@@ -225,9 +225,9 @@ and utility methods which are not part of the Promises/A specification.
 #### Implementations
 
 * [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
+* [FulfilledPromise](#fulfilledpromise) (deprecated)
+* [RejectedPromise](#rejectedpromise) (deprecated)
+* [LazyPromise](#lazypromise) (deprecated)
 
 #### ExtendedPromiseInterface::done()
 
@@ -357,9 +357,9 @@ a promise has no effect.
 #### Implementations
 
 * [Promise](#promise-1)
-* [FulfilledPromise](#fulfilledpromise)
-* [RejectedPromise](#rejectedpromise)
-* [LazyPromise](#lazypromise)
+* [FulfilledPromise](#fulfilledpromise) (deprecated)
+* [RejectedPromise](#rejectedpromise) (deprecated)
+* [LazyPromise](#lazypromise) (deprecated)
 
 ### Promise
 
@@ -409,6 +409,8 @@ once all consumers called the `cancel()` method of the promise.
 
 ### FulfilledPromise
 
+> Deprecated in v2.8.0: External usage of `FulfilledPromise` is deprecated, use `resolve()` instead.
+
 Creates a already fulfilled promise.
 
 ```php
@@ -419,6 +421,8 @@ Note, that `$value` **cannot** be a promise. It's recommended to use
 [resolve()](#resolve) for creating resolved promises.
 
 ### RejectedPromise
+
+> Deprecated in v2.8.0: External usage of `RejectedPromise` is deprecated, use `reject()` instead.
 
 Creates a already rejected promise.
 
