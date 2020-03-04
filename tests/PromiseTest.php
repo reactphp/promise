@@ -52,6 +52,8 @@ class PromiseTest extends TestCase
     public function shouldResolveWithoutCreatingGarbageCyclesIfResolverResolvesWithException()
     {
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $promise = new Promise(function ($resolve) {
             $resolve(new \Exception('foo'));
         });
