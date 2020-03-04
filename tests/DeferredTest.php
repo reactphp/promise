@@ -23,10 +23,6 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
     {
-        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
-            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
-        }
-
         gc_collect_cycles();
         $deferred = new Deferred(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -40,11 +36,9 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
     {
-        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
-            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
-        }
-
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $deferred = new Deferred(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
         });
@@ -57,11 +51,9 @@ class DeferredTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndExplicitlyRejectWithException()
     {
-        if ($this->getTestResultObject()->getCollectCodeCoverageInformation() === true) {
-            $this->markTestSkipped('This test has memory leaks when code coverage is collected');
-        }
-
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $deferred = new Deferred(function () use (&$deferred) { });
         $deferred->reject(new \Exception('foo'));
         unset($deferred);

@@ -18,7 +18,6 @@ install:
   - composer install
 
 script:
-  - ./vendor/bin/phpunit -v
   - ./vendor/bin/phpunit -v --coverage-text --coverage-clover=./build/logs/clover.xml
 
 after_script:
