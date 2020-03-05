@@ -37,6 +37,8 @@ class DeferredTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
     {
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $deferred = new Deferred(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
         });
@@ -50,6 +52,8 @@ class DeferredTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndExplicitlyRejectWithException()
     {
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $deferred = new Deferred(function () use (&$deferred) { });
         $deferred->reject(new \Exception('foo'));
         unset($deferred);
