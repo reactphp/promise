@@ -52,6 +52,8 @@ class FulfilledPromiseTest extends TestCase
     public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToFulfilledPromiseWithAlwaysFollowers()
     {
         gc_collect_cycles();
+        gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
+
         $promise = new FulfilledPromise(1);
         $promise->always(function () {
             throw new \RuntimeException();
