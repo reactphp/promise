@@ -3,6 +3,8 @@
 namespace React\Promise;
 
 use React\Promise\Exception\CompositeException;
+use React\Promise\Internal\FulfilledPromise;
+use React\Promise\Internal\RejectedPromise;
 
 /**
  * Creates a promise for the supplied `$promiseOrValue`.

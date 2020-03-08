@@ -1,7 +1,16 @@
 <?php
 
-namespace React\Promise;
+namespace React\Promise\Internal;
 
+use React\Promise\Promise;
+use React\Promise\PromiseInterface;
+use function React\Promise\enqueue;
+use function React\Promise\fatalError;
+use function React\Promise\resolve;
+
+/**
+ * @internal
+ */
 final class FulfilledPromise implements PromiseInterface
 {
     private $value;

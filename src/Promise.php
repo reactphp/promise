@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Internal\RejectedPromise;
+
 final class Promise implements PromiseInterface
 {
     private $canceller;

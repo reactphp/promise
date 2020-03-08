@@ -2,6 +2,8 @@
 
 namespace React\Promise;
 
+use React\Promise\Internal\RejectedPromise;
+
 class SimpleFulfilledTestThenable
 {
     public function then(callable $onFulfilled = null, callable $onRejected = null)
