@@ -297,6 +297,35 @@ function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = n
 }
 
 /**
+ * Uncommon compose function chains functions applicable to the value
+ * subsumed in a promise. Composable functions possess an arity of 1.
+ * 
+ * @param callable $functions...
+ * @return PromiseInterface
+ */
+function compose(callable ...$functions)
+{
+    $identity = function ($val) {
+        return $val;
+    };
+
+
+    return \array_reduce($functions, function ($id, $function) {
+        return function ($promiseOrValue) use ($id, $function) {
+            return mapPromise($id, mapPromise($function, resolve($promiseOrValue)));
+        };
+    }, $identity);
+}
+
+/**
+ * @internal
+ */
+function mapPromise(callable $function, $promise)
+{
+    return $promise->then($function);
+}
+
+/**
  * @internal
  */
 function enqueue(callable $task): void
