@@ -43,6 +43,7 @@ Table of Contents
      * [some()](#some)
      * [map()](#map)
      * [reduce()](#reduce)
+     * [compose()](#compose)
    * [PromisorInterface](#promisorinterface)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
@@ -456,6 +457,17 @@ Traditional reduce function, similar to `array_reduce()`, but input may contain
 promises and/or values, and `$reduceFunc` may return either a value or a
 promise, *and* `$initialValue` may be a promise or a value for the starting
 value.
+
+#### compose()
+
+```php
+$promise = React\Promise\compose(callable ...$functions);
+```
+
+Uncommon compose function that chains functions each possessing an arity of 
+one and applicable on a value subsumed in a promise. It ultimately, upon 
+application on one promise object, evaluates to another promise object. 
+
 
 ### PromisorInterface
 
