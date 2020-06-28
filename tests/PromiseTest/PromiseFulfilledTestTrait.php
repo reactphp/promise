@@ -227,17 +227,12 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
 
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         self::assertNull($adapter->promise()->done(function () {
             throw new Exception('Unhandled Rejection');
         }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
@@ -247,17 +242,12 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
 
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         self::assertNull($adapter->promise()->done(function () {
             return reject(new Exception('Unhandled Rejection'));
         }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */

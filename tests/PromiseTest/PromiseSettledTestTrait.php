@@ -19,6 +19,8 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then());
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -28,6 +30,8 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then(null, null));
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -38,6 +42,8 @@ trait PromiseSettledTestTrait
         $adapter->settle();
 
         self::assertNull($adapter->promise()->cancel());
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -48,6 +54,8 @@ trait PromiseSettledTestTrait
         $adapter->settle();
 
         $adapter->promise()->cancel();
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -57,6 +65,8 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
         self::assertNull($adapter->promise()->done(null, function () {}));
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -66,6 +76,8 @@ trait PromiseSettledTestTrait
 
         $adapter->settle();
         self::assertNull($adapter->promise()->done(null, function () {}, null));
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -74,6 +86,8 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $ret = $adapter->promise()->always(function () {}));
+
+        $ret->then(null, function () { });
     }
 }

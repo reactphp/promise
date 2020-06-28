@@ -187,8 +187,8 @@ trait ResolveTestTrait
     /** @test */
     public function doneShouldTriggerFatalErrorExceptionThrownFulfillmentHandler()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -196,18 +196,13 @@ trait ResolveTestTrait
             throw new Exception('Unhandled Rejection');
         }));
         $adapter->resolve(1);
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenFulfillmentHandlerRejects()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -215,11 +210,6 @@ trait ResolveTestTrait
             return reject(new Exception('Unhandled Rejection'));
         }));
         $adapter->resolve(1);
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */

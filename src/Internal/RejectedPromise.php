@@ -4,10 +4,12 @@ namespace React\Promise\Internal;
 
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
+use Throwable;
 use function React\Promise\_checkTypehint;
 use function React\Promise\enqueue;
 use function React\Promise\fatalError;
 use function React\Promise\resolve;
+use function React\Promise\unhandledException;
 
 /**
  * @internal
@@ -15,10 +17,20 @@ use function React\Promise\resolve;
 final class RejectedPromise implements PromiseInterface
 {
     private $reason;
+    private $handled = false;
 
-    public function __construct(\Throwable $reason)
+    public function __construct(Throwable $reason)
     {
         $this->reason = $reason;
+    }
+
+    public function __destruct()
+    {
+        if ($this->handled) {
+            return;
+        }
+
+        unhandledException($this->reason);
     }
 
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
@@ -26,6 +38,8 @@ final class RejectedPromise implements PromiseInterface
         if (null === $onRejected) {
             return $this;
         }
+
+        $this->handled = true;
 
         return new Promise(function (callable $resolve, callable $reject) use ($onRejected): void {
             enqueue(function () use ($resolve, $reject, $onRejected): void {
@@ -41,18 +55,20 @@ final class RejectedPromise implements PromiseInterface
     public function done(callable $onFulfilled = null, callable $onRejected = null): void
     {
         enqueue(function () use ($onRejected) {
+            $this->handled = true;
+
             if (null === $onRejected) {
-                return fatalError($this->reason);
+                unhandledException($this->reason);
             }
 
             try {
                 $result = $onRejected($this->reason);
             } catch (\Throwable $exception) {
-                return fatalError($exception);
+                unhandledException($exception);
             }
 
             if ($result instanceof self) {
-                return fatalError($result->reason);
+                unhandledException($result->reason);
             }
 
             if ($result instanceof PromiseInterface) {

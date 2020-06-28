@@ -216,8 +216,8 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function doneShouldTriggerFatalErrorExceptionThrownByRejectionHandlerForRejectedPromise()
     {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -225,18 +225,13 @@ trait PromiseRejectedTestTrait
         self::assertNull($adapter->promise()->done(null, function () {
             throw new Exception('Unhandled Rejection');
         }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorRejectionExceptionWhenRejectionHandlerRejectsWithExceptionForRejectedPromise()
     {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -244,37 +239,27 @@ trait PromiseRejectedTestTrait
         self::assertNull($adapter->promise()->done(null, function () {
             return reject(new Exception('Unhandled Rejection'));
         }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorExceptionProvidedAsRejectionValueForRejectedPromise()
     {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
         $adapter = $this->getPromiseTestAdapter();
 
         $exception = new Exception('Unhandled Rejection');
 
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
+
         $adapter->reject($exception);
         self::assertNull($adapter->promise()->done());
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertEquals((string) $exception, $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorWithDeepNestingPromiseChainsForRejectedPromise()
     {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('UnhandledRejectionException');
 
         $exception = new Exception('UnhandledRejectionException');
 
@@ -293,11 +278,6 @@ trait PromiseRejectedTestTrait
         })));
 
         $result->done();
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertEquals((string) $exception, $errors[0]['errstr']);
     }
 
     /** @test */
@@ -378,10 +358,13 @@ trait PromiseRejectedTestTrait
         $mock = $this->expectCallableNever();
 
         $adapter->reject($exception);
-        $adapter->promise()
+        $ret = $adapter->promise()
             ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
+
+        $ret->then(null, function () { });
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -497,6 +480,8 @@ trait PromiseRejectedTestTrait
         $adapter->reject(new Exception());
 
         self::assertNull($adapter->promise()->cancel());
+
+        $adapter->promise()->then(null, function () { });
     }
 
     /** @test */
@@ -507,5 +492,7 @@ trait PromiseRejectedTestTrait
         $adapter->reject(new Exception());
 
         $adapter->promise()->cancel();
+
+        $adapter->promise()->then(null, function () { });
     }
 }

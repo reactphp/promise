@@ -105,15 +105,13 @@ trait CancelTestTrait
     /** @test */
     public function cancelShouldCallCancellerOnlyOnceIfCancellerResolves()
     {
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->will($this->returnCallback(function ($resolve) {
-                $resolve();
-            }));
+        $once = $this->expectCallableOnce();
+        $canceller = function ($resolve) use ($once) {
+            $resolve();
+            $once();
+        };
 
-        $adapter = $this->getPromiseTestAdapter($mock);
+        $adapter = $this->getPromiseTestAdapter($canceller);
 
         $adapter->promise()->cancel();
         $adapter->promise()->cancel();

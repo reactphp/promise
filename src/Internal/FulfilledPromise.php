@@ -7,6 +7,7 @@ use React\Promise\PromiseInterface;
 use function React\Promise\enqueue;
 use function React\Promise\fatalError;
 use function React\Promise\resolve;
+use function React\Promise\unhandledException;
 
 /**
  * @internal
@@ -51,7 +52,7 @@ final class FulfilledPromise implements PromiseInterface
             try {
                 $result = $onFulfilled($this->value);
             } catch (\Throwable $exception) {
-                return fatalError($exception);
+                unhandledException($exception);
             }
 
             if ($result instanceof PromiseInterface) {
