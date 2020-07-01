@@ -147,7 +147,7 @@ function any(array $promisesOrValues): PromiseInterface
  * @param int $howMany
  * @return PromiseInterface
  */
-function some(array $promisesOrValues, $howMany): PromiseInterface
+function some(array $promisesOrValues, int $howMany): PromiseInterface
 {
     if ($howMany < 1) {
         return resolve([]);
