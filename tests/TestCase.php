@@ -37,10 +37,14 @@ class TestCase extends BaseTestCase
         return $mock;
     }
 
-    public function createCallableMock()
+    protected function createCallableMock()
     {
-        return $this
-            ->getMockBuilder(CallableStub::class)
-            ->getMock();
+        if (method_exists('PHPUnit\Framework\MockObject\MockBuilder', 'addMethods')) {
+            // PHPUnit 9+
+            return $this->getMockBuilder('stdClass')->addMethods(array('__invoke'))->getMock();
+        } else {
+            // legacy PHPUnit 4 - PHPUnit 9
+            return $this->getMockBuilder('stdClass')->setMethods(array('__invoke'))->getMock();
+        }
     }
 }

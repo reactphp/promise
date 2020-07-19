@@ -229,7 +229,7 @@ trait PromiseRejectedTestTrait
         $errors = $errorCollector->stop();
 
         self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertContains('Unhandled Rejection', $errors[0]['errstr']);
+        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
@@ -248,7 +248,7 @@ trait PromiseRejectedTestTrait
         $errors = $errorCollector->stop();
 
         self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertContains('Unhandled Rejection', $errors[0]['errstr']);
+        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
