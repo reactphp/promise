@@ -5,21 +5,26 @@
     "authors": [
         {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
     ],
-    "autoload": {
-        "psr-0": {
-            "React\\Promise": "src/"
-        },
-        "files": ["src/React/Promise/functions_include.php"]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.1-dev"
-        }
-    },
     "require": {
         "php": ">=5.3.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0 || ^5.7 || ^4.8.35"
+    },
+    "autoload": {
+        "psr-4": { 
+            "React\\Promise\\": "src/React/Promise/" 
+        },
+        "files": ["src/React/Promise/functions_include.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "React\\Tests\\Promise\\": "tests/React/Promise/" 
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        }
     }
 }

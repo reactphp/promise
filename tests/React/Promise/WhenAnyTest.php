@@ -1,6 +1,9 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
+
+use React\Promise\Deferred;
+use React\Promise\When;
 
 /**
  * @group When

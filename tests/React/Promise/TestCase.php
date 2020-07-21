@@ -1,6 +1,6 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
