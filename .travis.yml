@@ -15,4 +15,4 @@ install:
   - composer install --prefer-source
 
 script:
-  - phpunit -v --coverage-text
+  - vendor/bin/phpunit --coverage-text

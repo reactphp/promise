@@ -204,10 +204,10 @@ class DeferredTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
      */
     public function shouldThrowIfCancellerIsNotACallable()
     {
+        $this->setExpectedException('InvalidArgumentException');
         new Deferred(false);
     }
 }

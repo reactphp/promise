@@ -10,7 +10,7 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldThrowIfResolverIsNotACallable()
     {
-        $this->setExpectedException('\InvalidArgumentException');
+        $this->setExpectedException('InvalidArgumentException');
 
         new Promise(null);
     }
@@ -93,10 +93,10 @@ class PromiseTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
      */
     public function shouldThrowIfCancellerIsNotACallable()
     {
+        $this->setExpectedException('InvalidArgumentException');
         new Promise(function () { }, false);
     }
 }
