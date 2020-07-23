@@ -1,6 +1,10 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
+
+use React\Promise\FulfilledPromise;
+use React\Promise\RejectedPromise;
+use React\Promise\Util;
 
 /**
  * @group Util

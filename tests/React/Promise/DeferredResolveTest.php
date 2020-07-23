@@ -1,6 +1,11 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
+
+use React\Promise\Deferred;
+use React\Promise\FulfilledPromise;
+use React\Promise\RejectedPromise;
+use React\Promise\When;
 
 /**
  * @group Deferred

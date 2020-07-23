@@ -1,6 +1,6 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
 
 class ErrorCollector
 {
@@ -33,6 +33,6 @@ class ErrorCollector
 
         $message = 'Error with level ' . $errno . ' and message "' . $errstr . '" not found in ' . var_export($this->errors, true);
 
-        throw new \PHPUnit_Framework_AssertionFailedError($message);
+        throw new \PHPUnit\Framework\AssertionFailedError($message);
     }
 }

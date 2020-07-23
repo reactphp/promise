@@ -1,6 +1,8 @@
 <?php
 
-namespace React\Promise;
+namespace React\Tests\Promise;
+
+use React\Promise\Deferred;
 
 /**
  * @group Deferred
@@ -204,10 +206,10 @@ class DeferredTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
      */
     public function shouldThrowIfCancellerIsNotACallable()
     {
+        $this->setExpectedException('InvalidArgumentException');
         new Deferred(false);
     }
 }
