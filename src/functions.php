@@ -342,7 +342,17 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
         return true;
     }
 
-    $expectedClass = $parameters[0]->getClass();
+    $expectedClass = null;
+    if (method_exists($parameters[0], 'getType')) {
+        $type = $parameters[0]->getType();
+        if (!$type || $type->isBuiltin()) {
+            return true;
+        }
+
+        $expectedClass = new \ReflectionClass(method_exists($type, 'getName') ? $type->getName() : (string) $type);
+    } else {
+        $expectedClass = $parameters[0]->getClass();
+    }
 
     if (!$expectedClass) {
         return true;
