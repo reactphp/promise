@@ -342,21 +342,37 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
         return true;
     }
 
-    $expectedClass = null;
-    if (method_exists($parameters[0], 'getType')) {
-        $type = $parameters[0]->getType();
-        if (!$type || $type->isBuiltin()) {
-            return true;
-        }
+    $type = $parameters[0]->getType();
 
-        $expectedClass = new \ReflectionClass(method_exists($type, 'getName') ? $type->getName() : (string) $type);
-    } else {
-        $expectedClass = $parameters[0]->getClass();
-    }
-
-    if (!$expectedClass) {
+    if (!$type) {
         return true;
     }
 
-    return $expectedClass->isInstance($reason);
+    $types = [$type];
+
+    if (\method_exists($type, 'getTypes')) {
+        $types = $type->getTypes();
+    }
+
+    $mismatched = false;
+
+    foreach ($types as $type) {
+        if (!$type || $type->isBuiltin()) {
+            continue;
+        }
+
+        try {
+            $expectedClass = new \ReflectionClass($type->getName());
+
+            if ($expectedClass->isInstance($reason)) {
+                return true;
+            } else {
+                $mismatched = true;
+            }
+        } catch (\ReflectionException $exception) {
+            $mismatched = true;
+        }
+    }
+
+    return !$mismatched;
 }

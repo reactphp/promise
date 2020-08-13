@@ -10,8 +10,8 @@ final class ErrorCollector
     {
         $errors = [];
 
-        set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) use (&$errors) {
-            $errors[] = compact('errno', 'errstr', 'errfile', 'errline', 'errcontext');
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$errors) {
+            $errors[] = compact('errno', 'errstr', 'errfile', 'errline');
         });
 
         $this->errors = &$errors;

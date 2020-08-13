@@ -42,6 +42,33 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertFalse(_checkTypehint([TestCallbackWithTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
+    // Requires PHP 8
+    /*
+    public function shouldAcceptClosureCallbackWithUnionTypehint()
+    {
+        self::assertTrue(_checkTypehint(function (RuntimeException|InvalidArgumentException $e) {}, new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(function (RuntimeException|InvalidArgumentException $e) {}, new Exception()));
+    }
+
+    public function shouldAcceptInvokableObjectCallbackWithUnionTypehint()
+    {
+        self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
+    }
+
+    public function shouldAcceptObjectMethodCallbackWithUnionTypehint()
+    {
+        self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
+    }
+
+    public function shouldAcceptStaticClassCallbackWithUnionTypehint()
+    {
+        self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
+    }
+    */
+
     /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
     {
@@ -52,7 +79,7 @@ class FunctionCheckTypehintTest extends TestCase
     /** @test */
     public function shouldAcceptFunctionStringCallbackWithoutTypehint()
     {
-        self::assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new InvalidArgumentException()));
+        self::assertTrue(_checkTypehint(new TestCallbackWithoutTypehintClass(), new InvalidArgumentException()));
     }
 
     /** @test */
@@ -96,6 +123,24 @@ class TestCallbackWithTypehintClass
     {
     }
 }
+
+// Requires PHP 8
+/*
+class TestCallbackWithUnionTypehintClass
+{
+    public function __invoke(RuntimeException|InvalidArgumentException $e)
+    {
+    }
+
+    public function testCallback(RuntimeException|InvalidArgumentException $e)
+    {
+    }
+
+    public static function testCallbackStatic(RuntimeException|InvalidArgumentException $e)
+    {
+    }
+}
+*/
 
 class TestCallbackWithoutTypehintClass
 {
