@@ -342,11 +342,33 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
         return true;
     }
 
-    $expectedClass = $parameters[0]->getClass();
+    $type = $parameters[0]->getType();
 
-    if (!$expectedClass) {
+    if (!$type) {
         return true;
     }
 
-    return $expectedClass->isInstance($reason);
+    $types = [$type];
+
+    if ($type instanceof \ReflectionUnionType) {
+        $types = $type->getTypes();
+    }
+
+    $mismatched = false;
+
+    foreach ($types as $type) {
+        if (!$type || $type->isBuiltin()) {
+            continue;
+        }
+
+        $expectedClass = $type->getName();
+
+        if ($reason instanceof $expectedClass) {
+            return true;
+        }
+
+        $mismatched = true;
+    }
+
+    return !$mismatched;
 }
