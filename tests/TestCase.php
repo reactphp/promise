@@ -3,7 +3,6 @@
 namespace React\Promise;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use React\Promise\Stub\CallableStub;
 
 class TestCase extends BaseTestCase
 {
