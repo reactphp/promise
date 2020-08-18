@@ -350,7 +350,7 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
 
     $types = [$type];
 
-    if (\method_exists($type, 'getTypes')) {
+    if ($type instanceof \ReflectionUnionType) {
         $types = $type->getTypes();
     }
 
@@ -361,17 +361,13 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
             continue;
         }
 
-        try {
-            $expectedClass = new \ReflectionClass($type->getName());
+        $expectedClass = $type->getName();
 
-            if ($expectedClass->isInstance($reason)) {
-                return true;
-            } else {
-                $mismatched = true;
-            }
-        } catch (\ReflectionException $exception) {
-            $mismatched = true;
+        if ($reason instanceof $expectedClass) {
+            return true;
         }
+
+        $mismatched = true;
     }
 
     return !$mismatched;

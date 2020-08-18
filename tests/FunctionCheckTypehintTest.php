@@ -5,6 +5,8 @@ namespace React\Promise;
 use Exception;
 use InvalidArgumentException;
 
+define('UNION_TYPE_TESTS_ENABLED', defined('PHP_MAJOR_VERSION') && (PHP_MAJOR_VERSION >= 8));
+
 class FunctionCheckTypehintTest extends TestCase
 {
     /** @test */
@@ -42,32 +44,52 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertFalse(_checkTypehint([TestCallbackWithTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
-    // Requires PHP 8
-    /*
+    /** @test */
     public function shouldAcceptClosureCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint(function (RuntimeException|InvalidArgumentException $e) {}, new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint(function (RuntimeException|InvalidArgumentException $e) {}, new Exception()));
+        if (UNION_TYPE_TESTS_ENABLED) {
+            eval(
+                'namespace React\Promise;' .
+                'self::assertTrue(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \InvalidArgumentException()));' .
+                'self::assertFalse(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \Exception()));'
+            );
+        } else {
+            self::expectNotToPerformAssertions();
+        }
     }
 
+    /** @test */
     public function shouldAcceptInvokableObjectCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
+        if (UNION_TYPE_TESTS_ENABLED) {
+            self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
+            self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
+        } else {
+            self::expectNotToPerformAssertions();
+        }
     }
 
+    /** @test */
     public function shouldAcceptObjectMethodCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
+        if (UNION_TYPE_TESTS_ENABLED) {
+            self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
+            self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
+        } else {
+            self::expectNotToPerformAssertions();
+        }
     }
 
+    /** @test */
     public function shouldAcceptStaticClassCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
+        if (UNION_TYPE_TESTS_ENABLED) {
+            self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
+            self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
+        } else {
+            self::expectNotToPerformAssertions();
+        }
     }
-    */
 
     /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
@@ -124,23 +146,26 @@ class TestCallbackWithTypehintClass
     }
 }
 
-// Requires PHP 8
-/*
+if (UNION_TYPE_TESTS_ENABLED) {
+    eval(<<<EOT
+namespace React\Promise;
 class TestCallbackWithUnionTypehintClass
 {
-    public function __invoke(RuntimeException|InvalidArgumentException $e)
+    public function __invoke(\RuntimeException|\InvalidArgumentException \$e)
     {
     }
 
-    public function testCallback(RuntimeException|InvalidArgumentException $e)
+    public function testCallback(\RuntimeException|\InvalidArgumentException \$e)
     {
     }
 
-    public static function testCallbackStatic(RuntimeException|InvalidArgumentException $e)
+    public static function testCallbackStatic(\RuntimeException|\InvalidArgumentException \$e)
     {
     }
 }
-*/
+EOT
+    );
+}
 
 class TestCallbackWithoutTypehintClass
 {
