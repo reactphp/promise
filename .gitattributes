@@ -2,4 +2,5 @@
 /.gitignore export-ignore
 /.travis.yml export-ignore
 /phpunit.xml.dist export-ignore
+/phpunit.xml.legacy export-ignore
 /tests export-ignore

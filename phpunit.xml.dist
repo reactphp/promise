@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="vendor/autoload.php" colors="true">
+<!-- PHPUnit configuration file with new format for PHPUnit 9.3+ -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheResult="false">
     <testsuites>
         <testsuite name="Promise Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory>./src/</directory>
-            <exclude>
-                <file>./src/functions_include.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <file>./src/functions_include.php</file>
+        </exclude>
+    </coverage>
 </phpunit>
