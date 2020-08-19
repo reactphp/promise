@@ -5,8 +5,6 @@ namespace React\Promise;
 use Exception;
 use InvalidArgumentException;
 
-define('UNION_TYPE_TESTS_ENABLED', defined('PHP_MAJOR_VERSION') && (PHP_MAJOR_VERSION >= 8));
-
 class FunctionCheckTypehintTest extends TestCase
 {
     /** @test */
@@ -44,51 +42,47 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertFalse(_checkTypehint([TestCallbackWithTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
-    /** @test */
+    /**
+     * @test
+     * @requires PHP 8
+     */
     public function shouldAcceptClosureCallbackWithUnionTypehint()
     {
-        if (UNION_TYPE_TESTS_ENABLED) {
-            eval(
-                'namespace React\Promise;' .
-                'self::assertTrue(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \InvalidArgumentException()));' .
-                'self::assertFalse(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \Exception()));'
-            );
-        } else {
-            self::expectNotToPerformAssertions();
-        }
+        eval(
+            'namespace React\Promise;' .
+            'self::assertTrue(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \InvalidArgumentException()));' .
+            'self::assertFalse(_checkTypehint(function (\RuntimeException|\InvalidArgumentException $e) {}, new \Exception()));'
+        );
     }
 
-    /** @test */
+    /**
+     * @test
+     * @requires PHP 8
+     */
     public function shouldAcceptInvokableObjectCallbackWithUnionTypehint()
     {
-        if (UNION_TYPE_TESTS_ENABLED) {
-            self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
-            self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
-        } else {
-            self::expectNotToPerformAssertions();
-        }
+        self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
     }
 
-    /** @test */
+    /**
+     * @test
+     * @requires PHP 8
+     */
     public function shouldAcceptObjectMethodCallbackWithUnionTypehint()
     {
-        if (UNION_TYPE_TESTS_ENABLED) {
-            self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
-            self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
-        } else {
-            self::expectNotToPerformAssertions();
-        }
+        self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
     }
 
-    /** @test */
+    /**
+     * @test
+     * @requires PHP 8
+     */
     public function shouldAcceptStaticClassCallbackWithUnionTypehint()
     {
-        if (UNION_TYPE_TESTS_ENABLED) {
-            self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
-            self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
-        } else {
-            self::expectNotToPerformAssertions();
-        }
+        self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
     /** @test */
@@ -146,7 +140,7 @@ class TestCallbackWithTypehintClass
     }
 }
 
-if (UNION_TYPE_TESTS_ENABLED) {
+if (defined('PHP_MAJOR_VERSION') && (PHP_MAJOR_VERSION >= 8)) {
     eval(<<<EOT
 namespace React\Promise;
 class TestCallbackWithUnionTypehintClass
