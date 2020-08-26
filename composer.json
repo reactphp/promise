@@ -3,7 +3,26 @@
     "description": "A lightweight implementation of CommonJS Promises/A for PHP",
     "license": "MIT",
     "authors": [
-        {"name": "Jan Sorgalla", "email": "jsorgalla@gmail.com"}
+        {
+            "name": "Jan Sorgalla",
+            "homepage": "https://sorgalla.com/",
+            "email": "jsorgalla@gmail.com"
+        },
+        {
+            "name": "Christian Lück",
+            "homepage": "https://clue.engineering/",
+            "email": "christian@clue.engineering"
+        },
+        {
+            "name": "Cees-Jan Kiewiet",
+            "homepage": "https://wyrihaximus.net/",
+            "email": "reactphp@ceesjankiewiet.nl"
+        },
+        {
+            "name": "Chris Boden",
+            "homepage": "https://cboden.dev/",
+            "email": "cboden@gmail.com"
+        }
     ],
     "require": {
         "php": ">=5.4.0"
