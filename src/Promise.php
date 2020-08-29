@@ -84,11 +84,11 @@ final class Promise implements PromiseInterface
     public function always(callable $onFulfilledOrRejected): PromiseInterface
     {
         return $this->then(static function ($value) use ($onFulfilledOrRejected) {
-            return resolve($onFulfilledOrRejected())->then(function () use ($value) {
+            return \React\Promise\resolve($onFulfilledOrRejected())->then(function () use ($value) {
                 return $value;
             });
         }, static function ($reason) use ($onFulfilledOrRejected) {
-            return resolve($onFulfilledOrRejected())->then(function () use ($reason) {
+            return \React\Promise\resolve($onFulfilledOrRejected())->then(function () use ($reason) {
                 return new RejectedPromise($reason);
             });
         });
@@ -146,7 +146,7 @@ final class Promise implements PromiseInterface
             return;
         }
 
-        $this->settle(reject($reason));
+        $this->settle(\React\Promise\reject($reason));
     }
 
     private function settle(PromiseInterface $result): void
@@ -223,7 +223,7 @@ final class Promise implements PromiseInterface
                 $callback(
                     static function ($value = null) use (&$target) {
                         if ($target !== null) {
-                            $target->settle(resolve($value));
+                            $target->settle(\React\Promise\resolve($value));
                             $target = null;
                         }
                     },
