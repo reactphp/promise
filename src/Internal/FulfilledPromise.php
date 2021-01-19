@@ -2,6 +2,7 @@
 
 namespace React\Promise\Internal;
 
+use JsonSerializable;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use function React\Promise\enqueue;
@@ -11,7 +12,7 @@ use function React\Promise\resolve;
 /**
  * @internal
  */
-final class FulfilledPromise implements PromiseInterface
+final class FulfilledPromise implements PromiseInterface , JsonSerializable
 {
     private $value;
 
@@ -76,5 +77,10 @@ final class FulfilledPromise implements PromiseInterface
 
     public function cancel(): void
     {
+    }
+    
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }
