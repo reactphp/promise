@@ -235,14 +235,10 @@ trait NotifyTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->at(0))
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-        $mock
-            ->expects($this->at(1))
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
+        $mock->expects($this->exactly(2))->method('__invoke')->withConsecutive(
+            array($this->identicalTo(1)),
+            array($this->identicalTo(2))
+        );
 
         $adapter->promise()
             ->then(
@@ -261,14 +257,10 @@ trait NotifyTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->at(0))
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-        $mock
-            ->expects($this->at(1))
-            ->method('__invoke')
-            ->with($this->identicalTo(2));
+        $mock->expects($this->exactly(2))->method('__invoke')->withConsecutive(
+            array($this->identicalTo(1)),
+            array($this->identicalTo(2))
+        );
 
         $adapter->promise()
             ->then(
