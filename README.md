@@ -4,8 +4,7 @@ Promise
 A lightweight implementation of
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
-[![Build Status](https://travis-ci.org/reactphp/promise.svg?branch=master)](http://travis-ci.org/reactphp/promise)
-[![Coverage Status](https://coveralls.io/repos/github/reactphp/promise/badge.svg?branch=master)](https://coveralls.io/github/reactphp/promise?branch=master)
+[![CI status](https://github.com/reactphp/promise/workflows/CI/badge.svg?branch=2.x)](https://github.com/reactphp/promise/actions)
 
 Table of Contents
 -----------------
