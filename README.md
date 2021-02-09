@@ -4,7 +4,7 @@ React/Promise
 A lightweight implementation of
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) for PHP.
 
-[![Build Status](https://secure.travis-ci.org/reactphp/promise.png?branch=master)](http://travis-ci.org/reactphp/promise)
+[![CI status](https://github.com/reactphp/promise/workflows/CI/badge.svg?branch=1.x)](https://github.com/reactphp/promise/actions)
 
 Table of Contents
 -----------------
