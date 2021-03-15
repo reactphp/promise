@@ -2,6 +2,10 @@
 
 namespace React\Promise;
 
+/**
+ * @psalm-template T
+ * @psalm-template R
+ */
 interface PromiseInterface
 {
     /**
@@ -28,9 +32,15 @@ interface PromiseInterface
      *  2. `$onFulfilled` and `$onRejected` will never be called more
      *      than once.
      *
-     * @param callable|null $onFulfilled
-     * @param callable|null $onRejected
-     * @return PromiseInterface
+     * @template TFulfilled of mixed
+     * @template TRejected of mixed
+     * @param (callable(T): (PromiseInterface<TFulfilled>|TFulfilled))|null $onFulfilled
+     * @param (callable(R): (PromiseInterface<TRejected>|TRejected))|null $onRejected
+     * @return PromiseInterface<(
+     *   $onFulfilled is not null
+     *     ? ($onRejected is not null ? TFulfilled|TRejected : TFulfilled)
+     *     : ($onRejected is not null ? TRejected : R)
+     * )>
      */
     public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
@@ -44,8 +54,9 @@ interface PromiseInterface
      * Additionally, you can type hint the `$reason` argument of `$onRejected` to catch
      * only specific errors.
      *
-     * @param callable $onRejected
-     * @return PromiseInterface
+     * @param callable(mixed):(PromiseInterface<T>|mixed) $onRejected
+     *
+     * @return PromiseInterface<T>
      */
     public function catch(callable $onRejected): PromiseInterface;
 
@@ -92,7 +103,7 @@ interface PromiseInterface
      * ```
      *
      * @param callable $onFulfilledOrRejected
-     * @return PromiseInterface
+     * @return PromiseInterface<T>
      */
     public function finally(callable $onFulfilledOrRejected): PromiseInterface;
 
@@ -118,7 +129,7 @@ interface PromiseInterface
      * ```
      *
      * @param callable $onRejected
-     * @return PromiseInterface
+     * @return PromiseInterface<T>
      * @deprecated 3.0.0 Use catch() instead
      * @see self::catch()
      */
@@ -135,7 +146,7 @@ interface PromiseInterface
      * ```
      *
      * @param callable $onFulfilledOrRejected
-     * @return PromiseInterface
+     * @return PromiseInterface<T>
      * @deprecated 3.0.0 Use finally() instead
      * @see self::finally()
      */
