@@ -2,6 +2,7 @@
 
 namespace React\Promise;
 
+/** @psalm-template T */
 interface PromiseInterface
 {
     /**
@@ -28,9 +29,12 @@ interface PromiseInterface
      *  2. `$onFulfilled` and `$onRejected` will never be called more
      *      than once.
      *
-     * @param callable|null $onFulfilled
-     * @param callable|null $onRejected
-     * @return PromiseInterface
+     * @psalm-template TResolved
+     *
+     * @param callable(T):(PromiseInterface<TResolved>|TResolved)|null $onFulfilled
+     * @param callable(mixed):(PromiseInterface|mixed)|null $onRejected
+     *
+     * @return PromiseInterface<TResolved>
      */
     public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
@@ -44,7 +48,7 @@ interface PromiseInterface
      * Since the purpose of `done()` is consumption rather than transformation,
      * `done()` always returns `null`.
      *
-     * @param callable|null $onFulfilled
+     * @param callable(mixed):TResolve|null $onFulfilled
      * @param callable|null $onRejected
      * @return void
      */
@@ -60,8 +64,9 @@ interface PromiseInterface
      * Additionally, you can type hint the `$reason` argument of `$onRejected` to catch
      * only specific errors.
      *
-     * @param callable $onRejected
-     * @return PromiseInterface
+     * @param callable(mixed):(PromiseInterface<T>|mixed) $onRejected
+     *
+     * @return PromiseInterface<T>
      */
     public function otherwise(callable $onRejected): PromiseInterface;
 
@@ -108,7 +113,7 @@ interface PromiseInterface
      * ```
      *
      * @param callable $onFulfilledOrRejected
-     * @return PromiseInterface
+     * @return PromiseInterface<T>
      */
     public function always(callable $onFulfilledOrRejected): PromiseInterface;
 
