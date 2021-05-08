@@ -229,7 +229,7 @@ $promise
     })
     ->otherwise(function (\Throwable $reason) {
         // Catch other errors
-    )};
+    });
 ```
 
 #### PromiseInterface::always()
