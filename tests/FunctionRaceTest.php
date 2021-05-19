@@ -118,6 +118,6 @@ class FunctionRaceTest extends TestCase
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
-        race([$deferred->promise(), $promise2])->cancel();
+        race([$deferred->promise(), $promise2])->then(null, function () { })->cancel();
     }
 }

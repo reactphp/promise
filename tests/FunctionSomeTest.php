@@ -163,6 +163,8 @@ class FunctionSomeTest extends TestCase
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
-        some([$deferred->promise(), $promise2], 2);
+        $ret = some([$deferred->promise(), $promise2], 2);
+
+        $ret->then(null, function () { });
     }
 }

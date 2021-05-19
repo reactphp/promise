@@ -129,8 +129,8 @@ trait RejectTestTrait
     /** @test */
     public function doneShouldTriggerFatalErrorExceptionThrownByRejectionHandler()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -138,18 +138,13 @@ trait RejectTestTrait
             throw new Exception('Unhandled Rejection');
         }));
         $adapter->reject(new Exception());
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorRejectionExceptionWhenRejectionHandlerRejectsWithException()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -157,18 +152,13 @@ trait RejectTestTrait
             return reject(new Exception('Unhandled Rejection'));
         }));
         $adapter->reject(new Exception());
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenRejectionHandlerRetunsPendingPromiseWhichRejectsLater()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
@@ -180,35 +170,25 @@ trait RejectTestTrait
         }));
         $adapter->reject(new Exception());
         $d->reject(new Exception('Unhandled Rejection'));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorExceptionProvidedAsRejectionValue()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $adapter = $this->getPromiseTestAdapter();
 
         self::assertNull($adapter->promise()->done());
         $adapter->reject(new Exception('Unhandled Rejection'));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */
     public function doneShouldTriggerFatalErrorWithDeepNestingPromiseChains()
     {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Unhandled Rejection');
 
         $exception = new Exception('Unhandled Rejection');
 
@@ -228,11 +208,6 @@ trait RejectTestTrait
         $result->done();
 
         $d->resolve();
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertEquals((string) $exception, $errors[0]['errstr']);
     }
 
     /** @test */

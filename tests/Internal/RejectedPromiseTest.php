@@ -4,6 +4,7 @@ namespace React\Promise\Internal;
 
 use Exception;
 use LogicException;
+use React\Promise\ErrorCollector;
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 use React\Promise\PromiseTest\PromiseRejectedTestTrait;
 use React\Promise\PromiseTest\PromiseSettledTestTrait;
@@ -44,5 +45,15 @@ class RejectedPromiseTest extends TestCase
                 }
             },
         ]);
+    }
+
+    /** @test */
+    public function unhandledRejectionShouldTriggerFatalError()
+    {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('foo');
+
+        $promise = new RejectedPromise(new Exception('foo'));
+        unset($promise);
     }
 }

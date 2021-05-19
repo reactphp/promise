@@ -5,6 +5,7 @@ namespace React\Promise;
 use React\Promise\Exception\CompositeException;
 use React\Promise\Internal\FulfilledPromise;
 use React\Promise\Internal\RejectedPromise;
+use Throwable;
 
 /**
  * Creates a promise for the supplied `$promiseOrValue`.
@@ -313,14 +314,23 @@ function enqueue(callable $task): void
 /**
  * @internal
  */
-function fatalError($error): void
+function unhandledException(Throwable $throwable): void
 {
-    try {
-        \trigger_error($error, E_USER_ERROR);
-    } catch (\Throwable $e) {
-        \set_error_handler(null);
-        \trigger_error($error, E_USER_ERROR);
+    // set dummy handler and return previous handler
+    $handler = set_exception_handler(static function (Throwable  $throwable) {
+        throw $throwable;
+    });
+
+    // use dummy handler when no original handler is available
+    if ($handler === null) {
+        $handler = set_exception_handler(null);
     }
+
+    set_exception_handler(null);
+
+    $handler($throwable);
+
+    die(255);
 }
 
 /**
