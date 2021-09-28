@@ -341,43 +341,49 @@ function _checkTypehint(callable $callback, $object)
         return true;
     }
 
-    if (\PHP_VERSION_ID < 70100 || \defined('HHVM_VERSION')) {
-        $expectedException = $parameters[0];
+    $expectedException = $parameters[0];
 
+    // PHP before v8 used an easy API:
+    if (\PHP_VERSION_ID < 70100 || \defined('HHVM_VERSION')) {
         if (!$expectedException->getClass()) {
             return true;
         }
 
         return $expectedException->getClass()->isInstance($object);
-    } else {
-        $type = $parameters[0]->getType();
+    }
 
-        if (!$type) {
+    // Extract the type of the argument and handle different possibilities
+    $type = $expectedException->getType();
+    $types = [];
+
+    switch (true) {
+        case $type === null:
+            break;
+        case $type instanceof \ReflectionNamedType:
+            $types = [$type];
+            break;
+        case $type instanceof \ReflectionUnionType;
+            $types = $type->getTypes();
+            break;
+        default:
+            throw new \LogicException('Unexpected return value of ReflectionParameter::getType');
+    }
+
+    // If there is no type restriction, it matches
+    if (empty($types)) {
+        return true;
+    }
+
+    // Search for one matching named-type for success, otherwise return false
+    // A named-type can be either a class-name or a built-in type like string, int, array, etc.
+    foreach ($types as $type) {
+        $matches = ($type->isBuiltin() && \gettype($object) === $type->getName())
+            || (new \ReflectionClass($type->getName()))->isInstance($object);
+
+        if ($matches) {
             return true;
         }
-
-        $types = [$type];
-
-        if ($type instanceof \ReflectionUnionType) {
-            $types = $type->getTypes();
-        }
-
-        $mismatched = false;
-
-        foreach ($types as $type) {
-            if (!$type || $type->isBuiltin()) {
-                continue;
-            }
-
-            $expectedClass = $type->getName();
-
-            if ($object instanceof $expectedClass) {
-                return true;
-            }
-
-            $mismatched = true;
-        }
-
-        return !$mismatched;
     }
+
+    return false;
 }
