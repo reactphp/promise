@@ -354,6 +354,8 @@ function _checkTypehint(callable $callback, $object)
 
     // Extract the type of the argument and handle different possibilities
     $type = $expectedException->getType();
+    
+    $isTypeUnion = true;
     $types = [];
 
     switch (true) {
@@ -362,6 +364,8 @@ function _checkTypehint(callable $callback, $object)
         case $type instanceof \ReflectionNamedType:
             $types = [$type];
             break;
+        case $type instanceof \ReflectionIntersectionType:
+            $isTypeUnion = false;
         case $type instanceof \ReflectionUnionType;
             $types = $type->getTypes();
             break;
@@ -374,16 +378,30 @@ function _checkTypehint(callable $callback, $object)
         return true;
     }
 
-    // Search for one matching named-type for success, otherwise return false
-    // A named-type can be either a class-name or a built-in type like string, int, array, etc.
     foreach ($types as $type) {
+        if (!$type instanceof \ReflectionNamedType) {
+            throw new \LogicException('This implementation does not support groups of intersection or union types');
+        }
+
+        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
         $matches = ($type->isBuiltin() && \gettype($object) === $type->getName())
             || (new \ReflectionClass($type->getName()))->isInstance($object);
 
+
+        // If we look for a single match (union), we can return early on match
+        // If we look for a full match (intersection), we can return early on mismatch
         if ($matches) {
-            return true;
+            if ($isTypeUnion) {
+                return true;
+            }
+        } else {
+            if (!$isTypeUnion) {
+                return false;
+            }
         }
     }
 
-    return false;
+    // If we look for a single match (union) and did not return early, we matched no type and are false
+    // If we look for a full match (intersection) and did not return early, we matched all types and are true
+    return $isTypeUnion ? false : true;
 }
