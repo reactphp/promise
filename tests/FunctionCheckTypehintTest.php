@@ -85,7 +85,37 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertFalse(_checkTypehint([CallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
     }
 
-/** @test */
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptInvokableObjectCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new \RuntimeException()));
+        self::assertTrue(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new CountableException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptObjectMethodCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new \RuntimeException()));
+        self::assertTrue(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new CountableException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptStaticClassCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint([CallbackWithIntersectionTypehintClass::class, 'testCallbackStatic'], new \RuntimeException()));
+        self::assertTrue(_checkTypehint([CallbackWithIntersectionTypehintClass::class, 'testCallbackStatic'], new CountableException()));
+    }
+
+    /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
     {
         self::assertTrue(_checkTypehint(function (InvalidArgumentException $e) {
