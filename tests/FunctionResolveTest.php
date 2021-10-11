@@ -130,12 +130,12 @@ class FunctionResolveTest extends TestCase
     {
         $deferreds = [];
 
-        for ($i = 0; $i < 250; $i++) {
+        for ($i = 0; $i < 150; $i++) {
             $deferreds[] = $d = new Deferred();
             $p = $d->promise();
 
             $last = $p;
-            for ($j = 0; $j < 250; $j++) {
+            for ($j = 0; $j < 150; $j++) {
                 $last = $last->then(function ($result) {
                     return $result;
                 });
