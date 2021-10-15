@@ -341,11 +341,43 @@ function _checkTypehint(callable $callback, $object)
         return true;
     }
 
-    $expectedException = $parameters[0];
+    if (\PHP_VERSION_ID < 70100 || \defined('HHVM_VERSION')) {
+        $expectedException = $parameters[0];
 
-    if (!$expectedException->getClass()) {
-        return true;
+        if (!$expectedException->getClass()) {
+            return true;
+        }
+
+        return $expectedException->getClass()->isInstance($object);
+    } else {
+        $type = $parameters[0]->getType();
+
+        if (!$type) {
+            return true;
+        }
+
+        $types = [$type];
+
+        if ($type instanceof \ReflectionUnionType) {
+            $types = $type->getTypes();
+        }
+
+        $mismatched = false;
+
+        foreach ($types as $type) {
+            if (!$type || $type->isBuiltin()) {
+                continue;
+            }
+
+            $expectedClass = $type->getName();
+
+            if ($object instanceof $expectedClass) {
+                return true;
+            }
+
+            $mismatched = true;
+        }
+
+        return !$mismatched;
     }
-
-    return $expectedException->getClass()->isInstance($object);
 }
