@@ -23,22 +23,22 @@ class FunctionCheckTypehintTest extends TestCase
     /** @test */
     public function shouldAcceptInvokableObjectCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint(new TestCallbackWithTypehintClass(), new \InvalidArgumentException()));
-        $this->assertfalse(_checkTypehint(new TestCallbackWithTypehintClass(), new \Exception()));
+        $this->assertTrue(_checkTypehint(new CallbackWithTypehintClass(), new \InvalidArgumentException()));
+        $this->assertfalse(_checkTypehint(new CallbackWithTypehintClass(), new \Exception()));
     }
 
     /** @test */
     public function shouldAcceptObjectMethodCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
-        $this->assertfalse(_checkTypehint([new TestCallbackWithTypehintClass(), 'testCallback'], new \Exception()));
+        $this->assertTrue(_checkTypehint([new CallbackWithTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
+        $this->assertfalse(_checkTypehint([new CallbackWithTypehintClass(), 'testCallback'], new \Exception()));
     }
 
     /** @test */
     public function shouldAcceptStaticClassCallbackWithTypehint()
     {
-        $this->assertTrue(_checkTypehint(['React\Promise\TestCallbackWithTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
-        $this->assertfalse(_checkTypehint(['React\Promise\TestCallbackWithTypehintClass', 'testCallbackStatic'], new \Exception()));
+        $this->assertTrue(_checkTypehint([new CallbackWithTypehintClass(), 'testCallbackStatic'], new \InvalidArgumentException()));
+        $this->assertfalse(_checkTypehint([new CallbackWithTypehintClass(), 'testCallbackStatic'], new \Exception()));
     }
 
     /**
@@ -60,8 +60,8 @@ class FunctionCheckTypehintTest extends TestCase
      */
     public function shouldAcceptInvokableObjectCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint(new TestCallbackWithUnionTypehintClass(), new Exception()));
+        self::assertTrue(_checkTypehint(new CallbackWithUnionTypehintClass(), new \InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(new CallbackWithUnionTypehintClass(), new \Exception()));
     }
 
     /**
@@ -70,8 +70,8 @@ class FunctionCheckTypehintTest extends TestCase
      */
     public function shouldAcceptObjectMethodCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint([new TestCallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
+        self::assertTrue(_checkTypehint([new CallbackWithUnionTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
+        self::assertFalse(_checkTypehint([new CallbackWithUnionTypehintClass(), 'testCallback'], new \Exception()));
     }
 
     /**
@@ -80,8 +80,8 @@ class FunctionCheckTypehintTest extends TestCase
      */
     public function shouldAcceptStaticClassCallbackWithUnionTypehint()
     {
-        self::assertTrue(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
-        self::assertFalse(_checkTypehint([TestCallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithUnionTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
+        self::assertFalse(_checkTypehint(['React\Promise\CallbackWithUnionTypehintClass', 'testCallbackStatic'], new \Exception()));
     }
 
     /** @test */
@@ -100,19 +100,19 @@ class FunctionCheckTypehintTest extends TestCase
     /** @test */
     public function shouldAcceptInvokableObjectCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint(new TestCallbackWithoutTypehintClass(), new \InvalidArgumentException()));
+        $this->assertTrue(_checkTypehint(new CallbackWithoutTypehintClass(), new \InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptObjectMethodCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint([new TestCallbackWithoutTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
+        $this->assertTrue(_checkTypehint([new CallbackWithoutTypehintClass(), 'testCallback'], new \InvalidArgumentException()));
     }
 
     /** @test */
     public function shouldAcceptStaticClassCallbackWithoutTypehint()
     {
-        $this->assertTrue(_checkTypehint(['React\Promise\TestCallbackWithoutTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
+        $this->assertTrue(_checkTypehint(['React\Promise\CallbackWithoutTypehintClass', 'testCallbackStatic'], new \InvalidArgumentException()));
     }
 }
 
@@ -122,59 +122,4 @@ function testCallbackWithTypehint(\InvalidArgumentException $e)
 
 function testCallbackWithoutTypehint()
 {
-}
-
-class TestCallbackWithTypehintClass
-{
-    public function __invoke(\InvalidArgumentException $e)
-    {
-
-    }
-
-    public function testCallback(\InvalidArgumentException $e)
-    {
-
-    }
-
-    public static function testCallbackStatic(\InvalidArgumentException $e)
-    {
-
-    }
-}
-
-if (defined('PHP_MAJOR_VERSION') && (PHP_MAJOR_VERSION >= 8)) {
-    eval(<<<EOT
-namespace React\Promise;
-class TestCallbackWithUnionTypehintClass
-{
-    public function __invoke(\RuntimeException|\InvalidArgumentException \$e)
-    {
-    }
-    public function testCallback(\RuntimeException|\InvalidArgumentException \$e)
-    {
-    }
-    public static function testCallbackStatic(\RuntimeException|\InvalidArgumentException \$e)
-    {
-    }
-}
-EOT
-    );
-}
-
-class TestCallbackWithoutTypehintClass
-{
-    public function __invoke()
-    {
-
-    }
-
-    public function testCallback()
-    {
-
-    }
-
-    public static function testCallbackStatic()
-    {
-
-    }
 }
