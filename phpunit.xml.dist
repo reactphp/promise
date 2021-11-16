@@ -14,9 +14,9 @@
     <coverage>
         <include>
             <directory>./src/</directory>
-            <exclude>
-                <file>./src/functions_include.php</file>
-            </exclude>
         </include>
+        <exclude>
+            <file>./src/functions_include.php</file>
+        </exclude>
     </coverage>
 </phpunit>
