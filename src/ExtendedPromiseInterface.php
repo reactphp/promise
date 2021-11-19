@@ -2,6 +2,9 @@
 
 namespace React\Promise;
 
+/**
+ * @method ExtendedPromiseInterface then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
+ */
 interface ExtendedPromiseInterface extends PromiseInterface
 {
     /**
