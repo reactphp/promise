@@ -104,7 +104,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->otherwise($mock);
+            ->catch($mock);
 
         $adapter->reject($exception);
     }
@@ -260,7 +260,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then(null, $mock);
 
         $adapter->reject($exception);
@@ -280,7 +280,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then(null, $mock);
@@ -302,7 +302,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then(null, $mock);
@@ -324,7 +324,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -346,7 +346,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 return reject($exception);
             })
             ->then(null, $mock);

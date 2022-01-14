@@ -266,7 +266,7 @@ trait PromiseFulfilledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->resolve(1);
-        $adapter->promise()->otherwise($this->expectCallableNever());
+        $adapter->promise()->catch($this->expectCallableNever());
     }
 
     /** @test */
@@ -284,7 +284,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then($mock);
     }
 
@@ -303,7 +303,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then($mock);
@@ -324,7 +324,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then($mock);
@@ -345,7 +345,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -366,7 +366,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve(1);
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 return reject($exception);
             })
             ->then(null, $mock);

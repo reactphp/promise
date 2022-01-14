@@ -58,7 +58,7 @@ trait PromisePendingTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        $adapter->promise()->otherwise($this->expectCallableNever());
+        $adapter->promise()->catch($this->expectCallableNever());
     }
 
     /** @test */
@@ -66,6 +66,6 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
     }
 }

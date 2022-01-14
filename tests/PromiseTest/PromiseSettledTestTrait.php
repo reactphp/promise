@@ -74,6 +74,6 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle();
-        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
     }
 }

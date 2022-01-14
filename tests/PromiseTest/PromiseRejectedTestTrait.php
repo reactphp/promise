@@ -325,7 +325,7 @@ trait PromiseRejectedTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->reject($exception);
-        $adapter->promise()->otherwise($mock);
+        $adapter->promise()->catch($mock);
     }
 
     /** @test */
@@ -343,7 +343,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function ($reason) use ($mock) {
+            ->catch(function ($reason) use ($mock) {
                 $mock($reason);
             });
     }
@@ -363,7 +363,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+            ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
@@ -379,7 +379,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+            ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
@@ -399,7 +399,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then(null, $mock);
     }
 
@@ -418,7 +418,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then(null, $mock);
@@ -439,7 +439,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then(null, $mock);
@@ -461,7 +461,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function () use ($exception2) {
+            ->finally(function () use ($exception2) {
                 throw $exception2;
             })
             ->then(null, $mock);
@@ -483,7 +483,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function () use ($exception2) {
+            ->finally(function () use ($exception2) {
                 return reject($exception2);
             })
             ->then(null, $mock);

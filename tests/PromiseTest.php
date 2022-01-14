@@ -228,7 +228,7 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
-        $promise->otherwise(function () { });
+        $promise->catch(function () { });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -239,7 +239,7 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
-        $promise->always(function () { });
+        $promise->finally(function () { });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());

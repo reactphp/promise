@@ -51,6 +51,14 @@ interface PromiseInterface
     public function done(callable $onFulfilled = null, callable $onRejected = null): void;
 
     /**
+     * @see catch
+     * @deprecated Use catch instead
+     * @param callable $onRejected
+     * @return PromiseInterface
+     */
+    public function otherwise(callable $onRejected): PromiseInterface;
+
+    /**
      * Registers a rejection handler for promise. It is a shortcut for:
      *
      * ```php
@@ -63,7 +71,7 @@ interface PromiseInterface
      * @param callable $onRejected
      * @return PromiseInterface
      */
-    public function otherwise(callable $onRejected): PromiseInterface;
+    public function catch(callable $onRejected): PromiseInterface;
 
     /**
      * Allows you to execute "cleanup" type tasks in a promise chain.

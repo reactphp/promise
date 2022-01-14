@@ -236,7 +236,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then($mock);
 
         $adapter->resolve($value);
@@ -256,7 +256,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then($mock);
@@ -278,7 +278,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then($mock);
@@ -300,7 +300,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -322,7 +322,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 return reject($exception);
             })
             ->then(null, $mock);

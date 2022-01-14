@@ -70,7 +70,15 @@ final class Promise implements PromiseInterface
         };
     }
 
+    /**
+     * @deprecated Use catch instead
+     */
     public function otherwise(callable $onRejected): PromiseInterface
+    {
+        return $this->catch($onRejected);
+    }
+
+    public function catch(callable $onRejected): PromiseInterface
     {
         return $this->then(null, static function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
@@ -81,7 +89,15 @@ final class Promise implements PromiseInterface
         });
     }
 
+    /**
+     * @deprecated Use finally instead
+     */
     public function always(callable $onFulfilledOrRejected): PromiseInterface
+    {
+        return $this->finally($onFulfilledOrRejected);
+    }
+
+    public function finally(callable $onFulfilledOrRejected): PromiseInterface
     {
         return $this->then(static function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {

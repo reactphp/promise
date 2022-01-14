@@ -29,8 +29,10 @@ Table of Contents
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
      * [PromiseInterface::done()](#promiseinterfacedone)
-     * [PromiseInterface::otherwise()](#promiseinterfaceotherwise)
-     * [PromiseInterface::always()](#promiseinterfacealways)
+     * [~~PromiseInterface::otherwise()~~](#promiseinterfaceotherwise)
+     * [PromiseInterface::catch()](#promiseinterfacecatch)
+     * [~~PromiseInterface::always()~~](#promiseinterfacealways)
+     * [PromiseInterface::finally()](#promiseinterfacefinally)
      * [PromiseInterface::cancel()](#promiseinterfacecancel)
    * [Promise](#promise-2)
    * [Functions](#functions)
@@ -206,10 +208,14 @@ Since the purpose of `done()` is consumption rather than transformation,
 * [PromiseInterface::then()](#promiseinterfacethen)
 * [done() vs. then()](#done-vs-then)
 
-#### PromiseInterface::otherwise()
+#### ~~PromiseInterface::otherwise()~~
+
+The `otherwise` method has been deprecated in favour of [`catch`](#promiseinterfacecatch)
+
+#### PromiseInterface::catch()
 
 ```php
-$promise->otherwise(callable $onRejected);
+$promise->catch(callable $onRejected);
 ```
 
 Registers a rejection handler for promise. It is a shortcut for:
@@ -223,19 +229,23 @@ only specific errors.
 
 ```php
 $promise
-    ->otherwise(function (\RuntimeException $reason) {
+    ->catch(function (\RuntimeException $reason) {
         // Only catch \RuntimeException instances
         // All other types of errors will propagate automatically
     })
-    ->otherwise(function (\Throwable $reason) {
+    ->catch(function (\Throwable $reason) {
         // Catch other errors
     });
 ```
 
-#### PromiseInterface::always()
+#### ~~PromiseInterface::always()~~
+
+The `otherwise` method has been deprecated in favour of [`finally`](#promiseinterfacefinally)
+
+#### PromiseInterface::finally()
 
 ```php
-$newPromise = $promise->always(callable $onFulfilledOrRejected);
+$newPromise = $promise->finally(callable $onFulfilledOrRejected);
 ```
 
 Allows you to execute "cleanup" type tasks in a promise chain.
@@ -254,8 +264,8 @@ when the promise is either fulfilled or rejected.
   rejected promise, `$newPromise` will reject with the thrown exception or
   rejected promise's reason.
 
-`always()` behaves similarly to the synchronous finally statement. When combined
-with `otherwise()`, `always()` allows you to write code that is similar to the familiar
+`finally()` behaves similarly to the synchronous finally statement. When combined
+with `catch()`, `finally()` allows you to write code that is similar to the familiar
 synchronous catch/finally pair.
 
 Consider the following synchronous code:
@@ -275,8 +285,8 @@ written:
 
 ```php
 return doSomething()
-    ->otherwise('handleError')
-    ->always('cleanup');
+    ->catch('handleError')
+    ->finally('cleanup');
 ```
 
 #### PromiseInterface::cancel()
@@ -559,17 +569,17 @@ $deferred->promise()
     ->then(function ($x) {
         throw new \Exception($x + 1);
     })
-    ->otherwise(function (\Exception $x) {
+    ->catch(function (\Exception $x) {
         // Propagate the rejection
         throw $x;
     })
-    ->otherwise(function (\Exception $x) {
+    ->catch(function (\Exception $x) {
         // Can also propagate by returning another rejection
         return React\Promise\reject(
             new \Exception($x->getMessage() + 1)
         );
     })
-    ->otherwise(function ($x) {
+    ->catch(function ($x) {
         echo 'Reject ' . $x->getMessage(); // 3
     });
 
@@ -591,7 +601,7 @@ $deferred->promise()
     ->then(function ($x) {
         throw new \Exception($x + 1);
     })
-    ->otherwise(function (\Exception $x) {
+    ->catch(function (\Exception $x) {
         // Handle the rejection, and don't propagate.
         // This is like catch without a rethrow
         return $x->getMessage() + 1;
