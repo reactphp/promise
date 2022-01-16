@@ -70,7 +70,7 @@ final class Promise implements PromiseInterface
         };
     }
 
-    public function otherwise(callable $onRejected): PromiseInterface
+    public function catch(callable $onRejected): PromiseInterface
     {
         return $this->then(null, static function ($reason) use ($onRejected) {
             if (!_checkTypehint($onRejected, $reason)) {
@@ -81,7 +81,7 @@ final class Promise implements PromiseInterface
         });
     }
 
-    public function always(callable $onFulfilledOrRejected): PromiseInterface
+    public function finally(callable $onFulfilledOrRejected): PromiseInterface
     {
         return $this->then(static function ($value) use ($onFulfilledOrRejected) {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
@@ -127,6 +127,24 @@ final class Promise implements PromiseInterface
         if ($parentCanceller) {
             $parentCanceller();
         }
+    }
+
+    /**
+     * @deprecated 3.0.0 Use `catch()` instead
+     * @see self::catch()
+     */
+    public function otherwise(callable $onRejected): PromiseInterface
+    {
+        return $this->catch($onRejected);
+    }
+
+    /**
+     * @deprecated 3.0.0 Use `finally()` instead
+     * @see self::finally()
+     */
+    public function always(callable $onFulfilledOrRejected): PromiseInterface
+    {
+        return $this->finally($onFulfilledOrRejected);
     }
 
     private function resolver(callable $onFulfilled = null, callable $onRejected = null): callable

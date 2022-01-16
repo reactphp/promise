@@ -261,6 +261,121 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
+    public function catchShouldNotInvokeRejectionHandlerForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->resolve(1);
+        $adapter->promise()->catch($this->expectCallableNever());
+    }
+
+    /** @test */
+    public function finallyShouldNotSuppressValueForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->finally(function () {})
+            ->then($mock);
+    }
+
+    /** @test */
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->finally(function () {
+                return 1;
+            })
+            ->then($mock);
+    }
+
+    /** @test */
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $value = new stdClass();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($value));
+
+        $adapter->resolve($value);
+        $adapter->promise()
+            ->finally(function () {
+                return resolve(1);
+            })
+            ->then($mock);
+    }
+
+    /** @test */
+    public function finallyShouldRejectWhenHandlerThrowsForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->resolve(1);
+        $adapter->promise()
+            ->finally(function () use ($exception) {
+                throw $exception;
+            })
+            ->then(null, $mock);
+    }
+
+    /** @test */
+    public function finallyShouldRejectWhenHandlerRejectsForFulfilledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->resolve(1);
+        $adapter->promise()
+            ->finally(function () use ($exception) {
+                return reject($exception);
+            })
+            ->then(null, $mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
     public function otherwiseShouldNotInvokeRejectionHandlerForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -269,7 +384,10 @@ trait PromiseFulfilledTestTrait
         $adapter->promise()->otherwise($this->expectCallableNever());
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldNotSuppressValueForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -288,7 +406,10 @@ trait PromiseFulfilledTestTrait
             ->then($mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -309,7 +430,10 @@ trait PromiseFulfilledTestTrait
             ->then($mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -330,7 +454,10 @@ trait PromiseFulfilledTestTrait
             ->then($mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldRejectWhenHandlerThrowsForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -351,7 +478,10 @@ trait PromiseFulfilledTestTrait
             ->then(null, $mock);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldRejectWhenHandlerRejectsForFulfilledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
