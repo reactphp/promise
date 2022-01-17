@@ -83,22 +83,17 @@ function all(array $promisesOrValues): PromiseInterface
  * Initiates a competitive race that allows one winner. Returns a promise which is
  * resolved in the same way the first settled promise resolves.
  *
- * The returned promise will become **infinitely pending** if  `$promisesOrValues`
- * contains 0 items.
- *
- * @param array $promisesOrValues
+ * @param PromiseInterface $promise
+ * @param array<PromiseInterface> $promises
  * @return PromiseInterface
  */
-function race(array $promisesOrValues): PromiseInterface
+function race(PromiseInterface $promise, PromiseInterface ...$promises): PromiseInterface
 {
-    if (!$promisesOrValues) {
-        return new Promise(function (): void {});
-    }
-
+    $promises[] = $promise;
     $cancellationQueue = new Internal\CancellationQueue();
 
-    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
-        foreach ($promisesOrValues as $promiseOrValue) {
+    return new Promise(function ($resolve, $reject) use ($promises, $cancellationQueue): void {
+        foreach ($promises as $promiseOrValue) {
             $cancellationQueue->enqueue($promiseOrValue);
 
             resolve($promiseOrValue)
