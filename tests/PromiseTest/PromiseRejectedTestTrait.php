@@ -312,7 +312,7 @@ trait PromiseRejectedTestTrait
     }
 
     /** @test */
-    public function otherwiseShouldInvokeRejectionHandlerForRejectedPromise()
+    public function catchShouldInvokeRejectionHandlerForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -325,11 +325,11 @@ trait PromiseRejectedTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->reject($exception);
-        $adapter->promise()->otherwise($mock);
+        $adapter->promise()->catch($mock);
     }
 
     /** @test */
-    public function otherwiseShouldInvokeNonTypeHintedRejectionHandlerIfReasonIsAnExceptionForRejectedPromise()
+    public function catchShouldInvokeNonTypeHintedRejectionHandlerIfReasonIsAnExceptionForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -343,13 +343,13 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function ($reason) use ($mock) {
+            ->catch(function ($reason) use ($mock) {
                 $mock($reason);
             });
     }
 
     /** @test */
-    public function otherwiseShouldInvokeRejectionHandlerIfReasonMatchesTypehintForRejectedPromise()
+    public function catchShouldInvokeRejectionHandlerIfReasonMatchesTypehintForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -363,13 +363,13 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+            ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
 
     /** @test */
-    public function otherwiseShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehintForRejectedPromise()
+    public function catchShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehintForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -379,13 +379,13 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+            ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
             });
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejectionForRejectedPromise()
+    public function finallyShouldNotSuppressRejectionForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -399,12 +399,12 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then(null, $mock);
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsANonPromiseForRejectedPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsANonPromiseForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -418,14 +418,14 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then(null, $mock);
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsAPromiseForRejectedPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsAPromiseForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -439,14 +439,14 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then(null, $mock);
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerThrowsForRejectedPromise()
+    public function finallyShouldRejectWhenHandlerThrowsForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -461,14 +461,14 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function () use ($exception2) {
+            ->finally(function () use ($exception2) {
                 throw $exception2;
             })
             ->then(null, $mock);
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerRejectsForRejectedPromise()
+    public function finallyShouldRejectWhenHandlerRejectsForRejectedPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -483,7 +483,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->promise()
-            ->always(function () use ($exception2) {
+            ->finally(function () use ($exception2) {
                 return reject($exception2);
             })
             ->then(null, $mock);
@@ -507,5 +507,210 @@ trait PromiseRejectedTestTrait
         $adapter->reject(new Exception());
 
         $adapter->promise()->cancel();
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function otherwiseShouldInvokeRejectionHandlerForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()->otherwise($mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function otherwiseShouldInvokeNonTypeHintedRejectionHandlerIfReasonIsAnExceptionForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->otherwise(function ($reason) use ($mock) {
+                $mock($reason);
+            });
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function otherwiseShouldInvokeRejectionHandlerIfReasonMatchesTypehintForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new InvalidArgumentException();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+                $mock($reason);
+            });
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function otherwiseShouldNotInvokeRejectionHandlerIfReaonsDoesNotMatchTypehintForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->expectCallableNever();
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
+                $mock($reason);
+            });
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function alwaysShouldNotSuppressRejectionForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->always(function () {})
+            ->then(null, $mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsANonPromiseForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+        ->expects($this->once())
+        ->method('__invoke')
+        ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+        ->finally(function () {
+            return 1;
+        })
+        ->then(null, $mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsAPromiseForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception));
+
+        $adapter->reject($exception);
+        $adapter->promise()
+            ->always(function () {
+                return resolve(1);
+            })
+            ->then(null, $mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function alwaysShouldRejectWhenHandlerThrowsForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception1 = new Exception();
+        $exception2 = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception2));
+
+        $adapter->reject($exception1);
+        $adapter->promise()
+            ->always(function () use ($exception2) {
+                throw $exception2;
+            })
+            ->then(null, $mock);
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
+    public function alwaysShouldRejectWhenHandlerRejectsForRejectedPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $exception1 = new Exception();
+        $exception2 = new Exception();
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo($exception2));
+
+        $adapter->reject($exception1);
+        $adapter->promise()
+            ->always(function () use ($exception2) {
+                return reject($exception2);
+            })
+            ->then(null, $mock);
     }
 }

@@ -53,6 +53,26 @@ trait PromisePendingTestTrait
     }
 
     /** @test */
+    public function catchShouldNotInvokeRejectionHandlerForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        $adapter->promise()->catch($this->expectCallableNever());
+    }
+
+    /** @test */
+    public function finallyShouldReturnAPromiseForPendingPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
     public function otherwiseShouldNotInvokeRejectionHandlerForPendingPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
@@ -61,7 +81,10 @@ trait PromisePendingTestTrait
         $adapter->promise()->otherwise($this->expectCallableNever());
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldReturnAPromiseForPendingPromise()
     {
         $adapter = $this->getPromiseTestAdapter();

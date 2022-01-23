@@ -69,6 +69,18 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
+    public function finallyShouldReturnAPromiseForSettledPromise()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+
+        $adapter->settle();
+        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
     public function alwaysShouldReturnAPromiseForSettledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();

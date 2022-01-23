@@ -91,7 +91,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldInvokeOtherwiseHandler()
+    public function rejectShouldInvokeCatchHandler()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -104,7 +104,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->otherwise($mock);
+            ->catch($mock);
 
         $adapter->reject($exception);
     }
@@ -247,7 +247,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejection()
+    public function finallyShouldNotSuppressRejection()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -260,14 +260,14 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then(null, $mock);
 
         $adapter->reject($exception);
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsANonPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsANonPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -280,7 +280,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then(null, $mock);
@@ -289,7 +289,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressRejectionWhenHandlerReturnsAPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsAPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -302,7 +302,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then(null, $mock);
@@ -311,7 +311,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerThrowsForRejection()
+    public function finallyShouldRejectWhenHandlerThrowsForRejection()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -324,7 +324,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -333,7 +333,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerRejectsForRejection()
+    public function finallyShouldRejectWhenHandlerRejectsForRejection()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -346,7 +346,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 return reject($exception);
             })
             ->then(null, $mock);

@@ -224,6 +224,31 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithCatchFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->catch(function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /** @test */
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithFinallyFollowers()
+    {
+        gc_collect_cycles();
+        $promise = new Promise(function () { });
+        $promise->finally(function () { });
+        unset($promise);
+
+        $this->assertSame(0, gc_collect_cycles());
+    }
+
+    /**
+     * @test
+     * @deprecated
+     */
     public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithOtherwiseFollowers()
     {
         gc_collect_cycles();
@@ -234,7 +259,10 @@ class PromiseTest extends TestCase
         $this->assertSame(0, gc_collect_cycles());
     }
 
-    /** @test */
+    /**
+     * @test
+     * @deprecated
+     */
     public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithAlwaysFollowers()
     {
         gc_collect_cycles();

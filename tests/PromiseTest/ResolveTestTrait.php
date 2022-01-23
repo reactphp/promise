@@ -223,7 +223,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressValue()
+    public function finallyShouldNotSuppressValue()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -236,14 +236,14 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {})
+            ->finally(function () {})
             ->then($mock);
 
         $adapter->resolve($value);
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressValueWhenHandlerReturnsANonPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -256,7 +256,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return 1;
             })
             ->then($mock);
@@ -265,7 +265,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function alwaysShouldNotSuppressValueWhenHandlerReturnsAPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromise()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -278,7 +278,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->always(function () {
+            ->finally(function () {
                 return resolve(1);
             })
             ->then($mock);
@@ -287,7 +287,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerThrowsForFulfillment()
+    public function finallyShouldRejectWhenHandlerThrowsForFulfillment()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -300,7 +300,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 throw $exception;
             })
             ->then(null, $mock);
@@ -309,7 +309,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function alwaysShouldRejectWhenHandlerRejectsForFulfillment()
+    public function finallyShouldRejectWhenHandlerRejectsForFulfillment()
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -322,7 +322,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->always(function () use ($exception) {
+            ->finally(function () use ($exception) {
                 return reject($exception);
             })
             ->then(null, $mock);

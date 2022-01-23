@@ -60,12 +60,12 @@ final class FulfilledPromise implements PromiseInterface
         });
     }
 
-    public function otherwise(callable $onRejected): PromiseInterface
+    public function catch(callable $onRejected): PromiseInterface
     {
         return $this;
     }
 
-    public function always(callable $onFulfilledOrRejected): PromiseInterface
+    public function finally(callable $onFulfilledOrRejected): PromiseInterface
     {
         return $this->then(function ($value) use ($onFulfilledOrRejected): PromiseInterface {
             return resolve($onFulfilledOrRejected())->then(function () use ($value) {
@@ -76,5 +76,23 @@ final class FulfilledPromise implements PromiseInterface
 
     public function cancel(): void
     {
+    }
+
+    /**
+     * @deprecated 3.0.0 Use `catch()` instead
+     * @see self::catch()
+     */
+    public function otherwise(callable $onRejected): PromiseInterface
+    {
+        return $this->catch($onRejected);
+    }
+
+    /**
+     * @deprecated 3.0.0 Use `finally()` instead
+     * @see self::finally()
+     */
+    public function always(callable $onFulfilledOrRejected): PromiseInterface
+    {
+        return $this->finally($onFulfilledOrRejected);
     }
 }

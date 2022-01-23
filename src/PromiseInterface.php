@@ -63,7 +63,7 @@ interface PromiseInterface
      * @param callable $onRejected
      * @return PromiseInterface
      */
-    public function otherwise(callable $onRejected): PromiseInterface;
+    public function catch(callable $onRejected): PromiseInterface;
 
     /**
      * Allows you to execute "cleanup" type tasks in a promise chain.
@@ -82,8 +82,8 @@ interface PromiseInterface
      *    rejected promise, `$newPromise` will reject with the thrown exception or
      *    rejected promise's reason.
      *
-     * `always()` behaves similarly to the synchronous finally statement. When combined
-     * with `otherwise()`, `always()` allows you to write code that is similar to the familiar
+     * `finally()` behaves similarly to the synchronous finally statement. When combined
+     * with `catch()`, `finally()` allows you to write code that is similar to the familiar
      * synchronous catch/finally pair.
      *
      * Consider the following synchronous code:
@@ -103,14 +103,14 @@ interface PromiseInterface
      *
      * ```php
      * return doSomething()
-     *     ->otherwise('handleError')
-     *     ->always('cleanup');
+     *     ->catch('handleError')
+     *     ->finally('cleanup');
      * ```
      *
      * @param callable $onFulfilledOrRejected
      * @return PromiseInterface
      */
-    public function always(callable $onFulfilledOrRejected): PromiseInterface;
+    public function finally(callable $onFulfilledOrRejected): PromiseInterface;
 
     /**
      * The `cancel()` method notifies the creator of the promise that there is no
@@ -122,4 +122,38 @@ interface PromiseInterface
      * @return void
      */
     public function cancel(): void;
+
+    /**
+     * [Deprecated] Registers a rejection handler for a promise.
+     *
+     * This method continues to exist only for BC reasons and to ease upgrading
+     * between versions. It is an alias for:
+     *
+     * ```php
+     * $promise->catch($onRejected);
+     * ```
+     *
+     * @param callable $onRejected
+     * @return PromiseInterface
+     * @deprecated 3.0.0 Use catch() instead
+     * @see self::catch()
+     */
+    public function otherwise(callable $onRejected): PromiseInterface;
+
+    /**
+     * [Deprecated] Allows you to execute "cleanup" type tasks in a promise chain.
+     *
+     * This method continues to exist only for BC reasons and to ease upgrading
+     * between versions. It is an alias for:
+     *
+     * ```php
+     * $promise->finally($onFulfilledOrRejected);
+     * ```
+     *
+     * @param callable $onFulfilledOrRejected
+     * @return PromiseInterface
+     * @deprecated 3.0.0 Use finally() instead
+     * @see self::finally()
+     */
+    public function always(callable $onFulfilledOrRejected): PromiseInterface;
 }
