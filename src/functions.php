@@ -341,43 +341,67 @@ function _checkTypehint(callable $callback, $object)
         return true;
     }
 
-    if (\PHP_VERSION_ID < 70100 || \defined('HHVM_VERSION')) {
-        $expectedException = $parameters[0];
+    $expectedException = $parameters[0];
 
+    // PHP before v8 used an easy API:
+    if (\PHP_VERSION_ID < 70100 || \defined('HHVM_VERSION')) {
         if (!$expectedException->getClass()) {
             return true;
         }
 
         return $expectedException->getClass()->isInstance($object);
-    } else {
-        $type = $parameters[0]->getType();
+    }
 
-        if (!$type) {
-            return true;
-        }
+    // Extract the type of the argument and handle different possibilities
+    $type = $expectedException->getType();
+    
+    $isTypeUnion = true;
+    $types = [];
 
-        $types = [$type];
-
-        if ($type instanceof \ReflectionUnionType) {
+    switch (true) {
+        case $type === null:
+            break;
+        case $type instanceof \ReflectionNamedType:
+            $types = [$type];
+            break;
+        case $type instanceof \ReflectionIntersectionType:
+            $isTypeUnion = false;
+        case $type instanceof \ReflectionUnionType;
             $types = $type->getTypes();
+            break;
+        default:
+            throw new \LogicException('Unexpected return value of ReflectionParameter::getType');
+    }
+
+    // If there is no type restriction, it matches
+    if (empty($types)) {
+        return true;
+    }
+
+    foreach ($types as $type) {
+        if (!$type instanceof \ReflectionNamedType) {
+            throw new \LogicException('This implementation does not support groups of intersection or union types');
         }
 
-        $mismatched = false;
+        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
+        $matches = ($type->isBuiltin() && \gettype($object) === $type->getName())
+            || (new \ReflectionClass($type->getName()))->isInstance($object);
 
-        foreach ($types as $type) {
-            if (!$type || $type->isBuiltin()) {
-                continue;
-            }
 
-            $expectedClass = $type->getName();
-
-            if ($object instanceof $expectedClass) {
+        // If we look for a single match (union), we can return early on match
+        // If we look for a full match (intersection), we can return early on mismatch
+        if ($matches) {
+            if ($isTypeUnion) {
                 return true;
             }
-
-            $mismatched = true;
+        } else {
+            if (!$isTypeUnion) {
+                return false;
+            }
         }
-
-        return !$mismatched;
     }
+
+    // If we look for a single match (union) and did not return early, we matched no type and are false
+    // If we look for a full match (intersection) and did not return early, we matched all types and are true
+    return $isTypeUnion ? false : true;
 }

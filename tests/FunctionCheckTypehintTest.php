@@ -84,6 +84,39 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertFalse(_checkTypehint(['React\Promise\CallbackWithUnionTypehintClass', 'testCallbackStatic'], new \Exception()));
     }
 
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptInvokableObjectCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new \RuntimeException()));
+        self::assertFalse(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new CountableNonException()));
+        self::assertTrue(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new CountableException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptObjectMethodCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new \RuntimeException()));
+        self::assertFalse(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new CountableNonException()));
+        self::assertTrue(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new CountableException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function shouldAcceptStaticClassCallbackWithIntersectionTypehint()
+    {
+        self::assertFalse(_checkTypehint(['React\Promise\CallbackWithIntersectionTypehintClass', 'testCallbackStatic'], new \RuntimeException()));
+        self::assertFalse(_checkTypehint(['React\Promise\CallbackWithIntersectionTypehintClass', 'testCallbackStatic'], new CountableNonException()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithIntersectionTypehintClass', 'testCallbackStatic'], new CountableException()));
+    }
+
     /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
     {
