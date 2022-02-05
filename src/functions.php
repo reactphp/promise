@@ -342,33 +342,58 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
         return true;
     }
 
-    $type = $parameters[0]->getType();
+    $expectedException = $parameters[0];
 
-    if (!$type) {
+    // Extract the type of the argument and handle different possibilities
+    $type = $expectedException->getType();
+    
+    $isTypeUnion = true;
+    $types = [];
+
+    switch (true) {
+        case $type === null:
+            break;
+        case $type instanceof \ReflectionNamedType:
+            $types = [$type];
+            break;
+        case $type instanceof \ReflectionIntersectionType:
+            $isTypeUnion = false;
+        case $type instanceof \ReflectionUnionType;
+            $types = $type->getTypes();
+            break;
+        default:
+            throw new \LogicException('Unexpected return value of ReflectionParameter::getType');
+    }
+
+    // If there is no type restriction, it matches
+    if (empty($types)) {
         return true;
     }
 
-    $types = [$type];
-
-    if ($type instanceof \ReflectionUnionType) {
-        $types = $type->getTypes();
-    }
-
-    $mismatched = false;
-
     foreach ($types as $type) {
-        if (!$type || $type->isBuiltin()) {
-            continue;
+        if (!$type instanceof \ReflectionNamedType) {
+            throw new \LogicException('This implementation does not support groups of intersection or union types');
         }
 
-        $expectedClass = $type->getName();
+        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
+        $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
+            || (new \ReflectionClass($type->getName()))->isInstance($reason);
 
-        if ($reason instanceof $expectedClass) {
-            return true;
+
+        // If we look for a single match (union), we can return early on match
+        // If we look for a full match (intersection), we can return early on mismatch
+        if ($matches) {
+            if ($isTypeUnion) {
+                return true;
+            }
+        } else {
+            if (!$isTypeUnion) {
+                return false;
+            }
         }
-
-        $mismatched = true;
     }
 
-    return !$mismatched;
+    // If we look for a single match (union) and did not return early, we matched no type and are false
+    // If we look for a full match (intersection) and did not return early, we matched all types and are true
+    return $isTypeUnion ? false : true;
 }
