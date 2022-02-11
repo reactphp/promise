@@ -849,15 +849,14 @@ This project follows [SemVer](https://semver.org/).
 This will install the latest supported version:
 
 ```bash
-$ composer require react/promise:^2.8
+$ composer require react/promise:^2.9
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 This project aims to run on any platform and thus does not require any PHP
-extensions and supports running on legacy PHP 5.4 through current PHP 7+ and HHVM.
-It's *highly recommended to use PHP 7+* for this project due to its vast
-performance improvements.
+extensions and supports running on legacy PHP 5.4 through current PHP 8+ and HHVM.
+It's *highly recommended to use the latest supported PHP version* for this project.
 
 Credits
 -------
