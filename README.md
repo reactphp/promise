@@ -6,13 +6,13 @@ A lightweight implementation of
 
 [![CI status](https://github.com/reactphp/promise/workflows/CI/badge.svg)](https://github.com/reactphp/promise/actions)
 
-> The master branch contains the code for the upcoming 3.0 release.
-> For the code of the current stable 2.x release, checkout the 
-> [2.x branch](https://github.com/reactphp/promise/tree/2.x).
-
-> The upcoming 3.0 release will be the way forward for this package. 
-> However we will still actively support 2.0 and 1.0 for those not yet 
-> on PHP 7+.
+> **Development version:** This branch contains the code for the upcoming 3.0 release.
+> For the code of the current stable 2.x release, check out the
+> [`2.x` branch](https://github.com/reactphp/promise/tree/2.x).
+>
+> The upcoming 3.0 release will be the way forward for this package.
+> However, we will still actively support 2.0 and 1.0 for those not yet
+> on PHP 7.1+.
 
 Table of Contents
 -----------------
@@ -52,8 +52,9 @@ Table of Contents
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
    * [done() vs. then()](#done-vs-then)
-5. [Credits](#credits)
-6. [License](#license)
+5. [Install](#install)
+6. [Credits](#credits)
+7. [License](#license)
 
 Introduction
 ------------
@@ -697,6 +698,37 @@ getJsonResult()
             }
         }
     );
+```
+
+Install
+-------
+
+The recommended way to install this library is [through Composer](https://getcomposer.org/).
+[New to Composer?](https://getcomposer.org/doc/00-intro.md)
+
+Once released, this project will follow [SemVer](https://semver.org/).
+At the moment, this will install the latest development version:
+
+```bash
+$ composer require react/promise:^3@dev
+```
+
+See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
+
+This project aims to run on any platform and thus does not require any PHP
+extensions and supports running on PHP 7.1 through current PHP 8+.
+It's *highly recommended to use the latest supported PHP version* for this project.
+
+We're committed to providing long-term support (LTS) options and to provide a
+smooth upgrade path. If you're using an older PHP version, you may use the
+[`2.x` branch](https://github.com/reactphp/promise/tree/2.x) (PHP 5.4+) or
+[`1.x` branch](https://github.com/reactphp/promise/tree/1.x) (PHP 5.3+) which both
+provide a compatible API but do not take advantage of newer language features.
+You may target multiple versions at the same time to support a wider range of
+PHP versions like this:
+
+```bash
+$ composer require "react/promise:^3@dev || ^2 || ^1"
 ```
 
 Credits
