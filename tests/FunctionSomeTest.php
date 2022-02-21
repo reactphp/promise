@@ -148,7 +148,7 @@ class FunctionSomeTest extends TestCase
     public function shouldCancelOtherPendingInputArrayPromisesIfEnoughPromisesFulfill()
     {
         $deferred = new Deferred($this->expectCallableNever());
-        $deferred->resolve();
+        $deferred->resolve(null);
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 

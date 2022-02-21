@@ -103,7 +103,7 @@ class FunctionRaceTest extends TestCase
     public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
     {
         $deferred = new Deferred($this->expectCallableNever());
-        $deferred->resolve();
+        $deferred->resolve(null);
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 

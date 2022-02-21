@@ -96,7 +96,7 @@ $deferred = new React\Promise\Deferred();
 
 $promise = $deferred->promise();
 
-$deferred->resolve(mixed $value = null);
+$deferred->resolve(mixed $value);
 $deferred->reject(\Throwable $reason);
 ```
 
@@ -119,7 +119,7 @@ keeping the authority to modify its state to yourself.
 #### Deferred::resolve()
 
 ```php
-$deferred->resolve(mixed $value = null);
+$deferred->resolve(mixed $value);
 ```
 
 Resolves the promise returned by `promise()`. All consumers are notified by
