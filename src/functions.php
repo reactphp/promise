@@ -20,8 +20,7 @@ use React\Promise\Internal\RejectedPromise;
  * @param mixed $promiseOrValue
  * @return PromiseInterface
  */
-
-function resolve($promiseOrValue = null): PromiseInterface
+function resolve($promiseOrValue): PromiseInterface
 {
     if ($promiseOrValue instanceof PromiseInterface) {
         return $promiseOrValue;
@@ -346,7 +345,7 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
 
     // Extract the type of the argument and handle different possibilities
     $type = $expectedException->getType();
-    
+
     $isTypeUnion = true;
     $types = [];
 

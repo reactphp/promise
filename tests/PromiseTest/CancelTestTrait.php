@@ -110,7 +110,7 @@ trait CancelTestTrait
             ->expects($this->once())
             ->method('__invoke')
             ->will($this->returnCallback(function ($resolve) {
-                $resolve();
+                $resolve(null);
             }));
 
         $adapter = $this->getPromiseTestAdapter($mock);

@@ -216,7 +216,7 @@ trait RejectTestTrait
 
         $result = resolve(resolve($d->promise()->then(function () use ($exception) {
             $d = new Deferred();
-            $d->resolve();
+            $d->resolve(null);
 
             return resolve($d->promise()->then(function () {}))->then(
                 function () use ($exception) {
@@ -227,7 +227,7 @@ trait RejectTestTrait
 
         $result->done();
 
-        $d->resolve();
+        $d->resolve(null);
 
         $errors = $errorCollector->stop();
 

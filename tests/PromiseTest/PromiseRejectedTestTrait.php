@@ -279,11 +279,11 @@ trait PromiseRejectedTestTrait
         $exception = new Exception('UnhandledRejectionException');
 
         $d = new Deferred();
-        $d->resolve();
+        $d->resolve(null);
 
         $result = resolve(resolve($d->promise()->then(function () use ($exception) {
             $d = new Deferred();
-            $d->resolve();
+            $d->resolve(null);
 
             return resolve($d->promise()->then(function () {}))->then(
                 function () use ($exception) {

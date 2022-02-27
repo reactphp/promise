@@ -17,7 +17,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then());
     }
 
@@ -26,7 +26,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then(null, null));
     }
 
@@ -35,7 +35,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
 
         self::assertNull($adapter->promise()->cancel());
     }
@@ -45,7 +45,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
-        $adapter->settle();
+        $adapter->settle(null);
 
         $adapter->promise()->cancel();
     }
@@ -55,7 +55,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertNull($adapter->promise()->done(null, function () {}));
     }
 
@@ -64,7 +64,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertNull($adapter->promise()->done(null, function () {}, null));
     }
 
@@ -73,7 +73,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
     }
 
@@ -85,7 +85,7 @@ trait PromiseSettledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
     }
 }

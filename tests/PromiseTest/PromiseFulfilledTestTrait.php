@@ -190,7 +190,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->resolve();
+        $adapter->resolve(null);
 
         self::assertNull($adapter->promise()->cancel());
     }
@@ -200,7 +200,7 @@ trait PromiseFulfilledTestTrait
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
-        $adapter->resolve();
+        $adapter->resolve(null);
 
         $adapter->promise()->cancel();
     }

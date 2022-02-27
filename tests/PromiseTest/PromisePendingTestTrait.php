@@ -57,7 +57,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         $adapter->promise()->catch($this->expectCallableNever());
     }
 
@@ -77,7 +77,7 @@ trait PromisePendingTestTrait
     {
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->settle();
+        $adapter->settle(null);
         $adapter->promise()->otherwise($this->expectCallableNever());
     }
 

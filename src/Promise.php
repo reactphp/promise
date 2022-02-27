@@ -239,7 +239,7 @@ final class Promise implements PromiseInterface
                 $target =& $this;
 
                 $callback(
-                    static function ($value = null) use (&$target) {
+                    static function ($value) use (&$target) {
                         if ($target !== null) {
                             $target->settle(resolve($value));
                             $target = null;

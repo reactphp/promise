@@ -21,7 +21,7 @@ final class Deferred implements PromisorInterface
         return $this->promise;
     }
 
-    public function resolve($value = null): void
+    public function resolve($value): void
     {
         ($this->resolveCallback)($value);
     }
