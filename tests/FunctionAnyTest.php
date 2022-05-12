@@ -170,8 +170,10 @@ class FunctionAnyTest extends TestCase
     /** @test */
     public function shouldResolveWhenFirstInputPromiseResolves()
     {
-        $exception2 = new Exception();
-        $exception3 = new Exception();
+        $this->expectException(\Exception::class);
+
+        $rejectedPromise2 = reject(new Exception());
+        $rejectedPromise3 = reject(new Exception());
 
         $mock = $this->createCallableMock();
         $mock
@@ -179,7 +181,7 @@ class FunctionAnyTest extends TestCase
             ->method('__invoke')
             ->with(self::identicalTo(1));
 
-        any([resolve(1), reject($exception2), reject($exception3)])
+        any([resolve(1), $rejectedPromise2, $rejectedPromise3])
             ->then($mock);
     }
 

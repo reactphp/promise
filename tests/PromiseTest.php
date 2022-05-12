@@ -62,6 +62,8 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithoutResolver()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function () {
             throw new \Exception('foo');
@@ -74,6 +76,8 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverRejectsWithException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -86,6 +90,8 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -99,6 +105,8 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
             $reject(new \Exception('foo'));
@@ -112,6 +120,8 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) {
             throw new \Exception('foo');
@@ -136,6 +146,8 @@ class PromiseTest extends TestCase
      */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
         $promise = new Promise(function () {}, function () use (&$promise) {
             throw new \Exception('foo');
@@ -153,10 +165,14 @@ class PromiseTest extends TestCase
      */
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
-        $promise = new Promise(function () use (&$promise) {
-            throw new \Exception('foo');
-        });
+        try {
+            $promise = new Promise(function () use (&$promise) {
+                throw new \Exception('foo');
+            });
+        } catch (\Throwable $throwable) {}
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -169,10 +185,15 @@ class PromiseTest extends TestCase
      */
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
-        $promise = new Promise(function () {
-            throw new \Exception('foo');
-        }, function () use (&$promise) { });
+        try {
+            $promise = new Promise(function () {
+                throw new \Exception('foo');
+            }, function () use (&$promise) {
+            });
+        } catch (\Throwable $throwable) {}
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -263,10 +284,14 @@ class PromiseTest extends TestCase
     /** @test */
     public function shouldFulfillIfFullfilledWithSimplePromise()
     {
+        $this->expectException(Exception::class);
+
         gc_collect_cycles();
-        $promise = new Promise(function () {
-            throw new Exception('foo');
-        });
+        try {
+            $promise = new Promise(function () {
+                throw new Exception('foo');
+            });
+        } catch (\Throwable $throwable) {}
         unset($promise);
 
         self::assertSame(0, gc_collect_cycles());

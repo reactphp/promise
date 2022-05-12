@@ -12,14 +12,24 @@ use function React\Promise\resolve;
 final class RejectedPromise implements PromiseInterface
 {
     private $reason;
+    private $endOfChain = true;
 
     public function __construct(\Throwable $reason)
     {
         $this->reason = $reason;
     }
 
+    public function __destruct()
+    {
+        if ($this->endOfChain === true) {
+            throw $this->reason;
+        }
+    }
+
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
+        $this->endOfChain = false;
+
         if (null === $onRejected) {
             return $this;
         }
@@ -33,6 +43,8 @@ final class RejectedPromise implements PromiseInterface
 
     public function catch(callable $onRejected): PromiseInterface
     {
+        $this->endOfChain = false;
+
         if (!_checkTypehint($onRejected, $this->reason)) {
             return $this;
         }
@@ -42,6 +54,8 @@ final class RejectedPromise implements PromiseInterface
 
     public function finally(callable $onFulfilledOrRejected): PromiseInterface
     {
+        $this->endOfChain = false;
+
         return $this->then(null, function (\Throwable $reason) use ($onFulfilledOrRejected): PromiseInterface {
             return resolve($onFulfilledOrRejected())->then(function () use ($reason): PromiseInterface {
                 return new RejectedPromise($reason);

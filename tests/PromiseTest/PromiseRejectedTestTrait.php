@@ -31,7 +31,6 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception1);
         $adapter->reject($exception2);
-
         $adapter->promise()
             ->then(
                 $this->expectCallableNever(),
@@ -46,14 +45,13 @@ trait PromiseRejectedTestTrait
 
         $exception = new Exception();
 
-        $adapter->reject($exception);
-
         $mock = $this->createCallableMock();
         $mock
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->identicalTo($exception));
 
+        $adapter->reject($exception);
         $adapter->promise()
             ->then($this->expectCallableNever(), $mock);
     }
@@ -264,7 +262,7 @@ trait PromiseRejectedTestTrait
         $adapter->promise()
             ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
-            });
+            })->then(null, $this->expectCallableOnce());
     }
 
     /** @test */
@@ -375,9 +373,13 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function cancelShouldReturnNullForRejectedPromise()
     {
+        $this->expectException(Exception::class);
+
         $adapter = $this->getPromiseTestAdapter();
 
-        $adapter->reject(new Exception());
+        try {
+            $adapter->reject(new Exception());
+        } catch (\Throwable $throwable) {}
 
         self::assertNull($adapter->promise()->cancel());
     }
@@ -385,9 +387,13 @@ trait PromiseRejectedTestTrait
     /** @test */
     public function cancelShouldHaveNoEffectForRejectedPromise()
     {
+        $this->expectException(Exception::class);
+
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
-        $adapter->reject(new Exception());
+        try {
+            $adapter->reject(new Exception());
+        } catch (\Throwable $throwable) {}
 
         $adapter->promise()->cancel();
     }
@@ -474,7 +480,7 @@ trait PromiseRejectedTestTrait
         $adapter->promise()
             ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
-            });
+            })->then(null, $this->expectCallableOnce());
     }
 
     /**

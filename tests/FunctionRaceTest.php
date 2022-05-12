@@ -149,6 +149,8 @@ class FunctionRaceTest extends TestCase
     /** @test */
     public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseRejects()
     {
+        $this->expectException(Exception::class);
+
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->reject(new Exception());
 

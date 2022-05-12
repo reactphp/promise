@@ -80,7 +80,6 @@ class CancellationQueueTest extends TestCase
      */
     public function rethrowsExceptionsThrownFromCancel()
     {
-        $this->expectException(Exception::class);
         $this->expectExceptionMessage('test');
         $mock = $this->createCallableMock();
         $mock
