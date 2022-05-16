@@ -37,22 +37,6 @@ trait PromisePendingTestTrait
     }
 
     /** @test */
-    public function doneShouldReturnNullForPendingPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        self::assertNull($adapter->promise()->done());
-    }
-
-    /** @test */
-    public function doneShouldReturnAllowNullForPendingPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        self::assertNull($adapter->promise()->done(null, null));
-    }
-
-    /** @test */
     public function catchShouldNotInvokeRejectionHandlerForPendingPromise()
     {
         $adapter = $this->getPromiseTestAdapter();

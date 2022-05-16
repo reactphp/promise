@@ -170,59 +170,6 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function doneShouldInvokeFulfillmentHandler()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        self::assertNull($adapter->promise()->done($mock));
-        $adapter->resolve(1);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorExceptionThrownFulfillmentHandler()
-    {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        self::assertNull($adapter->promise()->done(function () {
-            throw new Exception('Unhandled Rejection');
-        }));
-        $adapter->resolve(1);
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenFulfillmentHandlerRejects()
-    {
-        $errorCollector = new Promise\ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        self::assertNull($adapter->promise()->done(function () {
-            return reject(new Exception('Unhandled Rejection'));
-        }));
-        $adapter->resolve(1);
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
-    }
-
-    /** @test */
     public function finallyShouldNotSuppressValue()
     {
         $adapter = $this->getPromiseTestAdapter();

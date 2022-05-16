@@ -3,7 +3,6 @@
 namespace React\Promise\PromiseTest;
 
 use Exception;
-use React\Promise\ErrorCollector;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
 use stdClass;
 use function React\Promise\reject;
@@ -203,61 +202,6 @@ trait PromiseFulfilledTestTrait
         $adapter->resolve(null);
 
         $adapter->promise()->cancel();
-    }
-
-    /** @test */
-    public function doneShouldInvokeFulfillmentHandlerForFulfilledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo(1));
-
-        $adapter->resolve(1);
-        self::assertNull($adapter->promise()->done($mock));
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorThrownFulfillmentHandlerForFulfilledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->resolve(1);
-
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        self::assertNull($adapter->promise()->done(function () {
-            throw new Exception('Unhandled Rejection');
-        }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorUnhandledRejectionExceptionWhenFulfillmentHandlerRejectsForFulfilledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->resolve(1);
-
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        self::assertNull($adapter->promise()->done(function () {
-            return reject(new Exception('Unhandled Rejection'));
-        }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
     }
 
     /** @test */

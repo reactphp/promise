@@ -35,22 +35,6 @@ interface PromiseInterface
     public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
     /**
-     * Consumes the promise's ultimate value if the promise fulfills, or handles the
-     * ultimate error.
-     *
-     * It will cause a fatal error (`E_USER_ERROR`) if either `$onFulfilled` or
-     * `$onRejected` throw or return a rejected promise.
-     *
-     * Since the purpose of `done()` is consumption rather than transformation,
-     * `done()` always returns `null`.
-     *
-     * @param callable|null $onFulfilled
-     * @param callable|null $onRejected
-     * @return void
-     */
-    public function done(callable $onFulfilled = null, callable $onRejected = null): void;
-
-    /**
      * Registers a rejection handler for promise. It is a shortcut for:
      *
      * ```php

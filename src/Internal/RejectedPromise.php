@@ -6,7 +6,6 @@ use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use function React\Promise\_checkTypehint;
 use function React\Promise\enqueue;
-use function React\Promise\fatalError;
 use function React\Promise\resolve;
 
 /**
@@ -35,29 +34,6 @@ final class RejectedPromise implements PromiseInterface
                     $reject($exception);
                 }
             });
-        });
-    }
-
-    public function done(callable $onFulfilled = null, callable $onRejected = null): void
-    {
-        enqueue(function () use ($onRejected) {
-            if (null === $onRejected) {
-                return fatalError($this->reason);
-            }
-
-            try {
-                $result = $onRejected($this->reason);
-            } catch (\Throwable $exception) {
-                return fatalError($exception);
-            }
-
-            if ($result instanceof self) {
-                return fatalError($result->reason);
-            }
-
-            if ($result instanceof PromiseInterface) {
-                $result->done();
-            }
         });
     }
 

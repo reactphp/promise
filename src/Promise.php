@@ -57,19 +57,6 @@ final class Promise implements PromiseInterface
         );
     }
 
-    public function done(callable $onFulfilled = null, callable $onRejected = null): void
-    {
-        if (null !== $this->result) {
-            $this->result->done($onFulfilled, $onRejected);
-            return;
-        }
-
-        $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected) {
-            $promise
-                ->done($onFulfilled, $onRejected);
-        };
-    }
-
     public function catch(callable $onRejected): PromiseInterface
     {
         return $this->then(null, static function ($reason) use ($onRejected) {
@@ -151,9 +138,15 @@ final class Promise implements PromiseInterface
     {
         return function ($resolve, $reject) use ($onFulfilled, $onRejected) {
             $this->handlers[] = static function (PromiseInterface $promise) use ($onFulfilled, $onRejected, $resolve, $reject) {
-                $promise
-                    ->then($onFulfilled, $onRejected)
-                    ->done($resolve, $reject);
+                $promise = $promise->then($onFulfilled, $onRejected);
+
+                if ($promise instanceof self && $promise->result === null) {
+                    $promise->handlers[] = static function (PromiseInterface $promise) use ($resolve, $reject) {
+                        $promise->then($resolve, $reject);
+                    };
+                } else {
+                    $promise->then($resolve, $reject);
+                }
             };
         };
     }
