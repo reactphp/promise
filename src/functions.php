@@ -73,9 +73,33 @@ function reject(\Throwable $reason): PromiseInterface
  */
 function all(array $promisesOrValues): PromiseInterface
 {
-    return map($promisesOrValues, function ($val) {
-        return $val;
-    });
+    if (!$promisesOrValues) {
+        return resolve([]);
+    }
+
+    $cancellationQueue = new Internal\CancellationQueue();
+
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
+        $toResolve = \count($promisesOrValues);
+        $values    = [];
+
+        foreach ($promisesOrValues as $i => $promiseOrValue) {
+            $cancellationQueue->enqueue($promiseOrValue);
+            $values[$i] = null;
+
+            resolve($promiseOrValue)
+                ->done(
+                    function ($mapped) use ($i, &$values, &$toResolve, $resolve): void {
+                        $values[$i] = $mapped;
+
+                        if (0 === --$toResolve) {
+                            $resolve($values);
+                        }
+                    },
+                    $reject
+                );
+        }
+    }, $cancellationQueue);
 }
 
 /**
@@ -164,49 +188,6 @@ function any(array $promisesOrValues): PromiseInterface
 
             resolve($promiseOrValue)
                 ->done($fulfiller, $rejecter);
-        }
-    }, $cancellationQueue);
-}
-
-/**
- * Traditional map function, similar to `array_map()`, but allows input to contain
- * promises and/or values, and `$mapFunc` may return either a value or a promise.
- *
- * The map function receives each item as argument, where item is a fully resolved
- * value of a promise or value in `$promisesOrValues`.
- *
- * @param array $promisesOrValues
- * @param callable $mapFunc
- * @return PromiseInterface
- */
-function map(array $promisesOrValues, callable $mapFunc): PromiseInterface
-{
-    if (!$promisesOrValues) {
-        return resolve([]);
-    }
-
-    $cancellationQueue = new Internal\CancellationQueue();
-
-    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $mapFunc, $cancellationQueue): void {
-        $toResolve = \count($promisesOrValues);
-        $values    = [];
-
-        foreach ($promisesOrValues as $i => $promiseOrValue) {
-            $cancellationQueue->enqueue($promiseOrValue);
-            $values[$i] = null;
-
-            resolve($promiseOrValue)
-                ->then($mapFunc)
-                ->done(
-                    function ($mapped) use ($i, &$values, &$toResolve, $resolve): void {
-                        $values[$i] = $mapped;
-
-                        if (0 === --$toResolve) {
-                            $resolve($values);
-                        }
-                    },
-                    $reject
-                );
         }
     }, $cancellationQueue);
 }
