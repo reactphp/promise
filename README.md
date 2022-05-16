@@ -43,7 +43,6 @@ Table of Contents
      * [race()](#race)
      * [any()](#any)
      * [map()](#map)
-     * [reduce()](#reduce)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -364,8 +363,7 @@ once all consumers called the `cancel()` method of the promise.
 
 ### Functions
 
-Useful functions for creating, joining, mapping and reducing collections of
-promises.
+Useful functions for creating, joining and mapping collections of promises.
 
 All functions working on promise collections (like `all()`, `race()`,
 etc.) support cancellation. This means, if you call `cancel()` on the returned
@@ -452,17 +450,6 @@ promises and/or values, and `$mapFunc` may return either a value or a promise.
 
 The map function receives each item as argument, where item is a fully resolved
 value of a promise or value in `$promisesOrValues`.
-
-#### reduce()
-
-```php
-$promise = React\Promise\reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null);
-```
-
-Traditional reduce function, similar to `array_reduce()`, but input may contain
-promises and/or values, and `$reduceFunc` may return either a value or a
-promise, *and* `$initialValue` may be a promise or a value for the starting
-value.
 
 Examples
 --------

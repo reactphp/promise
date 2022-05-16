@@ -212,44 +212,6 @@ function map(array $promisesOrValues, callable $mapFunc): PromiseInterface
 }
 
 /**
- * Traditional reduce function, similar to `array_reduce()`, but input may contain
- * promises and/or values, and `$reduceFunc` may return either a value or a
- * promise, *and* `$initialValue` may be a promise or a value for the starting
- * value.
- *
- * @param array $promisesOrValues
- * @param callable $reduceFunc
- * @param mixed $initialValue
- * @return PromiseInterface
- */
-function reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null): PromiseInterface
-{
-    $cancellationQueue = new Internal\CancellationQueue();
-
-    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $reduceFunc, $initialValue, $cancellationQueue): void {
-        $total = \count($promisesOrValues);
-        $i = 0;
-
-        $wrappedReduceFunc = function ($current, $val) use ($reduceFunc, $cancellationQueue, $total, &$i): PromiseInterface {
-            $cancellationQueue->enqueue($val);
-
-            return $current
-                ->then(function ($c) use ($reduceFunc, $total, &$i, $val) {
-                    return resolve($val)
-                        ->then(function ($value) use ($reduceFunc, $total, &$i, $c) {
-                            return $reduceFunc($c, $value, $i++, $total);
-                        });
-                });
-        };
-
-        $cancellationQueue->enqueue($initialValue);
-
-        \array_reduce($promisesOrValues, $wrappedReduceFunc, resolve($initialValue))
-            ->done($resolve, $reject);
-    }, $cancellationQueue);
-}
-
-/**
  * @internal
  */
 function enqueue(callable $task): void
