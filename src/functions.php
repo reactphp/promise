@@ -122,45 +122,13 @@ function race(array $promisesOrValues): PromiseInterface
  */
 function any(array $promisesOrValues): PromiseInterface
 {
-    return some($promisesOrValues, 1)
-        ->then(function ($val) {
-            return \array_shift($val);
-        });
-}
-
-/**
- * Returns a promise that will resolve when `$howMany` of the supplied items in
- * `$promisesOrValues` resolve. The resolution value of the returned promise
- * will be an array of length `$howMany` containing the resolution values of the
- * triggering items.
- *
- * The returned promise will reject if it becomes impossible for `$howMany` items
- * to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
- * reject). The rejection value will be an array of
- * `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
- *
- * The returned promise will also reject with a `React\Promise\Exception\LengthException`
- * if `$promisesOrValues` contains less items than `$howMany`.
- *
- * @param array $promisesOrValues
- * @param int $howMany
- * @return PromiseInterface
- */
-function some(array $promisesOrValues, int $howMany): PromiseInterface
-{
-    if ($howMany < 1) {
-        return resolve([]);
-    }
-
     $len = \count($promisesOrValues);
 
-    if ($len < $howMany) {
+    if (!$promisesOrValues) {
         return reject(
             new Exception\LengthException(
                 \sprintf(
-                    'Input array must contain at least %d item%s but contains only %s item%s.',
-                    $howMany,
-                    1 === $howMany ? '' : 's',
+                    'Input array must contain at least 1 item but contains only %s item%s.',
                     $len,
                     1 === $len ? '' : 's'
                 )
@@ -170,37 +138,23 @@ function some(array $promisesOrValues, int $howMany): PromiseInterface
 
     $cancellationQueue = new Internal\CancellationQueue();
 
-    return new Promise(function ($resolve, $reject) use ($len, $promisesOrValues, $howMany, $cancellationQueue): void {
-        $toResolve = $howMany;
-        $toReject  = ($len - $toResolve) + 1;
-        $values    = [];
+    return new Promise(function ($resolve, $reject) use ($len, $promisesOrValues, $cancellationQueue): void {
+        $toReject  = $len;
         $reasons   = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
-            $fulfiller = function ($val) use ($i, &$values, &$toResolve, $toReject, $resolve): void {
-                if ($toResolve < 1 || $toReject < 1) {
-                    return;
-                }
-
-                $values[$i] = $val;
-
-                if (0 === --$toResolve) {
-                    $resolve($values);
-                }
+            $fulfiller = function ($val) use ($resolve): void {
+                $resolve($val);
             };
 
-            $rejecter = function (\Throwable $reason) use ($i, &$reasons, &$toReject, $toResolve, $reject): void {
-                if ($toResolve < 1 || $toReject < 1) {
-                    return;
-                }
-
+            $rejecter = function (\Throwable $reason) use ($i, &$reasons, &$toReject, $reject): void {
                 $reasons[$i] = $reason;
 
                 if (0 === --$toReject) {
                     $reject(
                         new CompositeException(
                             $reasons,
-                            'Too many promises rejected.'
+                            'All promises rejected.'
                         )
                     );
                 }

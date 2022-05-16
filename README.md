@@ -42,7 +42,6 @@ Table of Contents
      * [all()](#all)
      * [race()](#race)
      * [any()](#any)
-     * [some()](#some)
      * [map()](#map)
      * [reduce()](#reduce)
 4. [Examples](#examples)
@@ -368,7 +367,7 @@ once all consumers called the `cancel()` method of the promise.
 Useful functions for creating, joining, mapping and reducing collections of
 promises.
 
-All functions working on promise collections (like `all()`, `race()`, `some()`
+All functions working on promise collections (like `all()`, `race()`,
 etc.) support cancellation. This means, if you call `cancel()` on the returned
 promise, all promises in the collection are cancelled.
 
@@ -441,26 +440,6 @@ which holds all rejection reasons. The rejection reasons can be obtained with
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains 0 items.
-
-#### some()
-
-```php
-$promise = React\Promise\some(array $promisesOrValues, integer $howMany);
-```
-
-Returns a promise that will resolve when at least `$howMany` of the supplied items in
-`$promisesOrValues` fulfill. The resolution value of the returned promise
-will be an array of length `$howMany` containing the resolution values of
-`$howMany` fulfilled promises that were resolved first.
-
-The returned promise will reject if it becomes impossible for `$howMany` items
-to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
-reject). The rejection value will be a `React\Promise\Exception\CompositeException`
-which holds `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
-The rejection reasons can be obtained with `CompositeException::getExceptions()`.
-
-The returned promise will also reject with a `React\Promise\Exception\LengthException`
-if `$promisesOrValues` contains less items than `$howMany`.
 
 #### map()
 

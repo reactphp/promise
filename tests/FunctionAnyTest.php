@@ -61,7 +61,7 @@ class FunctionAnyTest extends TestCase
 
         $compositeException = new CompositeException(
             [0 => $exception1, 1 => $exception2, 2 => $exception3],
-            'Too many promises rejected.'
+            'All promises rejected.'
         );
 
         $mock = $this->createCallableMock();
@@ -126,6 +126,6 @@ class FunctionAnyTest extends TestCase
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
-        some([$deferred->promise(), $promise2], 1)->cancel();
+        any([$deferred->promise(), $promise2], 1)->cancel();
     }
 }
