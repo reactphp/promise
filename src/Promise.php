@@ -2,9 +2,17 @@
 
 namespace React\Promise;
 
+/**
+ * @template-implements PromiseInterface
+ * @template-covariant T
+ */
 class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
     private $canceller;
+
+    /**
+     * @var PromiseInterface<T>
+     */
     private $result;
 
     private $handlers = [];
@@ -25,6 +33,11 @@ class Promise implements ExtendedPromiseInterface, CancellablePromiseInterface
         $this->call($cb);
     }
 
+    /**
+     * @template TFulfilled as PromiseInterface<T>|T
+     * @param (callable(T): TFulfilled)|null $onFulfilled
+     * @return ($onFulfilled is null ? $this : (TFulfilled is PromiseInterface ? TFulfilled : PromiseInterface<TFulfilled>))
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null !== $this->result) {
