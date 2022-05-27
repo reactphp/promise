@@ -59,6 +59,24 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveValuesGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo([1, 2, 3]));
+
+        $gen = (function () {
+            for ($i = 1; $i <= 3; ++$i) {
+                yield $i;
+            }
+        })();
+
+        all($gen)->then($mock);
+    }
+
+    /** @test */
     public function shouldRejectIfAnyInputPromiseRejects()
     {
         $exception2 = new Exception();

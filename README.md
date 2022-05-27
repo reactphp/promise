@@ -376,7 +376,7 @@ reject a promise, any language error or user land exception can be used to rejec
 #### all()
 
 ```php
-$promise = React\Promise\all(array $promisesOrValues);
+$promise = React\Promise\all(iterable $promisesOrValues);
 ```
 
 Returns a promise that will resolve only once all the items in
@@ -387,7 +387,7 @@ will be an array containing the resolution values of each of the items in
 #### race()
 
 ```php
-$promise = React\Promise\race(array $promisesOrValues);
+$promise = React\Promise\race(iterable $promisesOrValues);
 ```
 
 Initiates a competitive race that allows one winner. Returns a promise which is
@@ -399,7 +399,7 @@ contains 0 items.
 #### any()
 
 ```php
-$promise = React\Promise\any(array $promisesOrValues);
+$promise = React\Promise\any(iterable $promisesOrValues);
 ```
 
 Returns a promise that will resolve when any one of the items in

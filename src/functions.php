@@ -68,11 +68,15 @@ function reject(\Throwable $reason): PromiseInterface
  * will be an array containing the resolution values of each of the items in
  * `$promisesOrValues`.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function all(array $promisesOrValues): PromiseInterface
+function all(iterable $promisesOrValues): PromiseInterface
 {
+    if (!\is_array($promisesOrValues)) {
+        $promisesOrValues = \iterator_to_array($promisesOrValues);
+    }
+
     if (!$promisesOrValues) {
         return resolve([]);
     }
@@ -109,11 +113,15 @@ function all(array $promisesOrValues): PromiseInterface
  * The returned promise will become **infinitely pending** if  `$promisesOrValues`
  * contains 0 items.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function race(array $promisesOrValues): PromiseInterface
+function race(iterable $promisesOrValues): PromiseInterface
 {
+    if (!\is_array($promisesOrValues)) {
+        $promisesOrValues = \iterator_to_array($promisesOrValues);
+    }
+
     if (!$promisesOrValues) {
         return new Promise(function (): void {});
     }
@@ -141,18 +149,22 @@ function race(array $promisesOrValues): PromiseInterface
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains 0 items.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function any(array $promisesOrValues): PromiseInterface
+function any(iterable $promisesOrValues): PromiseInterface
 {
+    if (!\is_array($promisesOrValues)) {
+        $promisesOrValues = \iterator_to_array($promisesOrValues);
+    }
+
     $len = \count($promisesOrValues);
 
     if (!$promisesOrValues) {
         return reject(
             new Exception\LengthException(
                 \sprintf(
-                    'Input array must contain at least 1 item but contains only %s item%s.',
+                    'Must contain at least 1 item but contains only %s item%s.',
                     $len,
                     1 === $len ? '' : 's'
                 )

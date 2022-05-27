@@ -18,7 +18,7 @@ class FunctionAnyTest extends TestCase
             ->with(
                 self::callback(function ($exception) {
                     return $exception instanceof LengthException &&
-                           'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
+                           'Must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
             );
 
@@ -50,6 +50,24 @@ class FunctionAnyTest extends TestCase
 
         any([resolve(1), resolve(2), resolve(3)])
             ->then($mock);
+    }
+
+    /** @test */
+    public function shouldResolveValuesGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo(1));
+
+        $gen = (function () {
+            for ($i = 1; $i <= 3; ++$i) {
+                yield $i;
+            }
+        })();
+
+        any($gen)->then($mock);
     }
 
     /** @test */
