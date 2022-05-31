@@ -45,7 +45,6 @@ Table of Contents
      * [some()](#some)
      * [map()](#map)
      * [reduce()](#reduce)
-   * [PromisorInterface](#promisorinterface)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -485,12 +484,6 @@ Traditional reduce function, similar to `array_reduce()`, but input may contain
 promises and/or values, and `$reduceFunc` may return either a value or a
 promise, *and* `$initialValue` may be a promise or a value for the starting
 value.
-
-### PromisorInterface
-
-The `React\Promise\PromisorInterface` provides a common interface for objects
-that provide a promise. `React\Promise\Deferred` implements it, but since it
-is part of the public API anyone can implement it.
 
 Examples
 --------
