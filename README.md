@@ -42,9 +42,6 @@ Table of Contents
      * [all()](#all)
      * [race()](#race)
      * [any()](#any)
-     * [some()](#some)
-     * [map()](#map)
-     * [reduce()](#reduce)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -365,10 +362,9 @@ once all consumers called the `cancel()` method of the promise.
 
 ### Functions
 
-Useful functions for creating, joining, mapping and reducing collections of
-promises.
+Useful functions for creating and joining collections of promises.
 
-All functions working on promise collections (like `all()`, `race()`, `some()`
+All functions working on promise collections (like `all()`, `race()`,
 etc.) support cancellation. This means, if you call `cancel()` on the returned
 promise, all promises in the collection are cancelled.
 
@@ -441,49 +437,6 @@ which holds all rejection reasons. The rejection reasons can be obtained with
 
 The returned promise will also reject with a `React\Promise\Exception\LengthException`
 if `$promisesOrValues` contains 0 items.
-
-#### some()
-
-```php
-$promise = React\Promise\some(array $promisesOrValues, integer $howMany);
-```
-
-Returns a promise that will resolve when at least `$howMany` of the supplied items in
-`$promisesOrValues` fulfill. The resolution value of the returned promise
-will be an array of length `$howMany` containing the resolution values of
-`$howMany` fulfilled promises that were resolved first.
-
-The returned promise will reject if it becomes impossible for `$howMany` items
-to resolve (that is, when `(count($promisesOrValues) - $howMany) + 1` items
-reject). The rejection value will be a `React\Promise\Exception\CompositeException`
-which holds `(count($promisesOrValues) - $howMany) + 1` rejection reasons.
-The rejection reasons can be obtained with `CompositeException::getExceptions()`.
-
-The returned promise will also reject with a `React\Promise\Exception\LengthException`
-if `$promisesOrValues` contains less items than `$howMany`.
-
-#### map()
-
-```php
-$promise = React\Promise\map(array $promisesOrValues, callable $mapFunc);
-```
-
-Traditional map function, similar to `array_map()`, but allows input to contain
-promises and/or values, and `$mapFunc` may return either a value or a promise.
-
-The map function receives each item as argument, where item is a fully resolved
-value of a promise or value in `$promisesOrValues`.
-
-#### reduce()
-
-```php
-$promise = React\Promise\reduce(array $promisesOrValues, callable $reduceFunc, $initialValue = null);
-```
-
-Traditional reduce function, similar to `array_reduce()`, but input may contain
-promises and/or values, and `$reduceFunc` may return either a value or a
-promise, *and* `$initialValue` may be a promise or a value for the starting
-value.
 
 Examples
 --------
