@@ -88,7 +88,7 @@ function all(array $promisesOrValues): PromiseInterface
             $values[$i] = null;
 
             resolve($promiseOrValue)
-                ->done(
+                ->then(
                     function ($mapped) use ($i, &$values, &$toResolve, $resolve): void {
                         $values[$i] = $mapped;
 
@@ -125,7 +125,7 @@ function race(array $promisesOrValues): PromiseInterface
             $cancellationQueue->enqueue($promiseOrValue);
 
             resolve($promiseOrValue)
-                ->done($resolve, $reject);
+                ->then($resolve, $reject);
         }
     }, $cancellationQueue);
 }
@@ -187,7 +187,7 @@ function any(array $promisesOrValues): PromiseInterface
             $cancellationQueue->enqueue($promiseOrValue);
 
             resolve($promiseOrValue)
-                ->done($fulfiller, $rejecter);
+                ->then($fulfiller, $rejecter);
         }
     }, $cancellationQueue);
 }
@@ -204,19 +204,6 @@ function enqueue(callable $task): void
     }
 
     $queue->enqueue($task);
-}
-
-/**
- * @internal
- */
-function fatalError($error): void
-{
-    try {
-        \trigger_error($error, E_USER_ERROR);
-    } catch (\Throwable $e) {
-        \set_error_handler(null);
-        \trigger_error($error, E_USER_ERROR);
-    }
 }
 
 /**

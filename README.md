@@ -29,7 +29,6 @@ Table of Contents
      * [Deferred::reject()](#deferredreject)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
-     * [PromiseInterface::done()](#promiseinterfacedone)
      * [PromiseInterface::catch()](#promiseinterfacecatch)
      * [PromiseInterface::finally()](#promiseinterfacefinally)
      * [PromiseInterface::cancel()](#promiseinterfacecancel)
@@ -48,7 +47,6 @@ Table of Contents
      * [Resolution forwarding](#resolution-forwarding)
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
-   * [done() vs. then()](#done-vs-then)
 5. [Install](#install)
 6. [Credits](#credits)
 7. [License](#license)
@@ -183,28 +181,6 @@ the same call to `then()`:
 
 * [resolve()](#resolve) - Creating a resolved promise
 * [reject()](#reject) - Creating a rejected promise
-* [PromiseInterface::done()](#promiseinterfacedone)
-* [done() vs. then()](#done-vs-then)
-
-#### PromiseInterface::done()
-
-```php
-$promise->done(callable $onFulfilled = null, callable $onRejected = null);
-```
-
-Consumes the promise's ultimate value if the promise fulfills, or handles the
-ultimate error.
-
-It will cause a fatal error (`E_USER_ERROR`) if either `$onFulfilled` or
-`$onRejected` throw or return a rejected promise.
-
-Since the purpose of `done()` is consumption rather than transformation,
-`done()` always returns `null`.
-
-#### See also
-
-* [PromiseInterface::then()](#promiseinterfacethen)
-* [done() vs. then()](#done-vs-then)
 
 #### PromiseInterface::catch()
 
@@ -577,74 +553,6 @@ $deferred->promise()
     });
 
 $deferred->resolve(1);  // Prints "Mixed 4"
-```
-
-### done() vs. then()
-
-The golden rule is:
-
-    Either return your promise, or call done() on it.
-
-At a first glance, `then()` and `done()` seem very similar. However, there are
-important distinctions.
-
-The intent of `then()` is to transform a promise's value and to pass or return
-a new promise for the transformed value along to other parts of your code.
-
-The intent of `done()` is to consume a promise's value, transferring
-responsibility for the value to your code.
-
-In addition to transforming a value, `then()` allows you to recover from, or
-propagate intermediate errors. Any errors that are not handled will be caught
-by the promise machinery and used to reject the promise returned by `then()`.
-
-Calling `done()` transfers all responsibility for errors to your code. If an
-error (either a thrown exception or returned rejection) escapes the
-`$onFulfilled` or `$onRejected` callbacks you provide to `done()`, it will cause
-a fatal error.
-
-```php
-function getJsonResult()
-{
-    return queryApi()
-        ->then(
-            // Transform API results to an object
-            function ($jsonResultString) {
-                return json_decode($jsonResultString);
-            },
-            // Transform API errors to an exception
-            function ($jsonErrorString) {
-                $object = json_decode($jsonErrorString);
-                throw new ApiErrorException($object->errorMessage);
-            }
-        );
-}
-
-// Here we provide no rejection handler. If the promise returned has been
-// rejected, the ApiErrorException will be thrown
-getJsonResult()
-    ->done(
-        // Consume transformed object
-        function ($jsonResultObject) {
-            // Do something with $jsonResultObject
-        }
-    );
-
-// Here we provide a rejection handler which will either throw while debugging
-// or log the exception
-getJsonResult()
-    ->done(
-        function ($jsonResultObject) {
-            // Do something with $jsonResultObject
-        },
-        function (ApiErrorException $exception) {
-            if (isDebug()) {
-                throw $exception;
-            } else {
-                logException($exception);
-            }
-        }
-    );
 ```
 
 Install

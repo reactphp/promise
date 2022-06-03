@@ -179,19 +179,6 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldIgnoreNotifyAfterReject()
-    {
-        $promise = new Promise(function () { }, function ($resolve, $reject, $notify) {
-            $reject(new \Exception('foo'));
-            $notify(42);
-        });
-
-        $promise->then(null, null, $this->expectCallableNever());
-        $promise->cancel();
-    }
-
-
-    /** @test */
     public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromise()
     {
         gc_collect_cycles();
@@ -207,17 +194,6 @@ class PromiseTest extends TestCase
         gc_collect_cycles();
         $promise = new Promise(function () { });
         $promise->then()->then()->then();
-        unset($promise);
-
-        $this->assertSame(0, gc_collect_cycles());
-    }
-
-    /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithDoneFollowers()
-    {
-        gc_collect_cycles();
-        $promise = new Promise(function () { });
-        $promise->done();
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());

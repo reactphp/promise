@@ -51,24 +51,6 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
-    public function doneShouldReturnNullForSettledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->settle(null);
-        self::assertNull($adapter->promise()->done(null, function () {}));
-    }
-
-    /** @test */
-    public function doneShouldReturnAllowNullForSettledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->settle(null);
-        self::assertNull($adapter->promise()->done(null, function () {}, null));
-    }
-
-    /** @test */
     public function finallyShouldReturnAPromiseForSettledPromise()
     {
         $adapter = $this->getPromiseTestAdapter();

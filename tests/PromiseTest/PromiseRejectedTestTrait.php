@@ -4,8 +4,6 @@ namespace React\Promise\PromiseTest;
 
 use Exception;
 use InvalidArgumentException;
-use React\Promise\Deferred;
-use React\Promise\ErrorCollector;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -194,121 +192,6 @@ trait PromiseRejectedTestTrait
                 $this->expectCallableNever(),
                 $mock
             );
-    }
-
-    /** @test */
-    public function doneShouldInvokeRejectionHandlerForRejectedPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $exception = new Exception();
-
-        $mock = $this->createCallableMock();
-        $mock
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->identicalTo($exception));
-
-        $adapter->reject($exception);
-        self::assertNull($adapter->promise()->done(null, $mock));
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorExceptionThrownByRejectionHandlerForRejectedPromise()
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(new Exception());
-        self::assertNull($adapter->promise()->done(null, function () {
-            throw new Exception('Unhandled Rejection');
-        }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorRejectionExceptionWhenRejectionHandlerRejectsWithExceptionForRejectedPromise()
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(new Exception());
-        self::assertNull($adapter->promise()->done(null, function () {
-            return reject(new Exception('Unhandled Rejection'));
-        }));
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertStringContainsString('Unhandled Rejection', $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorExceptionProvidedAsRejectionValueForRejectedPromise()
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $adapter = $this->getPromiseTestAdapter();
-
-        $exception = new Exception('Unhandled Rejection');
-
-        $adapter->reject($exception);
-        self::assertNull($adapter->promise()->done());
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertEquals((string) $exception, $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldTriggerFatalErrorWithDeepNestingPromiseChainsForRejectedPromise()
-    {
-        $errorCollector = new ErrorCollector();
-        $errorCollector->start();
-
-        $exception = new Exception('UnhandledRejectionException');
-
-        $d = new Deferred();
-        $d->resolve(null);
-
-        $result = resolve(resolve($d->promise()->then(function () use ($exception) {
-            $d = new Deferred();
-            $d->resolve(null);
-
-            return resolve($d->promise()->then(function () {}))->then(
-                function () use ($exception) {
-                    throw $exception;
-                }
-            );
-        })));
-
-        $result->done();
-
-        $errors = $errorCollector->stop();
-
-        self::assertEquals(E_USER_ERROR, $errors[0]['errno']);
-        self::assertEquals((string) $exception, $errors[0]['errstr']);
-    }
-
-    /** @test */
-    public function doneShouldRecoverWhenRejectionHandlerCatchesExceptionForRejectedPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->reject(new Exception('UnhandledRejectionException'));
-        self::assertNull($adapter->promise()->done(null, function (Exception $e) {
-
-        }));
     }
 
     /** @test */

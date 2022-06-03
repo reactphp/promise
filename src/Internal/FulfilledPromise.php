@@ -5,7 +5,6 @@ namespace React\Promise\Internal;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use function React\Promise\enqueue;
-use function React\Promise\fatalError;
 use function React\Promise\resolve;
 
 /**
@@ -38,25 +37,6 @@ final class FulfilledPromise implements PromiseInterface
                     $reject($exception);
                 }
             });
-        });
-    }
-
-    public function done(callable $onFulfilled = null, callable $onRejected = null): void
-    {
-        if (null === $onFulfilled) {
-            return;
-        }
-
-        enqueue(function () use ($onFulfilled) {
-            try {
-                $result = $onFulfilled($this->value);
-            } catch (\Throwable $exception) {
-                return fatalError($exception);
-            }
-
-            if ($result instanceof PromiseInterface) {
-                $result->done();
-            }
         });
     }
 
