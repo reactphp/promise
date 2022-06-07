@@ -84,6 +84,24 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveValuesInfiniteGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo(1));
+
+        $gen = (function () {
+            for ($i = 1; ; ++$i) {
+                yield $i;
+            }
+        })();
+
+        race($gen)->then($mock);
+    }
+
+    /** @test */
     public function shouldRejectIfFirstSettledPromiseRejects()
     {
         $exception = new Exception();
