@@ -68,36 +68,45 @@ function reject(\Throwable $reason): PromiseInterface
  * will be an array containing the resolution values of each of the items in
  * `$promisesOrValues`.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function all(array $promisesOrValues): PromiseInterface
+function all(iterable $promisesOrValues): PromiseInterface
 {
-    if (!$promisesOrValues) {
-        return resolve([]);
-    }
-
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
-        $toResolve = \count($promisesOrValues);
+        $toResolve = 0;
+        $continue  = true;
         $values    = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
             $cancellationQueue->enqueue($promiseOrValue);
             $values[$i] = null;
+            ++$toResolve;
 
-            resolve($promiseOrValue)
-                ->then(
-                    function ($mapped) use ($i, &$values, &$toResolve, $resolve): void {
-                        $values[$i] = $mapped;
+            resolve($promiseOrValue)->then(
+                function ($value) use ($i, &$values, &$toResolve, &$continue, $resolve): void {
+                    $values[$i] = $value;
 
-                        if (0 === --$toResolve) {
-                            $resolve($values);
-                        }
-                    },
-                    $reject
-                );
+                    if (0 === --$toResolve && !$continue) {
+                        $resolve($values);
+                    }
+                },
+                function (\Throwable $reason) use (&$continue, $reject): void {
+                    $continue = false;
+                    $reject($reason);
+                }
+            );
+
+            if (!$continue) {
+                break;
+            }
+        }
+
+        $continue = false;
+        if ($toResolve === 0) {
+            $resolve($values);
         }
     }, $cancellationQueue);
 }
@@ -109,23 +118,26 @@ function all(array $promisesOrValues): PromiseInterface
  * The returned promise will become **infinitely pending** if  `$promisesOrValues`
  * contains 0 items.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function race(array $promisesOrValues): PromiseInterface
+function race(iterable $promisesOrValues): PromiseInterface
 {
-    if (!$promisesOrValues) {
-        return new Promise(function (): void {});
-    }
-
     $cancellationQueue = new Internal\CancellationQueue();
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
+        $continue = true;
+
         foreach ($promisesOrValues as $promiseOrValue) {
             $cancellationQueue->enqueue($promiseOrValue);
 
-            resolve($promiseOrValue)
-                ->then($resolve, $reject);
+            resolve($promiseOrValue)->then($resolve, $reject)->finally(function () use (&$continue): void {
+                $continue = false;
+            });
+
+            if (!$continue) {
+                break;
+            }
         }
     }, $cancellationQueue);
 }
@@ -141,53 +153,54 @@ function race(array $promisesOrValues): PromiseInterface
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains 0 items.
  *
- * @param array $promisesOrValues
+ * @param iterable $promisesOrValues
  * @return PromiseInterface
  */
-function any(array $promisesOrValues): PromiseInterface
+function any(iterable $promisesOrValues): PromiseInterface
 {
-    $len = \count($promisesOrValues);
-
-    if (!$promisesOrValues) {
-        return reject(
-            new Exception\LengthException(
-                \sprintf(
-                    'Input array must contain at least 1 item but contains only %s item%s.',
-                    $len,
-                    1 === $len ? '' : 's'
-                )
-            )
-        );
-    }
-
     $cancellationQueue = new Internal\CancellationQueue();
 
-    return new Promise(function ($resolve, $reject) use ($len, $promisesOrValues, $cancellationQueue): void {
-        $toReject  = $len;
-        $reasons   = [];
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
+        $toReject = 0;
+        $continue = true;
+        $reasons  = [];
 
         foreach ($promisesOrValues as $i => $promiseOrValue) {
-            $fulfiller = function ($val) use ($resolve): void {
-                $resolve($val);
-            };
+            $cancellationQueue->enqueue($promiseOrValue);
+            ++$toReject;
 
-            $rejecter = function (\Throwable $reason) use ($i, &$reasons, &$toReject, $reject): void {
-                $reasons[$i] = $reason;
+            resolve($promiseOrValue)->then(
+                function ($value) use ($resolve, &$continue): void {
+                    $continue = false;
+                    $resolve($value);
+                },
+                function (\Throwable $reason) use ($i, &$reasons, &$toReject, $reject, &$continue): void {
+                    $reasons[$i] = $reason;
 
-                if (0 === --$toReject) {
-                    $reject(
-                        new CompositeException(
+                    if (0 === --$toReject && !$continue) {
+                        $reject(new CompositeException(
                             $reasons,
                             'All promises rejected.'
-                        )
-                    );
+                        ));
+                    }
                 }
-            };
+            );
 
-            $cancellationQueue->enqueue($promiseOrValue);
+            if (!$continue) {
+                break;
+            }
+        }
 
-            resolve($promiseOrValue)
-                ->then($fulfiller, $rejecter);
+        $continue = false;
+        if ($toReject === 0 && !$reasons) {
+            $reject(new Exception\LengthException(
+                'Must contain at least 1 item but contains only 0 items.'
+            ));
+        } elseif ($toReject === 0) {
+            $reject(new CompositeException(
+                $reasons,
+                'All promises rejected.'
+            ));
         }
     }, $cancellationQueue);
 }

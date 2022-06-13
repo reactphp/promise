@@ -18,12 +18,30 @@ class FunctionAnyTest extends TestCase
             ->with(
                 self::callback(function ($exception) {
                     return $exception instanceof LengthException &&
-                           'Input array must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
+                           'Must contain at least 1 item but contains only 0 items.' === $exception->getMessage();
                 })
             );
 
         any([])
             ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldRejectWithLengthExceptionWithEmptyInputGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(new LengthException('Must contain at least 1 item but contains only 0 items.'));
+
+        $gen = (function () {
+            if (false) {
+                yield;
+            }
+        })();
+
+        any($gen)->then($this->expectCallableNever(), $mock);
     }
 
     /** @test */
@@ -53,6 +71,58 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveWithAnInputValueFromDeferred()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo(1));
+
+        $deferred = new Deferred();
+
+        any([$deferred->promise()])->then($mock);
+
+        $deferred->resolve(1);
+    }
+
+    /** @test */
+    public function shouldResolveValuesGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo(1));
+
+        $gen = (function () {
+            for ($i = 1; $i <= 3; ++$i) {
+                yield $i;
+            }
+        })();
+
+        any($gen)->then($mock);
+    }
+
+    /** @test */
+    public function shouldResolveValuesInfiniteGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo(1));
+
+        $gen = (function () {
+            for ($i = 1; ; ++$i) {
+                yield $i;
+            }
+        })();
+
+        any($gen)->then($mock);
+    }
+
+    /** @test */
     public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected()
     {
         $exception1 = new Exception();
@@ -72,6 +142,29 @@ class FunctionAnyTest extends TestCase
 
         any([reject($exception1), reject($exception2), reject($exception3)])
             ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldRejectWithAllRejectedInputValuesIfInputIsRejectedFromDeferred()
+    {
+        $exception = new Exception();
+
+        $compositeException = new CompositeException(
+            [2 => $exception],
+            'All promises rejected.'
+        );
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with($compositeException);
+
+        $deferred = new Deferred();
+
+        any([2 => $deferred->promise()])->then($this->expectCallableNever(), $mock);
+
+        $deferred->reject($exception);
     }
 
     /** @test */

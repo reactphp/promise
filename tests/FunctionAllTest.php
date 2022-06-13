@@ -59,6 +59,42 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
+    public function shouldResolveValuesGenerator()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo([1, 2, 3]));
+
+        $gen = (function () {
+            for ($i = 1; $i <= 3; ++$i) {
+                yield $i;
+            }
+        })();
+
+        all($gen)->then($mock);
+    }
+
+    /** @test */
+    public function shouldResolveValuesGeneratorEmpty()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(self::identicalTo([]));
+
+        $gen = (function () {
+            if (false) {
+                yield;
+            }
+        })();
+
+        all($gen)->then($mock);
+    }
+
+    /** @test */
     public function shouldRejectIfAnyInputPromiseRejects()
     {
         $exception2 = new Exception();
@@ -72,6 +108,24 @@ class FunctionAllTest extends TestCase
 
         all([resolve(1), reject($exception2), resolve($exception3)])
             ->then($this->expectCallableNever(), $mock);
+    }
+
+    /** @test */
+    public function shouldRejectInfiteGeneratorOrRejectedPromises()
+    {
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(new \RuntimeException('Iteration 1'));
+
+        $gen = (function () {
+            for ($i = 1; ; ++$i) {
+                yield reject(new \RuntimeException('Iteration ' . $i));
+            }
+        })();
+
+        all($gen)->then(null, $mock);
     }
 
     /** @test */
