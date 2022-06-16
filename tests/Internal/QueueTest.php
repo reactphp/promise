@@ -32,6 +32,27 @@ class QueueTest extends TestCase
 
     /**
      * @test
+     * @requires PHP 8.1
+     */
+    public function executesFollowingTasksIfPriorTaskSuspendsFiber()
+    {
+        $queue = new Queue();
+
+        $fiber = new \Fiber(function () use ($queue) {
+            $queue->enqueue(function () {
+                \Fiber::suspend(2);
+            });
+            return 1;
+        });
+
+        $ret = $fiber->start();
+        $this->assertEquals(2, $ret);
+
+        $queue->enqueue($this->expectCallableOnce());
+    }
+
+    /**
+     * @test
      */
     public function rethrowsExceptionsThrownFromTasks()
     {
