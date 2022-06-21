@@ -44,3 +44,18 @@ jobs:
       - run: composer self-update --2.2 # downgrade Composer for HHVM
       - run: hhvm $(which composer) install
       - run: hhvm vendor/bin/phpunit
+
+  PHPStan:
+    name: PHPStan
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php:
+          - 8.1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - run: composer require phpstan/phpstan
+      - run: vendor/bin/phpstan
