@@ -13,8 +13,9 @@ namespace React\Promise;
  *
  * If `$promiseOrValue` is a promise, it will be returned as is.
  *
- * @param mixed $promiseOrValue
- * @return PromiseInterface
+ * @template T
+ * @param T $promiseOrValue
+ * @return PromiseInterface<T>
  */
 function resolve($promiseOrValue = null)
 {
