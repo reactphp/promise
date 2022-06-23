@@ -184,6 +184,33 @@ trait PromiseFulfilledTestTrait
             );
     }
 
+    /**
+     * @test
+     * @requires PHP 8.1
+     */
+    public function thenShouldContinueToExecuteCallbacksWhenPriorCallbackSuspendsFiber()
+    {
+        $adapter = $this->getPromiseTestAdapter();
+        $adapter->resolve(42);
+
+        $fiber = new \Fiber(function () use ($adapter) {
+            $adapter->promise()->then(function (int $value) {
+                \Fiber::suspend($value);
+            });
+        });
+
+        $ret = $fiber->start();
+        $this->assertEquals(42, $ret);
+
+        $mock = $this->createCallableMock();
+        $mock
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->identicalTo(42));
+
+        $adapter->promise()->then($mock);
+    }
+
     /** @test */
     public function cancelShouldReturnNullForFulfilledPromise()
     {
