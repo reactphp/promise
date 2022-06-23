@@ -4,8 +4,9 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          bootstrap="vendor/autoload.php"
+         cacheResult="false"
          colors="true"
-         cacheResult="false">
+         convertDeprecationsToExceptions="true">
     <testsuites>
         <testsuite name="Promise Test Suite">
             <directory>./tests/</directory>
@@ -19,4 +20,7 @@
             <file>./src/functions_include.php</file>
         </exclude>
     </coverage>
+    <php>
+        <ini name="error_reporting" value="-1" />
+    </php>
 </phpunit>
