@@ -208,20 +208,6 @@ function any(iterable $promisesOrValues): PromiseInterface
 /**
  * @internal
  */
-function enqueue(callable $task): void
-{
-    static $queue;
-
-    if (!$queue) {
-        $queue = new Internal\Queue();
-    }
-
-    $queue->enqueue($task);
-}
-
-/**
- * @internal
- */
 function _checkTypehint(callable $callback, \Throwable $reason): bool
 {
     if (\is_array($callback)) {

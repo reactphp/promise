@@ -2,9 +2,7 @@
 
 namespace React\Promise\Internal;
 
-use React\Promise\Promise;
 use React\Promise\PromiseInterface;
-use function React\Promise\enqueue;
 use function React\Promise\resolve;
 
 /**
@@ -29,15 +27,11 @@ final class FulfilledPromise implements PromiseInterface
             return $this;
         }
 
-        return new Promise(function (callable $resolve, callable $reject) use ($onFulfilled): void {
-            enqueue(function () use ($resolve, $reject, $onFulfilled): void {
-                try {
-                    $resolve($onFulfilled($this->value));
-                } catch (\Throwable $exception) {
-                    $reject($exception);
-                }
-            });
-        });
+        try {
+            return resolve($onFulfilled($this->value));
+        } catch (\Throwable $exception) {
+            return new RejectedPromise($exception);
+        }
     }
 
     public function catch(callable $onRejected): PromiseInterface
