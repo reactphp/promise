@@ -565,7 +565,7 @@ Once released, this project will follow [SemVer](https://semver.org/).
 At the moment, this will install the latest development version:
 
 ```bash
-$ composer require react/promise:^3@dev
+composer require react/promise:^3@dev
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
@@ -583,7 +583,7 @@ You may target multiple versions at the same time to support a wider range of
 PHP versions like this:
 
 ```bash
-$ composer require "react/promise:^3@dev || ^2 || ^1"
+composer require "react/promise:^3@dev || ^2 || ^1"
 ```
 
 Credits
