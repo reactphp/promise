@@ -267,14 +267,12 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
     }
 
     foreach ($types as $type) {
-        if (!$type instanceof \ReflectionNamedType) {
-            throw new \LogicException('This implementation does not support groups of intersection or union types');
+
+        if ($type instanceof \ReflectionIntersectionType) {
+            $matches = matchesAllTypes($reason, $type->getTypes());
+        } else {
+            $matches = matchesType($reason, $type);
         }
-
-        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
-        $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
-            || (new \ReflectionClass($type->getName()))->isInstance($reason);
-
 
         // If we look for a single match (union), we can return early on match
         // If we look for a full match (intersection), we can return early on mismatch
@@ -292,4 +290,27 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
     // If we look for a single match (union) and did not return early, we matched no type and are false
     // If we look for a full match (intersection) and did not return early, we matched all types and are true
     return $isTypeUnion ? false : true;
+}
+
+/**
+ * @internal
+ */
+function matchesType($reason, $type): bool
+{
+    return ($type->isBuiltin() && \gettype($reason) === $type->getName())
+        || (new \ReflectionClass($type->getName()))->isInstance($reason);
+}
+
+/**
+ * @internal
+ */
+function matchesAllTypes($reason, $types): bool
+{
+    foreach ($types as $typeToMatch) {
+        if (!matchesType($reason, $typeToMatch)) {
+            return false ;
+        }
+    }
+
+    return true;
 }
