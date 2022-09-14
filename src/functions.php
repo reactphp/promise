@@ -267,14 +267,18 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
     }
 
     foreach ($types as $type) {
-        if (!$type instanceof \ReflectionNamedType) {
-            throw new \LogicException('This implementation does not support groups of intersection or union types');
+
+        if ($type instanceof \ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $typeToMatch) {
+                if (!($matches = ($typeToMatch->isBuiltin() && \gettype($reason) === $typeToMatch->getName())
+                    || (new \ReflectionClass($typeToMatch->getName()))->isInstance($reason))) {
+                    break;
+                }
+            }
+        } else {
+            $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
+                || (new \ReflectionClass($type->getName()))->isInstance($reason);
         }
-
-        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
-        $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
-            || (new \ReflectionClass($type->getName()))->isInstance($reason);
-
 
         // If we look for a single match (union), we can return early on match
         // If we look for a full match (intersection), we can return early on mismatch
