@@ -145,9 +145,9 @@ class FunctionCheckTypehintTest extends TestCase
      */
     public function shouldAcceptStaticClassCallbackWithDNFTypehint()
     {
-        self::assertFalse(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new \RuntimeException()));
-        self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new CountableException()));
-        self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new ArrayAccessibleException()));
+        self::assertFalse(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new \RuntimeException()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new CountableException()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new ArrayAccessibleException()));
     }
 
     /** @test */
