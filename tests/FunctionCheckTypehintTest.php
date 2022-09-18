@@ -117,6 +117,39 @@ class FunctionCheckTypehintTest extends TestCase
         self::assertTrue(_checkTypehint(['React\Promise\CallbackWithIntersectionTypehintClass', 'testCallbackStatic'], new CountableException()));
     }
 
+    /**
+     * @test
+     * @requires PHP 8.2
+     */
+    public function shouldAcceptInvokableObjectCallbackWithDNFTypehint()
+    {
+        self::assertFalse(_checkTypehint(new CallbackWithDNFTypehintClass(), new \RuntimeException()));
+        self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new ArrayAccessibleException()));
+        self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new CountableException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.2
+     */
+    public function shouldAcceptObjectMethodCallbackWithDNFTypehint()
+    {
+        self::assertFalse(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new \RuntimeException()));
+        self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new CountableException()));
+        self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new ArrayAccessibleException()));
+    }
+
+    /**
+     * @test
+     * @requires PHP 8.2
+     */
+    public function shouldAcceptStaticClassCallbackWithDNFTypehint()
+    {
+        self::assertFalse(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new \RuntimeException()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new CountableException()));
+        self::assertTrue(_checkTypehint(['React\Promise\CallbackWithDNFTypehintClass', 'testCallbackStatic'], new ArrayAccessibleException()));
+    }
+
     /** @test */
     public function shouldAcceptClosureCallbackWithoutTypehint()
     {

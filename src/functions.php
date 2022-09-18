@@ -354,7 +354,7 @@ function _checkTypehint(callable $callback, $object)
 
     // Extract the type of the argument and handle different possibilities
     $type = $expectedException->getType();
-    
+
     $isTypeUnion = true;
     $types = [];
 
@@ -379,14 +379,18 @@ function _checkTypehint(callable $callback, $object)
     }
 
     foreach ($types as $type) {
-        if (!$type instanceof \ReflectionNamedType) {
-            throw new \LogicException('This implementation does not support groups of intersection or union types');
+
+        if ($type instanceof \ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $typeToMatch) {
+                if (!($matches = ($typeToMatch->isBuiltin() && \gettype($object) === $typeToMatch->getName())
+                    || (new \ReflectionClass($typeToMatch->getName()))->isInstance($object))) {
+                    break;
+                }
+            }
+        } else {
+            $matches = ($type->isBuiltin() && \gettype($object) === $type->getName())
+                || (new \ReflectionClass($type->getName()))->isInstance($object);
         }
-
-        // A named-type can be either a class-name or a built-in type like string, int, array, etc.
-        $matches = ($type->isBuiltin() && \gettype($object) === $type->getName())
-            || (new \ReflectionClass($type->getName()))->isInstance($object);
-
 
         // If we look for a single match (union), we can return early on match
         // If we look for a full match (intersection), we can return early on mismatch
