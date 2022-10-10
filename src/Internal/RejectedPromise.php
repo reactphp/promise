@@ -2,10 +2,8 @@
 
 namespace React\Promise\Internal;
 
-use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use function React\Promise\_checkTypehint;
-use function React\Promise\enqueue;
 use function React\Promise\resolve;
 
 /**
@@ -26,15 +24,11 @@ final class RejectedPromise implements PromiseInterface
             return $this;
         }
 
-        return new Promise(function (callable $resolve, callable $reject) use ($onRejected): void {
-            enqueue(function () use ($resolve, $reject, $onRejected): void {
-                try {
-                    $resolve($onRejected($this->reason));
-                } catch (\Throwable $exception) {
-                    $reject($exception);
-                }
-            });
-        });
+        try {
+            return resolve($onRejected($this->reason));
+        } catch (\Throwable $exception) {
+            return new RejectedPromise($exception);
+        }
     }
 
     public function catch(callable $onRejected): PromiseInterface
