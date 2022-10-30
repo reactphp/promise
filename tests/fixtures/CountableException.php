@@ -7,6 +7,7 @@ use RuntimeException;
 
 class CountableException extends RuntimeException implements Countable
 {
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return 0;
