@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- PHPUnit configuration file with old format for PHPUnit 9.2 or older -->
+<!-- PHPUnit configuration file with old format before PHPUnit 9 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.5/phpunit.xsd"
          bootstrap="vendor/autoload.php"
@@ -18,4 +18,12 @@
             </exclude>
         </whitelist>
     </filter>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <!-- Evaluate assertions, requires running with "php -d zend.assertions=1 vendor/bin/phpunit" -->
+        <!-- <ini name="zend.assertions=1" value="1" /> -->
+        <ini name="assert.active" value="1" />
+        <ini name="assert.exception" value="1" />
+        <ini name="assert.bail" value="0" />
+    </php>
 </phpunit>
