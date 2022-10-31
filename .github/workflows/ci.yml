@@ -7,7 +7,7 @@ on:
 jobs:
   PHPUnit:
     name: PHPUnit (PHP ${{ matrix.php }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php:
@@ -21,11 +21,12 @@ jobs:
           - 5.4
           - 5.3
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: xdebug
+          ini-file: development
       - run: composer install
       - run: vendor/bin/phpunit --coverage-text
         if: ${{ matrix.php >= 7.3 }}
@@ -34,13 +35,16 @@ jobs:
 
   PHPUnit-hhvm:
     name: PHPUnit (HHVM)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v2
-      - uses: azjezz/setup-hhvm@v1
+      - uses: actions/checkout@v3
+      - run: cp "$(which composer)" composer.phar && ./composer.phar self-update --2.2 # downgrade Composer for HHVM
+      - name: Run hhvm composer.phar install
+        uses: docker://hhvm/hhvm:3.30-lts-latest
         with:
-          version: lts-3.30
-      - run: composer self-update --2.2 # downgrade Composer for HHVM
-      - run: hhvm $(which composer) install
-      - run: hhvm vendor/bin/phpunit
+          args: hhvm composer.phar install
+      - name: Run hhvm vendor/bin/phpunit
+        uses: docker://hhvm/hhvm:3.30-lts-latest
+        with:
+          args: hhvm vendor/bin/phpunit
