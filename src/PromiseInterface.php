@@ -2,6 +2,9 @@
 
 namespace React\Promise;
 
+/**
+ * @template-covariant T
+ */
 interface PromiseInterface
 {
     /**
@@ -32,10 +35,9 @@ interface PromiseInterface
      *      than once.
      *  3. `$onProgress` (deprecated) may be called multiple times.
      *
-     * @param callable|null $onFulfilled
-     * @param callable|null $onRejected
-     * @param callable|null $onProgress This argument is deprecated and should not be used anymore.
-     * @return PromiseInterface
+     * @template TFulfilled as PromiseInterface<T>|T
+     * @param (callable(T): TFulfilled)|null $onFulfilled
+     * @return ($onFulfilled is null ? $this : (TFulfilled is PromiseInterface ? TFulfilled : PromiseInterface<TFulfilled>))
      */
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null);
 }

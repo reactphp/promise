@@ -13,8 +13,10 @@ namespace React\Promise;
  *
  * If `$promiseOrValue` is a promise, it will be returned as is.
  *
- * @param mixed $promiseOrValue
- * @return PromiseInterface
+ * @template-covariant T
+ * @template TFulfilled as PromiseInterface<T>|T
+ * @param TFulfilled $promiseOrValue
+ * @return (TFulfilled is PromiseInterface ? TFulfilled : PromiseInterface<TFulfilled>)
  */
 function resolve($promiseOrValue = null)
 {
@@ -52,8 +54,10 @@ function resolve($promiseOrValue = null)
  * throwing an exception. For example, it allows you to propagate a rejection with
  * the value of another promise.
  *
- * @param mixed $promiseOrValue
- * @return PromiseInterface
+ * @template T is null
+ * @template R
+ * @param R $promiseOrValue
+ * @return PromiseInterface<T>
  */
 function reject($promiseOrValue = null)
 {
@@ -72,8 +76,9 @@ function reject($promiseOrValue = null)
  * will be an array containing the resolution values of each of the items in
  * `$promisesOrValues`.
  *
- * @param array $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<array<T>>
  */
 function all($promisesOrValues)
 {
@@ -89,8 +94,9 @@ function all($promisesOrValues)
  * The returned promise will become **infinitely pending** if  `$promisesOrValues`
  * contains 0 items.
  *
- * @param array $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<T>
  */
 function race($promisesOrValues)
 {
@@ -126,8 +132,9 @@ function race($promisesOrValues)
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains 0 items.
  *
- * @param array $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<T>
  */
 function any($promisesOrValues)
 {
@@ -151,9 +158,10 @@ function any($promisesOrValues)
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains less items than `$howMany`.
  *
- * @param array $promisesOrValues
+ * @template T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
  * @param int $howMany
- * @return PromiseInterface
+ * @return PromiseInterface<array<T>>
  */
 function some($promisesOrValues, $howMany)
 {
@@ -228,9 +236,11 @@ function some($promisesOrValues, $howMany)
  * The map function receives each item as argument, where item is a fully resolved
  * value of a promise or value in `$promisesOrValues`.
  *
- * @param array $promisesOrValues
- * @param callable $mapFunc
- * @return PromiseInterface
+ * @template-covariant  T
+ * @template TFulfilled as PromiseInterface<T>|T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
+ * @param callable(T): TFulfilled $mapFunc
+ * @return PromiseInterface<array<T>>
  */
 function map($promisesOrValues, callable $mapFunc)
 {
@@ -276,10 +286,11 @@ function map($promisesOrValues, callable $mapFunc)
  * promise, *and* `$initialValue` may be a promise or a value for the starting
  * value.
  *
- * @param array $promisesOrValues
- * @param callable $reduceFunc
+ * @template T
+ * @param array<PromiseInterface<T>|T> $promisesOrValues
+ * @param callable(T): bool $reduceFunc
  * @param mixed $initialValue
- * @return PromiseInterface
+ * @return PromiseInterface<array<T>>
  */
 function reduce($promisesOrValues, callable $reduceFunc, $initialValue = null)
 {

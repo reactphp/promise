@@ -78,8 +78,9 @@ interface ExtendedPromiseInterface extends PromiseInterface
      *     ->always('cleanup');
      * ```
      *
-     * @param callable $onFulfilledOrRejected
-     * @return ExtendedPromiseInterface
+     * @template TReturn of mixed
+     * @param callable(T): TReturn $onFulfilledOrRejected
+     * @return (TReturn is ExtendedPromiseInterface ? TReturn : ExtendedPromiseInterface<TReturn>)
      */
     public function always(callable $onFulfilledOrRejected);
 

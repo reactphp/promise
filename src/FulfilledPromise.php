@@ -4,11 +4,19 @@ namespace React\Promise;
 
 /**
  * @deprecated 2.8.0 External usage of FulfilledPromise is deprecated, use `resolve()` instead.
+ * @template-implements PromiseInterface
+ * @template-covariant T
  */
 class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseInterface
 {
+    /**
+     * @var T
+     */
     private $value;
 
+    /**
+     * @param T $value
+     */
     public function __construct($value = null)
     {
         if ($value instanceof PromiseInterface) {
@@ -18,6 +26,11 @@ class FulfilledPromise implements ExtendedPromiseInterface, CancellablePromiseIn
         $this->value = $value;
     }
 
+    /**
+     * @template TFulfilled as PromiseInterface<T>|T
+     * @param (callable(T): TFulfilled)|null $onFulfilled
+     * @return ($onFulfilled is null ? $this : (TFulfilled is PromiseInterface ? TFulfilled : PromiseInterface<TFulfilled>))
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null, callable $onProgress = null)
     {
         if (null === $onFulfilled) {

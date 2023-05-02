@@ -50,3 +50,16 @@ jobs:
         uses: docker://hhvm/hhvm:3.30-lts-latest
         with:
           args: hhvm vendor/bin/phpunit
+
+  static-analysis:
+    name: PHPStan
+    runs-on: ubuntu-20.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+      - run: composer require phpstan/phpstan
+      - name: Execute type checking
+        run: vendor/bin/phpstan --configuration="phpstan.types.neon.dist"
