@@ -850,7 +850,7 @@ This project follows [SemVer](https://semver.org/).
 This will install the latest supported version:
 
 ```bash
-composer require react/promise:^2.9
+composer require react/promise:^2.10
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
