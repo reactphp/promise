@@ -30,3 +30,25 @@ jobs:
         if: ${{ matrix.php >= 7.3 }}
       - run: vendor/bin/phpunit --coverage-text -c phpunit.xml.legacy
         if: ${{ matrix.php < 7.3 }}
+
+  PHPStan:
+    name: PHPStan (PHP ${{ matrix.php }})
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php:
+          - 8.2
+          - 8.1
+          - 8.0
+          - 7.4
+          - 7.3
+          - 7.2
+          - 7.1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - run: composer install
+      - run: vendor/bin/phpstan

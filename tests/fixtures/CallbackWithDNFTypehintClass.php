@@ -7,15 +7,9 @@ use RuntimeException;
 
 class CallbackWithDNFTypehintClass
 {
-    public function __invoke((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public function __invoke((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e) { }
 
-    public function testCallback((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public function testCallback((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e) { }
 
-    public static function testCallbackStatic((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public static function testCallbackStatic((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e) { }
 }

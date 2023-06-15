@@ -122,7 +122,7 @@ class FunctionCheckTypehintTest extends TestCase
     public function shouldAcceptInvokableObjectCallbackWithDNFTypehint()
     {
         self::assertFalse(_checkTypehint(new CallbackWithDNFTypehintClass(), new \RuntimeException()));
-        self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new ArrayAccessibleException()));
+        self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new IterableException()));
         self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new CountableException()));
     }
 
@@ -134,7 +134,7 @@ class FunctionCheckTypehintTest extends TestCase
     {
         self::assertFalse(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new CountableException()));
-        self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new ArrayAccessibleException()));
+        self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new IterableException()));
     }
 
     /**
@@ -145,7 +145,7 @@ class FunctionCheckTypehintTest extends TestCase
     {
         self::assertFalse(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new CountableException()));
-        self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new ArrayAccessibleException()));
+        self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new IterableException()));
     }
 
     /** @test */

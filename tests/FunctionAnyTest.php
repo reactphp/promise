@@ -219,6 +219,6 @@ class FunctionAnyTest extends TestCase
 
         $promise2 = new Promise(function () {}, $this->expectCallableNever());
 
-        any([$deferred->promise(), $promise2], 1)->cancel();
+        any([$deferred->promise(), $promise2])->cancel();
     }
 }

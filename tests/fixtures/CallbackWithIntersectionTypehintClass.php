@@ -7,15 +7,9 @@ use RuntimeException;
 
 class CallbackWithIntersectionTypehintClass
 {
-    public function __invoke(RuntimeException&Countable $e)
-    {
-    }
+    #[PHP8] public function __invoke(RuntimeException&Countable $e) { }
 
-    public function testCallback(RuntimeException&Countable $e)
-    {
-    }
+    #[PHP8] public function testCallback(RuntimeException&Countable $e) { }
 
-    public static function testCallbackStatic(RuntimeException&Countable $e)
-    {
-    }
+    #[PHP8] public static function testCallbackStatic(RuntimeException&Countable $e) { }
 }

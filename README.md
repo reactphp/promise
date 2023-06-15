@@ -48,8 +48,9 @@ Table of Contents
      * [Rejection forwarding](#rejection-forwarding)
      * [Mixed resolution and rejection forwarding](#mixed-resolution-and-rejection-forwarding)
 5. [Install](#install)
-6. [Credits](#credits)
-7. [License](#license)
+6. [Tests](#tests)
+7. [Credits](#credits)
+8. [License](#license)
 
 Introduction
 ------------
@@ -584,6 +585,27 @@ PHP versions like this:
 
 ```bash
 composer require "react/promise:^3@dev || ^2 || ^1"
+```
+
+## Tests
+
+To run the test suite, you first need to clone this repo and then install all
+dependencies [through Composer](https://getcomposer.org/):
+
+```bash
+composer install
+```
+
+To run the test suite, go to the project root and run:
+
+```bash
+vendor/bin/phpunit
+```
+
+On top of this, we use PHPStan on level 3 to ensure type safety across the project:
+
+```bash
+vendor/bin/phpstan
 ```
 
 Credits

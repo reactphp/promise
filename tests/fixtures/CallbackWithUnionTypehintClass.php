@@ -7,15 +7,9 @@ use RuntimeException;
 
 class CallbackWithUnionTypehintClass
 {
-    public function __invoke(RuntimeException|InvalidArgumentException $e)
-    {
-    }
+    #[PHP8] public function __invoke(RuntimeException|InvalidArgumentException $e) { }
 
-    public function testCallback(RuntimeException|InvalidArgumentException $e)
-    {
-    }
+    #[PHP8] public function testCallback(RuntimeException|InvalidArgumentException $e) { }
 
-    public static function testCallbackStatic(RuntimeException|InvalidArgumentException $e)
-    {
-    }
+    #[PHP8] public static function testCallbackStatic(RuntimeException|InvalidArgumentException $e) { }
 }

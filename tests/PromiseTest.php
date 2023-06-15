@@ -138,6 +138,7 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () {}, function () use (&$promise) {
+            assert($promise instanceof Promise);
             throw new \Exception('foo');
         });
         $promise->cancel();
@@ -155,6 +156,7 @@ class PromiseTest extends TestCase
     {
         gc_collect_cycles();
         $promise = new Promise(function () use (&$promise) {
+            assert($promise instanceof Promise);
             throw new \Exception('foo');
         });
         unset($promise);
@@ -172,7 +174,9 @@ class PromiseTest extends TestCase
         gc_collect_cycles();
         $promise = new Promise(function () {
             throw new \Exception('foo');
-        }, function () use (&$promise) { });
+        }, function () use (&$promise) {
+            assert($promise instanceof Promise);
+        });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -244,17 +248,6 @@ class PromiseTest extends TestCase
         gc_collect_cycles();
         $promise = new Promise(function () { });
         $promise->always(function () { });
-        unset($promise);
-
-        $this->assertSame(0, gc_collect_cycles());
-    }
-
-    /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithProgressFollowers()
-    {
-        gc_collect_cycles();
-        $promise = new Promise(function () { });
-        $promise->then(null, null, function () { });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());

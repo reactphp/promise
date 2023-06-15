@@ -256,12 +256,15 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
 
         if ($type instanceof \ReflectionIntersectionType) {
             foreach ($type->getTypes() as $typeToMatch) {
+                assert($typeToMatch instanceof \ReflectionNamedType);
                 if (!($matches = ($typeToMatch->isBuiltin() && \gettype($reason) === $typeToMatch->getName())
                     || (new \ReflectionClass($typeToMatch->getName()))->isInstance($reason))) {
                     break;
                 }
             }
+            assert(isset($matches));
         } else {
+            assert($type instanceof \ReflectionNamedType);
             $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
                 || (new \ReflectionClass($type->getName()))->isInstance($reason);
         }

@@ -54,7 +54,9 @@ class DeferredTest extends TestCase
         gc_collect_cycles();
         gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
 
-        $deferred = new Deferred(function () use (&$deferred) { });
+        $deferred = new Deferred(function () use (&$deferred) {
+            assert($deferred instanceof Deferred);
+        });
         $deferred->reject(new \Exception('foo'));
         unset($deferred);
 
