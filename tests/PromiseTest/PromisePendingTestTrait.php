@@ -7,13 +7,10 @@ use React\Promise\PromiseInterface;
 
 trait PromisePendingTestTrait
 {
-    /**
-     * @return PromiseAdapterInterface
-     */
-    abstract public function getPromiseTestAdapter(callable $canceller = null);
+    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
-    public function thenShouldReturnAPromiseForPendingPromise()
+    public function thenShouldReturnAPromiseForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -21,7 +18,7 @@ trait PromisePendingTestTrait
     }
 
     /** @test */
-    public function thenShouldReturnAllowNullForPendingPromise()
+    public function thenShouldReturnAllowNullForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -29,15 +26,7 @@ trait PromisePendingTestTrait
     }
 
     /** @test */
-    public function cancelShouldReturnNullForPendingPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        self::assertNull($adapter->promise()->cancel());
-    }
-
-    /** @test */
-    public function catchShouldNotInvokeRejectionHandlerForPendingPromise()
+    public function catchShouldNotInvokeRejectionHandlerForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -46,7 +35,7 @@ trait PromisePendingTestTrait
     }
 
     /** @test */
-    public function finallyShouldReturnAPromiseForPendingPromise()
+    public function finallyShouldReturnAPromiseForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -57,7 +46,7 @@ trait PromisePendingTestTrait
      * @test
      * @deprecated
      */
-    public function otherwiseShouldNotInvokeRejectionHandlerForPendingPromise()
+    public function otherwiseShouldNotInvokeRejectionHandlerForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -69,7 +58,7 @@ trait PromisePendingTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldReturnAPromiseForPendingPromise()
+    public function alwaysShouldReturnAPromiseForPendingPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 

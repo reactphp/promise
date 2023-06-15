@@ -9,7 +9,7 @@ use React\Promise\Exception\LengthException;
 class FunctionAnyTest extends TestCase
 {
     /** @test */
-    public function shouldRejectWithLengthExceptionWithEmptyInputArray()
+    public function shouldRejectWithLengthExceptionWithEmptyInputArray(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -27,7 +27,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithLengthExceptionWithEmptyInputGenerator()
+    public function shouldRejectWithLengthExceptionWithEmptyInputGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -36,7 +36,7 @@ class FunctionAnyTest extends TestCase
             ->with(new LengthException('Must contain at least 1 item but contains only 0 items.'));
 
         $gen = (function () {
-            if (false) {
+            if (false) { // @phpstan-ignore-line
                 yield;
             }
         })();
@@ -45,7 +45,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveWithAnInputValue()
+    public function shouldResolveWithAnInputValue(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -58,7 +58,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveWithAPromisedInputValue()
+    public function shouldResolveWithAPromisedInputValue(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -71,7 +71,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveWithAnInputValueFromDeferred()
+    public function shouldResolveWithAnInputValueFromDeferred(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -87,7 +87,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesGenerator()
+    public function shouldResolveValuesGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -105,7 +105,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesInfiniteGenerator()
+    public function shouldResolveValuesInfiniteGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -123,7 +123,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected()
+    public function shouldRejectWithAllRejectedInputValuesIfAllInputsAreRejected(): void
     {
         $exception1 = new Exception();
         $exception2 = new Exception();
@@ -145,7 +145,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithAllRejectedInputValuesIfInputIsRejectedFromDeferred()
+    public function shouldRejectWithAllRejectedInputValuesIfInputIsRejectedFromDeferred(): void
     {
         $exception = new Exception();
 
@@ -168,7 +168,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveWhenFirstInputPromiseResolves()
+    public function shouldResolveWhenFirstInputPromiseResolves(): void
     {
         $exception2 = new Exception();
         $exception3 = new Exception();
@@ -184,7 +184,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotRelyOnArryIndexesWhenUnwrappingToASingleResolutionValue()
+    public function shouldNotRelyOnArryIndexesWhenUnwrappingToASingleResolutionValue(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -203,7 +203,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldCancelInputArrayPromises()
+    public function shouldCancelInputArrayPromises(): void
     {
         $promise1 = new Promise(function () {}, $this->expectCallableOnce());
         $promise2 = new Promise(function () {}, $this->expectCallableOnce());
@@ -212,7 +212,7 @@ class FunctionAnyTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills(): void
     {
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve(null);

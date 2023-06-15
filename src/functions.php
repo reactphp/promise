@@ -68,7 +68,7 @@ function reject(\Throwable $reason): PromiseInterface
  * will be an array containing the resolution values of each of the items in
  * `$promisesOrValues`.
  *
- * @param iterable $promisesOrValues
+ * @param iterable<mixed> $promisesOrValues
  * @return PromiseInterface
  */
 function all(iterable $promisesOrValues): PromiseInterface
@@ -77,6 +77,7 @@ function all(iterable $promisesOrValues): PromiseInterface
 
     return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
         $toResolve = 0;
+        /** @var bool */
         $continue  = true;
         $values    = [];
 
@@ -118,7 +119,7 @@ function all(iterable $promisesOrValues): PromiseInterface
  * The returned promise will become **infinitely pending** if  `$promisesOrValues`
  * contains 0 items.
  *
- * @param iterable $promisesOrValues
+ * @param iterable<mixed> $promisesOrValues
  * @return PromiseInterface
  */
 function race(iterable $promisesOrValues): PromiseInterface
@@ -153,7 +154,7 @@ function race(iterable $promisesOrValues): PromiseInterface
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains 0 items.
  *
- * @param iterable $promisesOrValues
+ * @param iterable<mixed> $promisesOrValues
  * @return PromiseInterface
  */
 function any(iterable $promisesOrValues): PromiseInterface
@@ -215,6 +216,7 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
     } elseif (\is_object($callback) && !$callback instanceof \Closure) {
         $callbackReflection = new \ReflectionMethod($callback, '__invoke');
     } else {
+        assert($callback instanceof \Closure || \is_string($callback));
         $callbackReflection = new \ReflectionFunction($callback);
     }
 
@@ -257,16 +259,16 @@ function _checkTypehint(callable $callback, \Throwable $reason): bool
         if ($type instanceof \ReflectionIntersectionType) {
             foreach ($type->getTypes() as $typeToMatch) {
                 assert($typeToMatch instanceof \ReflectionNamedType);
-                if (!($matches = ($typeToMatch->isBuiltin() && \gettype($reason) === $typeToMatch->getName())
-                    || (new \ReflectionClass($typeToMatch->getName()))->isInstance($reason))) {
+                $name = $typeToMatch->getName();
+                if (!($matches = (!$typeToMatch->isBuiltin() && $reason instanceof $name))) {
                     break;
                 }
             }
             assert(isset($matches));
         } else {
             assert($type instanceof \ReflectionNamedType);
-            $matches = ($type->isBuiltin() && \gettype($reason) === $type->getName())
-                || (new \ReflectionClass($type->getName()))->isInstance($reason);
+            $name = $type->getName();
+            $matches = !$type->isBuiltin() && $reason instanceof $name;
         }
 
         // If we look for a single match (union), we can return early on match

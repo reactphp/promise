@@ -7,7 +7,7 @@ use Exception;
 class FunctionAllTest extends TestCase
 {
     /** @test */
-    public function shouldResolveEmptyInput()
+    public function shouldResolveEmptyInput(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -20,7 +20,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesArray()
+    public function shouldResolveValuesArray(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -33,7 +33,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolvePromisesArray()
+    public function shouldResolvePromisesArray(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -46,7 +46,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveSparseArrayInput()
+    public function shouldResolveSparseArrayInput(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -59,7 +59,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesGenerator()
+    public function shouldResolveValuesGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -77,7 +77,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesGeneratorEmpty()
+    public function shouldResolveValuesGeneratorEmpty(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -86,7 +86,7 @@ class FunctionAllTest extends TestCase
             ->with(self::identicalTo([]));
 
         $gen = (function () {
-            if (false) {
+            if (false) { // @phpstan-ignore-line
                 yield;
             }
         })();
@@ -95,7 +95,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectIfAnyInputPromiseRejects()
+    public function shouldRejectIfAnyInputPromiseRejects(): void
     {
         $exception2 = new Exception();
         $exception3 = new Exception();
@@ -111,7 +111,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectInfiteGeneratorOrRejectedPromises()
+    public function shouldRejectInfiteGeneratorOrRejectedPromises(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -129,7 +129,7 @@ class FunctionAllTest extends TestCase
     }
 
     /** @test */
-    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises()
+    public function shouldPreserveTheOrderOfArrayWhenResolvingAsyncPromises(): void
     {
         $mock = $this->createCallableMock();
         $mock

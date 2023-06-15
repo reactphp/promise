@@ -8,35 +8,35 @@ use InvalidArgumentException;
 class FunctionCheckTypehintTest extends TestCase
 {
     /** @test */
-    public function shouldAcceptClosureCallbackWithTypehint()
+    public function shouldAcceptClosureCallbackWithTypehint(): void
     {
         self::assertTrue(_checkTypehint(function (InvalidArgumentException $e) {}, new InvalidArgumentException()));
         self::assertFalse(_checkTypehint(function (InvalidArgumentException $e) {}, new Exception()));
     }
 
     /** @test */
-    public function shouldAcceptFunctionStringCallbackWithTypehint()
+    public function shouldAcceptFunctionStringCallbackWithTypehint(): void
     {
         self::assertTrue(_checkTypehint(new CallbackWithTypehintClass(), new InvalidArgumentException()));
         self::assertFalse(_checkTypehint(new CallbackWithTypehintClass(), new Exception()));
     }
 
     /** @test */
-    public function shouldAcceptInvokableObjectCallbackWithTypehint()
+    public function shouldAcceptInvokableObjectCallbackWithTypehint(): void
     {
         self::assertTrue(_checkTypehint(new CallbackWithTypehintClass(), new InvalidArgumentException()));
         self::assertFalse(_checkTypehint(new CallbackWithTypehintClass(), new Exception()));
     }
 
     /** @test */
-    public function shouldAcceptObjectMethodCallbackWithTypehint()
+    public function shouldAcceptObjectMethodCallbackWithTypehint(): void
     {
         self::assertTrue(_checkTypehint([new CallbackWithTypehintClass(), 'testCallback'], new InvalidArgumentException()));
         self::assertFalse(_checkTypehint([new CallbackWithTypehintClass(), 'testCallback'], new Exception()));
     }
 
     /** @test */
-    public function shouldAcceptStaticClassCallbackWithTypehint()
+    public function shouldAcceptStaticClassCallbackWithTypehint(): void
     {
         self::assertTrue(_checkTypehint([CallbackWithTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
         self::assertFalse(_checkTypehint([CallbackWithTypehintClass::class, 'testCallbackStatic'], new Exception()));
@@ -46,7 +46,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8
      */
-    public function shouldAcceptClosureCallbackWithUnionTypehint()
+    public function shouldAcceptClosureCallbackWithUnionTypehint(): void
     {
         eval(
             'namespace React\Promise;' .
@@ -59,7 +59,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8
      */
-    public function shouldAcceptInvokableObjectCallbackWithUnionTypehint()
+    public function shouldAcceptInvokableObjectCallbackWithUnionTypehint(): void
     {
         self::assertTrue(_checkTypehint(new CallbackWithUnionTypehintClass(), new InvalidArgumentException()));
         self::assertFalse(_checkTypehint(new CallbackWithUnionTypehintClass(), new Exception()));
@@ -69,7 +69,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8
      */
-    public function shouldAcceptObjectMethodCallbackWithUnionTypehint()
+    public function shouldAcceptObjectMethodCallbackWithUnionTypehint(): void
     {
         self::assertTrue(_checkTypehint([new CallbackWithUnionTypehintClass(), 'testCallback'], new InvalidArgumentException()));
         self::assertFalse(_checkTypehint([new CallbackWithUnionTypehintClass(), 'testCallback'], new Exception()));
@@ -79,7 +79,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8
      */
-    public function shouldAcceptStaticClassCallbackWithUnionTypehint()
+    public function shouldAcceptStaticClassCallbackWithUnionTypehint(): void
     {
         self::assertTrue(_checkTypehint([CallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
         self::assertFalse(_checkTypehint([CallbackWithUnionTypehintClass::class, 'testCallbackStatic'], new Exception()));
@@ -89,7 +89,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.1
      */
-    public function shouldAcceptInvokableObjectCallbackWithIntersectionTypehint()
+    public function shouldAcceptInvokableObjectCallbackWithIntersectionTypehint(): void
     {
         self::assertFalse(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new \RuntimeException()));
         self::assertTrue(_checkTypehint(new CallbackWithIntersectionTypehintClass(), new CountableException()));
@@ -99,7 +99,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.1
      */
-    public function shouldAcceptObjectMethodCallbackWithIntersectionTypehint()
+    public function shouldAcceptObjectMethodCallbackWithIntersectionTypehint(): void
     {
         self::assertFalse(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([new CallbackWithIntersectionTypehintClass(), 'testCallback'], new CountableException()));
@@ -109,7 +109,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.1
      */
-    public function shouldAcceptStaticClassCallbackWithIntersectionTypehint()
+    public function shouldAcceptStaticClassCallbackWithIntersectionTypehint(): void
     {
         self::assertFalse(_checkTypehint([CallbackWithIntersectionTypehintClass::class, 'testCallbackStatic'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([CallbackWithIntersectionTypehintClass::class, 'testCallbackStatic'], new CountableException()));
@@ -119,7 +119,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.2
      */
-    public function shouldAcceptInvokableObjectCallbackWithDNFTypehint()
+    public function shouldAcceptInvokableObjectCallbackWithDNFTypehint(): void
     {
         self::assertFalse(_checkTypehint(new CallbackWithDNFTypehintClass(), new \RuntimeException()));
         self::assertTrue(_checkTypehint(new CallbackWithDNFTypehintClass(), new IterableException()));
@@ -130,7 +130,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.2
      */
-    public function shouldAcceptObjectMethodCallbackWithDNFTypehint()
+    public function shouldAcceptObjectMethodCallbackWithDNFTypehint(): void
     {
         self::assertFalse(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([new CallbackWithDNFTypehintClass(), 'testCallback'], new CountableException()));
@@ -141,7 +141,7 @@ class FunctionCheckTypehintTest extends TestCase
      * @test
      * @requires PHP 8.2
      */
-    public function shouldAcceptStaticClassCallbackWithDNFTypehint()
+    public function shouldAcceptStaticClassCallbackWithDNFTypehint(): void
     {
         self::assertFalse(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new \RuntimeException()));
         self::assertTrue(_checkTypehint([CallbackWithDNFTypehintClass::class, 'testCallbackStatic'], new CountableException()));
@@ -149,41 +149,41 @@ class FunctionCheckTypehintTest extends TestCase
     }
 
     /** @test */
-    public function shouldAcceptClosureCallbackWithoutTypehint()
+    public function shouldAcceptClosureCallbackWithoutTypehint(): void
     {
         self::assertTrue(_checkTypehint(function (InvalidArgumentException $e) {
         }, new InvalidArgumentException()));
     }
 
     /** @test */
-    public function shouldAcceptFunctionStringCallbackWithoutTypehint()
+    public function shouldAcceptFunctionStringCallbackWithoutTypehint(): void
     {
         self::assertTrue(_checkTypehint(new CallbackWithoutTypehintClass(), new InvalidArgumentException()));
     }
 
     /** @test */
-    public function shouldAcceptInvokableObjectCallbackWithoutTypehint()
+    public function shouldAcceptInvokableObjectCallbackWithoutTypehint(): void
     {
         self::assertTrue(_checkTypehint(new CallbackWithoutTypehintClass(), new InvalidArgumentException()));
     }
 
     /** @test */
-    public function shouldAcceptObjectMethodCallbackWithoutTypehint()
+    public function shouldAcceptObjectMethodCallbackWithoutTypehint(): void
     {
         self::assertTrue(_checkTypehint([new CallbackWithoutTypehintClass(), 'testCallback'], new InvalidArgumentException()));
     }
 
     /** @test */
-    public function shouldAcceptStaticClassCallbackWithoutTypehint()
+    public function shouldAcceptStaticClassCallbackWithoutTypehint(): void
     {
         self::assertTrue(_checkTypehint([CallbackWithoutTypehintClass::class, 'testCallbackStatic'], new InvalidArgumentException()));
     }
 }
 
-function testCallbackWithTypehint(InvalidArgumentException $e)
+function testCallbackWithTypehint(InvalidArgumentException $e): void
 {
 }
 
-function testCallbackWithoutTypehint()
+function testCallbackWithoutTypehint(): void
 {
 }

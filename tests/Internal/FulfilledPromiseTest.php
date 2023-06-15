@@ -14,8 +14,9 @@ class FulfilledPromiseTest extends TestCase
     use PromiseSettledTestTrait,
         PromiseFulfilledTestTrait;
 
-    public function getPromiseTestAdapter(callable $canceller = null)
+    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
+        /** @var ?FulfilledPromise */
         $promise = null;
 
         return new CallbackPromiseAdapter([
@@ -45,9 +46,9 @@ class FulfilledPromiseTest extends TestCase
     /**
      * @test
      */
-    public function shouldThrowExceptionIfConstructedWithAPromise()
+    public function shouldThrowExceptionIfConstructedWithAPromise(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        return new FulfilledPromise(new FulfilledPromise());
+        new FulfilledPromise(new FulfilledPromise());
     }
 }

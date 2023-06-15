@@ -10,8 +10,13 @@ use function React\Promise\resolve;
  */
 final class FulfilledPromise implements PromiseInterface
 {
+    /** @var mixed */
     private $value;
 
+    /**
+     * @param mixed $value
+     * @throws \InvalidArgumentException
+     */
     public function __construct($value = null)
     {
         if ($value instanceof PromiseInterface) {

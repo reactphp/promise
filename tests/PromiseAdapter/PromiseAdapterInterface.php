@@ -6,8 +6,8 @@ use React\Promise\PromiseInterface;
 
 interface PromiseAdapterInterface
 {
-    public function promise(): ?PromiseInterface;
-    public function resolve(): ?PromiseInterface;
-    public function reject(): ?PromiseInterface;
-    public function settle(): ?PromiseInterface;
+    public function promise(): PromiseInterface;
+    public function resolve(): void;
+    public function reject(): void;
+    public function settle(): void;
 }

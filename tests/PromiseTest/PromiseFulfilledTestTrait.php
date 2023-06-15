@@ -10,13 +10,10 @@ use function React\Promise\resolve;
 
 trait PromiseFulfilledTestTrait
 {
-    /**
-     * @return PromiseAdapterInterface
-     */
-    abstract public function getPromiseTestAdapter(callable $canceller = null);
+    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
-    public function fulfilledPromiseShouldBeImmutable()
+    public function fulfilledPromiseShouldBeImmutable(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -37,7 +34,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function fulfilledPromiseShouldInvokeNewlyAddedCallback()
+    public function fulfilledPromiseShouldInvokeNewlyAddedCallback(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -54,7 +51,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function thenShouldForwardResultWhenCallbackIsNull()
+    public function thenShouldForwardResultWhenCallbackIsNull(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -77,7 +74,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function thenShouldForwardCallbackResultToNextCallback()
+    public function thenShouldForwardCallbackResultToNextCallback(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -102,7 +99,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function thenShouldForwardPromisedCallbackResultValueToNextCallback()
+    public function thenShouldForwardPromisedCallbackResultValueToNextCallback(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -127,7 +124,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackReturnsARejection()
+    public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackReturnsARejection(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -154,7 +151,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackThrows()
+    public function thenShouldSwitchFromCallbacksToErrbacksWhenCallbackThrows(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -188,7 +185,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @requires PHP 8.1
      */
-    public function thenShouldContinueToExecuteCallbacksWhenPriorCallbackSuspendsFiber()
+    public function thenShouldContinueToExecuteCallbacksWhenPriorCallbackSuspendsFiber(): void
     {
         $adapter = $this->getPromiseTestAdapter();
         $adapter->resolve(42);
@@ -212,17 +209,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function cancelShouldReturnNullForFulfilledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->resolve(null);
-
-        self::assertNull($adapter->promise()->cancel());
-    }
-
-    /** @test */
-    public function cancelShouldHaveNoEffectForFulfilledPromise()
+    public function cancelShouldHaveNoEffectForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
@@ -232,7 +219,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function catchShouldNotInvokeRejectionHandlerForFulfilledPromise()
+    public function catchShouldNotInvokeRejectionHandlerForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -241,7 +228,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValueForFulfilledPromise()
+    public function finallyShouldNotSuppressValueForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -260,7 +247,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -281,7 +268,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -302,7 +289,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerThrowsForFulfilledPromise()
+    public function finallyShouldRejectWhenHandlerThrowsForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -323,7 +310,7 @@ trait PromiseFulfilledTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerRejectsForFulfilledPromise()
+    public function finallyShouldRejectWhenHandlerRejectsForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -347,7 +334,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function otherwiseShouldNotInvokeRejectionHandlerForFulfilledPromise()
+    public function otherwiseShouldNotInvokeRejectionHandlerForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -359,7 +346,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldNotSuppressValueForFulfilledPromise()
+    public function alwaysShouldNotSuppressValueForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -381,7 +368,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise()
+    public function alwaysShouldNotSuppressValueWhenHandlerReturnsANonPromiseForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -405,7 +392,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise()
+    public function alwaysShouldNotSuppressValueWhenHandlerReturnsAPromiseForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -429,7 +416,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldRejectWhenHandlerThrowsForFulfilledPromise()
+    public function alwaysShouldRejectWhenHandlerThrowsForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -453,7 +440,7 @@ trait PromiseFulfilledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldRejectWhenHandlerRejectsForFulfilledPromise()
+    public function alwaysShouldRejectWhenHandlerRejectsForFulfilledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 

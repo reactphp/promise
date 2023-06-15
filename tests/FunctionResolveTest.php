@@ -9,7 +9,7 @@ use Exception;
 class FunctionResolveTest extends TestCase
 {
     /** @test */
-    public function shouldResolveAnImmediateValue()
+    public function shouldResolveAnImmediateValue(): void
     {
         $expected = 123;
 
@@ -27,7 +27,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveAFulfilledPromise()
+    public function shouldResolveAFulfilledPromise(): void
     {
         $expected = 123;
 
@@ -47,7 +47,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveAThenable()
+    public function shouldResolveAThenable(): void
     {
         $thenable = new SimpleFulfilledTestThenable();
 
@@ -65,7 +65,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveACancellableThenable()
+    public function shouldResolveACancellableThenable(): void
     {
         $thenable = new SimpleTestCancellableThenable();
 
@@ -76,7 +76,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectARejectedPromise()
+    public function shouldRejectARejectedPromise(): void
     {
         $exception = new Exception();
 
@@ -96,7 +96,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldSupportDeepNestingInPromiseChains()
+    public function shouldSupportDeepNestingInPromiseChains(): void
     {
         $d = new Deferred();
         $d->resolve(false);
@@ -126,7 +126,7 @@ class FunctionResolveTest extends TestCase
     }
 
     /** @test */
-    public function shouldSupportVeryDeepNestedPromises()
+    public function shouldSupportVeryDeepNestedPromises(): void
     {
         $deferreds = [];
 

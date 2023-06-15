@@ -7,7 +7,7 @@ use Exception;
 class FunctionRejectTest extends TestCase
 {
     /** @test */
-    public function shouldRejectAnException()
+    public function shouldRejectAnException(): void
     {
         $exception = new Exception();
 

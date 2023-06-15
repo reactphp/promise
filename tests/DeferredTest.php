@@ -8,7 +8,7 @@ class DeferredTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
-    public function getPromiseTestAdapter(callable $canceller = null)
+    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
         $d = new Deferred($canceller);
 
@@ -21,7 +21,7 @@ class DeferredTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException(): void
     {
         gc_collect_cycles();
         $deferred = new Deferred(function ($resolve, $reject) {
@@ -34,7 +34,7 @@ class DeferredTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException(): void
     {
         gc_collect_cycles();
         gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
@@ -49,7 +49,7 @@ class DeferredTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndExplicitlyRejectWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndExplicitlyRejectWithException(): void
     {
         gc_collect_cycles();
         gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on

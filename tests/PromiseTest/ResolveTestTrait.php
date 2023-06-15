@@ -12,13 +12,10 @@ use function React\Promise\resolve;
 
 trait ResolveTestTrait
 {
-    /**
-     * @return PromiseAdapterInterface
-     */
-    abstract public function getPromiseTestAdapter(callable $canceller = null);
+    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
-    public function resolveShouldResolve()
+    public function resolveShouldResolve(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -35,7 +32,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function resolveShouldResolveWithPromisedValue()
+    public function resolveShouldResolveWithPromisedValue(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -52,7 +49,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function resolveShouldRejectWhenResolvedWithRejectedPromise()
+    public function resolveShouldRejectWhenResolvedWithRejectedPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -71,7 +68,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function resolveShouldForwardValueWhenCallbackIsNull()
+    public function resolveShouldForwardValueWhenCallbackIsNull(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -95,7 +92,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function resolveShouldMakePromiseImmutable()
+    public function resolveShouldMakePromiseImmutable(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -123,7 +120,7 @@ trait ResolveTestTrait
     /**
      * @test
      */
-    public function resolveShouldRejectWhenResolvedWithItself()
+    public function resolveShouldRejectWhenResolvedWithItself(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -145,7 +142,7 @@ trait ResolveTestTrait
     /**
      * @test
      */
-    public function resolveShouldRejectWhenResolvedWithAPromiseWhichFollowsItself()
+    public function resolveShouldRejectWhenResolvedWithAPromiseWhichFollowsItself(): void
     {
         $adapter1 = $this->getPromiseTestAdapter();
         $adapter2 = $this->getPromiseTestAdapter();
@@ -170,7 +167,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValue()
+    public function finallyShouldNotSuppressValue(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -190,7 +187,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsANonPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -212,7 +209,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromise()
+    public function finallyShouldNotSuppressValueWhenHandlerReturnsAPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -234,7 +231,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerThrowsForFulfillment()
+    public function finallyShouldRejectWhenHandlerThrowsForFulfillment(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -256,7 +253,7 @@ trait ResolveTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerRejectsForFulfillment()
+    public function finallyShouldRejectWhenHandlerRejectsForFulfillment(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 

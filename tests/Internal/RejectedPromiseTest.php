@@ -14,8 +14,9 @@ class RejectedPromiseTest extends TestCase
     use PromiseSettledTestTrait,
         PromiseRejectedTestTrait;
 
-    public function getPromiseTestAdapter(callable $canceller = null)
+    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
+        /** @var ?RejectedPromise */
         $promise = null;
 
         return new CallbackPromiseAdapter([

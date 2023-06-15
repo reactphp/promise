@@ -11,13 +11,10 @@ use function React\Promise\resolve;
 
 trait RejectTestTrait
 {
-    /**
-     * @return PromiseAdapterInterface
-     */
-    abstract public function getPromiseTestAdapter(callable $canceller = null);
+    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
-    public function rejectShouldRejectWithAnException()
+    public function rejectShouldRejectWithAnException(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -36,7 +33,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldForwardReasonWhenCallbackIsNull()
+    public function rejectShouldForwardReasonWhenCallbackIsNull(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -61,7 +58,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldMakePromiseImmutable()
+    public function rejectShouldMakePromiseImmutable(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -91,7 +88,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function rejectShouldInvokeCatchHandler()
+    public function rejectShouldInvokeCatchHandler(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -110,7 +107,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressRejection()
+    public function finallyShouldNotSuppressRejection(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -130,7 +127,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsANonPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsANonPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -152,7 +149,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsAPromise()
+    public function finallyShouldNotSuppressRejectionWhenHandlerReturnsAPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -174,7 +171,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerThrowsForRejection()
+    public function finallyShouldRejectWhenHandlerThrowsForRejection(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -196,7 +193,7 @@ trait RejectTestTrait
     }
 
     /** @test */
-    public function finallyShouldRejectWhenHandlerRejectsForRejection()
+    public function finallyShouldRejectWhenHandlerRejectsForRejection(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 

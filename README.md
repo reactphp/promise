@@ -602,7 +602,7 @@ To run the test suite, go to the project root and run:
 vendor/bin/phpunit
 ```
 
-On top of this, we use PHPStan on level 3 to ensure type safety across the project:
+On top of this, we use PHPStan on max level to ensure type safety across the project:
 
 ```bash
 vendor/bin/phpstan
