@@ -11,8 +11,12 @@ use function React\Promise\resolve;
  */
 final class RejectedPromise implements PromiseInterface
 {
+    /** @var \Throwable */
     private $reason;
 
+    /**
+     * @param \Throwable $reason
+     */
     public function __construct(\Throwable $reason)
     {
         $this->reason = $reason;

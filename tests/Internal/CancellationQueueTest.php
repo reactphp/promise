@@ -11,7 +11,7 @@ use React\Promise\TestCase;
 class CancellationQueueTest extends TestCase
 {
     /** @test */
-    public function acceptsSimpleCancellableThenable()
+    public function acceptsSimpleCancellableThenable(): void
     {
         $p = new SimpleTestCancellableThenable();
 
@@ -24,7 +24,7 @@ class CancellationQueueTest extends TestCase
     }
 
     /** @test */
-    public function ignoresSimpleCancellable()
+    public function ignoresSimpleCancellable(): void
     {
         $p = new SimpleTestCancellable();
 
@@ -37,7 +37,7 @@ class CancellationQueueTest extends TestCase
     }
 
     /** @test */
-    public function callsCancelOnPromisesEnqueuedBeforeStart()
+    public function callsCancelOnPromisesEnqueuedBeforeStart(): void
     {
         $d1 = $this->getCancellableDeferred();
         $d2 = $this->getCancellableDeferred();
@@ -50,7 +50,7 @@ class CancellationQueueTest extends TestCase
     }
 
     /** @test */
-    public function callsCancelOnPromisesEnqueuedAfterStart()
+    public function callsCancelOnPromisesEnqueuedAfterStart(): void
     {
         $d1 = $this->getCancellableDeferred();
         $d2 = $this->getCancellableDeferred();
@@ -64,7 +64,7 @@ class CancellationQueueTest extends TestCase
     }
 
     /** @test */
-    public function doesNotCallCancelTwiceWhenStartedTwice()
+    public function doesNotCallCancelTwiceWhenStartedTwice(): void
     {
         $d = $this->getCancellableDeferred();
 
@@ -78,7 +78,7 @@ class CancellationQueueTest extends TestCase
     /**
      * @test
      */
-    public function rethrowsExceptionsThrownFromCancel()
+    public function rethrowsExceptionsThrownFromCancel(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('test');
@@ -96,7 +96,7 @@ class CancellationQueueTest extends TestCase
         $cancellationQueue();
     }
 
-    private function getCancellableDeferred()
+    private function getCancellableDeferred(): Deferred
     {
         return new Deferred($this->expectCallableOnce());
     }

@@ -11,9 +11,11 @@ namespace React\Promise\Exception;
  */
 class CompositeException extends \Exception
 {
+    /** @var \Throwable[] */
     private $throwables;
 
-    public function __construct(array $throwables, $message = '', $code = 0, $previous = null)
+    /** @param \Throwable[] $throwables */
+    public function __construct(array $throwables, string $message = '', int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 

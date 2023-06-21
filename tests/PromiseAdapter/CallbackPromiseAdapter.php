@@ -6,30 +6,34 @@ use React\Promise\PromiseInterface;
 
 class CallbackPromiseAdapter implements PromiseAdapterInterface
 {
+    /** @var callable[] */
     private $callbacks;
 
+    /**
+     * @param callable[] $callbacks
+     */
     public function __construct(array $callbacks)
     {
         $this->callbacks = $callbacks;
     }
 
-    public function promise(): ?PromiseInterface
+    public function promise(): PromiseInterface
     {
         return ($this->callbacks['promise'])(...func_get_args());
     }
 
-    public function resolve(): ?PromiseInterface
+    public function resolve(): void
     {
-        return ($this->callbacks['resolve'])(...func_get_args());
+        ($this->callbacks['resolve'])(...func_get_args());
     }
 
-    public function reject(): ?PromiseInterface
+    public function reject(): void
     {
-        return ($this->callbacks['reject'])(...func_get_args());
+        ($this->callbacks['reject'])(...func_get_args());
     }
 
-    public function settle(): ?PromiseInterface
+    public function settle(): void
     {
-        return ($this->callbacks['settle'])(...func_get_args());
+        ($this->callbacks['settle'])(...func_get_args());
     }
 }

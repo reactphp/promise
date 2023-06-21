@@ -7,15 +7,12 @@ use RuntimeException;
 
 class CallbackWithDNFTypehintClass
 {
-    public function __invoke((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public function __invoke((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e): void { } /*
+    public function __invoke(bool $unusedOnPhp8ButRequiredToMakePhpstanWorkOnLegacyPhp = true): void { } // */
 
-    public function testCallback((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public function testCallback((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e): void { } /*
+    public function testCallback(bool $unusedOnPhp8ButRequiredToMakePhpstanWorkOnLegacyPhp = true): void { } // */
 
-    public static function testCallbackStatic((RuntimeException&Countable)|(RuntimeException&\ArrayAccess) $e)
-    {
-    }
+    #[PHP8] public static function testCallbackStatic((RuntimeException&Countable)|(RuntimeException&\IteratorAggregate) $e): void { }/*
+    public static function testCallbackStatic(bool $unusedOnPhp8ButRequiredToMakePhpstanWorkOnLegacyPhp = true): void { } // */
 }

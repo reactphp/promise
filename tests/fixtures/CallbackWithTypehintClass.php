@@ -6,15 +6,15 @@ use InvalidArgumentException;
 
 class CallbackWithTypehintClass
 {
-    public function __invoke(InvalidArgumentException $e)
+    public function __invoke(InvalidArgumentException $e): void
     {
     }
 
-    public function testCallback(InvalidArgumentException $e)
+    public function testCallback(InvalidArgumentException $e): void
     {
     }
 
-    public static function testCallbackStatic(InvalidArgumentException $e)
+    public static function testCallbackStatic(InvalidArgumentException $e): void
     {
     }
 }

@@ -7,13 +7,10 @@ use React\Promise\PromiseInterface;
 
 trait PromiseSettledTestTrait
 {
-    /**
-     * @return PromiseAdapterInterface
-     */
-    abstract public function getPromiseTestAdapter(callable $canceller = null);
+    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
-    public function thenShouldReturnAPromiseForSettledPromise()
+    public function thenShouldReturnAPromiseForSettledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -22,7 +19,7 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
-    public function thenShouldReturnAllowNullForSettledPromise()
+    public function thenShouldReturnAllowNullForSettledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -31,17 +28,7 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
-    public function cancelShouldReturnNullForSettledPromise()
-    {
-        $adapter = $this->getPromiseTestAdapter();
-
-        $adapter->settle(null);
-
-        self::assertNull($adapter->promise()->cancel());
-    }
-
-    /** @test */
-    public function cancelShouldHaveNoEffectForSettledPromise()
+    public function cancelShouldHaveNoEffectForSettledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter($this->expectCallableNever());
 
@@ -51,7 +38,7 @@ trait PromiseSettledTestTrait
     }
 
     /** @test */
-    public function finallyShouldReturnAPromiseForSettledPromise()
+    public function finallyShouldReturnAPromiseForSettledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 
@@ -63,7 +50,7 @@ trait PromiseSettledTestTrait
      * @test
      * @deprecated
      */
-    public function alwaysShouldReturnAPromiseForSettledPromise()
+    public function alwaysShouldReturnAPromiseForSettledPromise(): void
     {
         $adapter = $this->getPromiseTestAdapter();
 

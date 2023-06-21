@@ -4,7 +4,10 @@ namespace React\Promise;
 
 class SimpleTestCancellableThenable
 {
+    /** @var bool */
     public $cancelCalled = false;
+
+    /** @var ?callable */
     public $onCancel;
 
     public function __construct(callable $onCancel = null)
@@ -12,12 +15,12 @@ class SimpleTestCancellableThenable
         $this->onCancel = $onCancel;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null)
+    public function then(callable $onFulfilled = null, callable $onRejected = null): self
     {
         return new self();
     }
 
-    public function cancel()
+    public function cancel(): void
     {
         $this->cancelCalled = true;
 

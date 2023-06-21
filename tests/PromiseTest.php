@@ -9,7 +9,7 @@ class PromiseTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
-    public function getPromiseTestAdapter(callable $canceller = null)
+    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
         $resolveCallback = $rejectCallback = null;
 
@@ -29,7 +29,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectIfResolverThrowsException()
+    public function shouldRejectIfResolverThrowsException(): void
     {
         $exception = new Exception('foo');
 
@@ -48,7 +48,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveWithoutCreatingGarbageCyclesIfResolverResolvesWithException()
+    public function shouldResolveWithoutCreatingGarbageCyclesIfResolverResolvesWithException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve) {
@@ -60,7 +60,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithoutResolver()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsExceptionWithoutResolver(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () {
@@ -72,7 +72,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverRejectsWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverRejectsWithException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) {
@@ -84,7 +84,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerRejectsWithException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
@@ -97,7 +97,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfParentCancellerRejectsWithException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) { }, function ($resolve, $reject) {
@@ -110,7 +110,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverThrowsException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function ($resolve, $reject) {
@@ -134,10 +134,11 @@ class PromiseTest extends TestCase
      * @test
      * @requires PHP 7
      */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () {}, function () use (&$promise) {
+            assert($promise instanceof Promise);
             throw new \Exception('foo');
         });
         $promise->cancel();
@@ -151,10 +152,11 @@ class PromiseTest extends TestCase
      * @requires PHP 7
      * @see self::shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException
      */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () use (&$promise) {
+            assert($promise instanceof Promise);
             throw new \Exception('foo');
         });
         unset($promise);
@@ -167,19 +169,21 @@ class PromiseTest extends TestCase
      * @requires PHP 7
      * @see self::shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException
      */
-    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException()
+    public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () {
             throw new \Exception('foo');
-        }, function () use (&$promise) { });
+        }, function () use (&$promise) {
+            assert($promise instanceof Promise);
+        });
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
     }
 
     /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromise()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromise(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -189,7 +193,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithThenFollowers()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithThenFollowers(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -200,7 +204,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithCatchFollowers()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithCatchFollowers(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -211,7 +215,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithFinallyFollowers()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithFinallyFollowers(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -225,7 +229,7 @@ class PromiseTest extends TestCase
      * @test
      * @deprecated
      */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithOtherwiseFollowers()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithOtherwiseFollowers(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -239,7 +243,7 @@ class PromiseTest extends TestCase
      * @test
      * @deprecated
      */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithAlwaysFollowers()
+    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithAlwaysFollowers(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () { });
@@ -250,18 +254,7 @@ class PromiseTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotLeaveGarbageCyclesWhenRemovingLastReferenceToPendingPromiseWithProgressFollowers()
-    {
-        gc_collect_cycles();
-        $promise = new Promise(function () { });
-        $promise->then(null, null, function () { });
-        unset($promise);
-
-        $this->assertSame(0, gc_collect_cycles());
-    }
-
-    /** @test */
-    public function shouldFulfillIfFullfilledWithSimplePromise()
+    public function shouldFulfillIfFullfilledWithSimplePromise(): void
     {
         gc_collect_cycles();
         $promise = new Promise(function () {

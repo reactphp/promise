@@ -6,11 +6,16 @@ use React\Promise\Internal\RejectedPromise;
 
 final class Promise implements PromiseInterface
 {
+    /** @var ?callable */
     private $canceller;
+
+    /** @var ?PromiseInterface */
     private $result;
 
+    /** @var callable[] */
     private $handlers = [];
 
+    /** @var int */
     private $requiredCancelRequests = 0;
 
     public function __construct(callable $resolver, callable $canceller = null)
@@ -46,6 +51,7 @@ final class Promise implements PromiseInterface
         return new static(
             $this->resolver($onFulfilled, $onRejected),
             static function () use (&$parent) {
+                assert($parent instanceof self);
                 --$parent->requiredCancelRequests;
 
                 if ($parent->requiredCancelRequests <= 0) {
@@ -187,7 +193,7 @@ final class Promise implements PromiseInterface
         }
     }
 
-    private function unwrap($promise): PromiseInterface
+    private function unwrap(PromiseInterface $promise): PromiseInterface
     {
         while ($promise instanceof self && null !== $promise->result) {
             $promise = $promise->result;
@@ -213,6 +219,7 @@ final class Promise implements PromiseInterface
         } elseif (\is_object($callback) && !$callback instanceof \Closure) {
             $ref = new \ReflectionMethod($callback, '__invoke');
         } else {
+            assert($callback instanceof \Closure || \is_string($callback));
             $ref = new \ReflectionFunction($callback);
         }
         $args = $ref->getNumberOfParameters();

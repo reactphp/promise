@@ -7,7 +7,7 @@ use Exception;
 class FunctionRaceTest extends TestCase
 {
     /** @test */
-    public function shouldReturnForeverPendingPromiseForEmptyInput()
+    public function shouldReturnForeverPendingPromiseForEmptyInput(): void
     {
         race(
             []
@@ -15,7 +15,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesArray()
+    public function shouldResolveValuesArray(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -29,7 +29,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolvePromisesArray()
+    public function shouldResolvePromisesArray(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -52,7 +52,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveSparseArrayInput()
+    public function shouldResolveSparseArrayInput(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -66,7 +66,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesGenerator()
+    public function shouldResolveValuesGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -84,7 +84,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldResolveValuesInfiniteGenerator()
+    public function shouldResolveValuesInfiniteGenerator(): void
     {
         $mock = $this->createCallableMock();
         $mock
@@ -102,7 +102,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldRejectIfFirstSettledPromiseRejects()
+    public function shouldRejectIfFirstSettledPromiseRejects(): void
     {
         $exception = new Exception();
 
@@ -127,7 +127,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldCancelInputArrayPromises()
+    public function shouldCancelInputArrayPromises(): void
     {
         $promise1 = new Promise(function () {}, $this->expectCallableOnce());
         $promise2 = new Promise(function () {}, $this->expectCallableOnce());
@@ -136,7 +136,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseFulfills(): void
     {
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->resolve(null);
@@ -147,7 +147,7 @@ class FunctionRaceTest extends TestCase
     }
 
     /** @test */
-    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseRejects()
+    public function shouldNotCancelOtherPendingInputArrayPromisesIfOnePromiseRejects(): void
     {
         $deferred = new Deferred($this->expectCallableNever());
         $deferred->reject(new Exception());

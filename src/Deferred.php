@@ -4,8 +4,13 @@ namespace React\Promise;
 
 final class Deferred
 {
+    /** @var Promise */
     private $promise;
+
+    /** @var callable */
     private $resolveCallback;
+
+    /** @var callable */
     private $rejectCallback;
 
     public function __construct(callable $canceller = null)
@@ -21,6 +26,9 @@ final class Deferred
         return $this->promise;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function resolve($value): void
     {
         ($this->resolveCallback)($value);
