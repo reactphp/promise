@@ -206,6 +206,58 @@ function any(iterable $promisesOrValues): PromiseInterface
     }, $cancellationQueue);
 }
 
+function some(iterable $promisesOrValues): PromiseInterface
+{
+    $cancellationQueue = new Internal\CancellationQueue();
+
+    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
+        $left = count($promisesOrValues);
+        $atLeastOne = false;
+        $values = [];
+        $reasons = [];
+
+        foreach ($promisesOrValues as $i => $promiseOrValue) {
+            $cancellationQueue->enqueue($promiseOrValue);
+            $values[$i] = null;
+            $reasons[$i] = null;
+
+            resolve($promiseOrValue)->then(
+                function ($value) use ($i, &$values, &$left, &$atLeastOne, $resolve): void {
+                    $values[$i] = $value;
+                    
+                    $left--;
+                    $atLeastOne = true;
+
+                    if ($left === 0) {
+                        $resolve($values);
+                    }
+                },
+                function (\Throwable $reason) use ($i, &$values, &$left, $atLeastOne, $resolve, $reject): void {
+                    $reasons[$i] = $reason;
+                    
+                    $left--;
+                    
+                    if($left === 0) {
+                        if($atLeastOne)
+                            $resolve($values);
+                        else
+                            $reject(new CompositeException(
+                                $reasons,
+                                'All promises rejected.'
+                            ));
+                    }
+                }
+            );
+        }
+
+        if ($left === 0) {
+            $reject(new Exception\LengthException(
+                'Must contain at least 1 item but contains only 0 items.'
+            ));
+        }
+    }, $cancellationQueue);
+}
+
 /**
  * @internal
  */
