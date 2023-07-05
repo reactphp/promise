@@ -261,7 +261,7 @@ trait PromiseRejectedTestTrait
         $adapter->promise()
             ->catch(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
-            });
+            })->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
     }
 
     /** @test */
@@ -461,7 +461,7 @@ trait PromiseRejectedTestTrait
         $adapter->promise()
             ->otherwise(function (InvalidArgumentException $reason) use ($mock) {
                 $mock($reason);
-            });
+            })->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
     }
 
     /**

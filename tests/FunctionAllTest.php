@@ -106,7 +106,7 @@ class FunctionAllTest extends TestCase
             ->method('__invoke')
             ->with(self::identicalTo($exception2));
 
-        all([resolve(1), reject($exception2), resolve($exception3)])
+        all([resolve(1), reject($exception2), reject($exception3)])
             ->then($this->expectCallableNever(), $mock);
     }
 

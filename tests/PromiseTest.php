@@ -66,6 +66,9 @@ class PromiseTest extends TestCase
         $promise = new Promise(function () {
             throw new \Exception('foo');
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -78,6 +81,9 @@ class PromiseTest extends TestCase
         $promise = new Promise(function ($resolve, $reject) {
             $reject(new \Exception('foo'));
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -116,6 +122,9 @@ class PromiseTest extends TestCase
         $promise = new Promise(function ($resolve, $reject) {
             throw new \Exception('foo');
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -137,6 +146,7 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
+        /** @var Promise $promise */
         $promise = new Promise(function () {}, function () use (&$promise) {
             assert($promise instanceof Promise);
             throw new \Exception('foo');
@@ -155,10 +165,14 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
+        /** @var Promise $promise */
         $promise = new Promise(function () use (&$promise) {
             assert($promise instanceof Promise);
             throw new \Exception('foo');
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -172,11 +186,15 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException(): void
     {
         gc_collect_cycles();
+        /** @var Promise $promise */
         $promise = new Promise(function () {
             throw new \Exception('foo');
         }, function () use (&$promise) {
             assert($promise instanceof Promise);
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         $this->assertSame(0, gc_collect_cycles());
@@ -260,6 +278,9 @@ class PromiseTest extends TestCase
         $promise = new Promise(function () {
             throw new Exception('foo');
         });
+
+        $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+
         unset($promise);
 
         self::assertSame(0, gc_collect_cycles());
