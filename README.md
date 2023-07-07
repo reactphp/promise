@@ -125,6 +125,8 @@ having `$onFulfilled` (which they registered via `$promise->then()`) called with
 If `$value` itself is a promise, the promise will transition to the state of
 this promise once it is resolved.
 
+See also the [`resolve()` function](#resolve).
+
 #### Deferred::reject()
 
 ```php
@@ -135,6 +137,8 @@ Rejects the promise returned by `promise()`, signalling that the deferred's
 computation failed.
 All consumers are notified by having `$onRejected` (which they registered via
 `$promise->then()`) called with `$reason`.
+
+See also the [`reject()` function](#reject).
 
 ### PromiseInterface
 
@@ -361,6 +365,19 @@ a trusted promise that follows the state of the thenable is returned.
 
 If `$promiseOrValue` is a promise, it will be returned as is.
 
+The resulting `$promise` implements the [`PromiseInterface`](#promiseinterface)
+and can be consumed like any other promise:
+
+```php
+$promise = React\Promise\resolve(42);
+
+$promise->then(function (int $result): void {
+    var_dump($result);
+}, function (\Throwable $e): void {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+});
+```
+
 #### reject()
 
 ```php
@@ -373,6 +390,52 @@ Note that the [`\Throwable`](https://www.php.net/manual/en/class.throwable.php) 
 both user land [`\Exception`](https://www.php.net/manual/en/class.exception.php)'s and 
 [`\Error`](https://www.php.net/manual/en/class.error.php) internal PHP errors. By enforcing `\Throwable` as reason to 
 reject a promise, any language error or user land exception can be used to reject a promise.
+
+The resulting `$promise` implements the [`PromiseInterface`](#promiseinterface)
+and can be consumed like any other promise:
+
+```php
+$promise = React\Promise\reject(new RuntimeException('Request failed'));
+
+$promise->then(function (int $result): void {
+    var_dump($result);
+}, function (\Throwable $e): void {
+    echo 'Error: ' . $e->getMessage() . PHP_EOL;
+});
+```
+
+Note that rejected promises should always be handled similar to how any
+exceptions should always be caught in a `try` + `catch` block. If you remove the
+last reference to a rejected promise that has not been handled, it will
+report an unhandled promise rejection:
+
+```php
+function incorrect(): int
+{
+     $promise = React\Promise\reject(new RuntimeException('Request failed'));
+
+     // Commented out: No rejection handler registered here.
+     // $promise->then(null, function (\Throwable $e): void { /* ignore */ });
+
+     // Returning from a function will remove all local variable references, hence why
+     // this will report an unhandled promise rejection here.
+     return 42;
+}
+
+// Calling this function will log an error message plus its stack trace:
+// Unhandled promise rejection with RuntimeException: Request failed in example.php:10
+incorrect();
+```
+
+A rejected promise will be considered "handled" if you catch the rejection
+reason with either the [`then()` method](#promiseinterfacethen), the
+[`catch()` method](#promiseinterfacecatch), or the
+[`finally()` method](#promiseinterfacefinally). Note that each of these methods
+return a new promise that may again be rejected if you re-throw an exception.
+
+A rejected promise will also be considered "handled" if you abort the operation
+with the [`cancel()` method](#promiseinterfacecancel) (which in turn would
+usually reject the promise if it is still pending).
 
 #### all()
 

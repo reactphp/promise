@@ -100,7 +100,7 @@ function all(iterable $promisesOrValues): PromiseInterface
                 }
             );
 
-            if (!$continue) {
+            if (!$continue && !\is_array($promisesOrValues)) {
                 break;
             }
         }
@@ -136,7 +136,7 @@ function race(iterable $promisesOrValues): PromiseInterface
                 $continue = false;
             });
 
-            if (!$continue) {
+            if (!$continue && !\is_array($promisesOrValues)) {
                 break;
             }
         }
@@ -187,7 +187,7 @@ function any(iterable $promisesOrValues): PromiseInterface
                 }
             );
 
-            if (!$continue) {
+            if (!$continue && !\is_array($promisesOrValues)) {
                 break;
             }
         }

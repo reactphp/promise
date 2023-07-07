@@ -2,6 +2,7 @@
 
 namespace React\Promise\PromiseTest;
 
+use React\Promise\Internal\RejectedPromise;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
 use React\Promise\PromiseInterface;
 
@@ -16,6 +17,10 @@ trait PromiseSettledTestTrait
 
         $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then());
+
+        if ($adapter->promise() instanceof RejectedPromise) {
+            $adapter->promise()->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+        }
     }
 
     /** @test */
@@ -25,6 +30,10 @@ trait PromiseSettledTestTrait
 
         $adapter->settle(null);
         self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->then(null, null));
+
+        if ($adapter->promise() instanceof RejectedPromise) {
+            $adapter->promise()->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+        }
     }
 
     /** @test */
@@ -43,7 +52,11 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle(null);
-        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->finally(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $promise = $adapter->promise()->finally(function () {}));
+
+        if ($promise instanceof RejectedPromise) {
+            $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+        }
     }
 
     /**
@@ -55,6 +68,10 @@ trait PromiseSettledTestTrait
         $adapter = $this->getPromiseTestAdapter();
 
         $adapter->settle(null);
-        self::assertInstanceOf(PromiseInterface::class, $adapter->promise()->always(function () {}));
+        self::assertInstanceOf(PromiseInterface::class, $promise = $adapter->promise()->always(function () {}));
+
+        if ($promise instanceof RejectedPromise) {
+            $promise->then(null, $this->expectCallableOnce()); // avoid reporting unhandled rejection
+        }
     }
 }

@@ -18,6 +18,9 @@ final class Promise implements PromiseInterface
     /** @var int */
     private $requiredCancelRequests = 0;
 
+    /** @var bool */
+    private $cancelled = false;
+
     public function __construct(callable $resolver, callable $canceller = null)
     {
         $this->canceller = $canceller;
@@ -89,12 +92,18 @@ final class Promise implements PromiseInterface
 
     public function cancel(): void
     {
+        $this->cancelled = true;
         $canceller = $this->canceller;
         $this->canceller = null;
 
         $parentCanceller = null;
 
         if (null !== $this->result) {
+            // Forward cancellation to rejected promise to avoid reporting unhandled rejection
+            if ($this->result instanceof RejectedPromise) {
+                $this->result->cancel();
+            }
+
             // Go up the promise chain and reach the top most promise which is
             // itself not following another promise
             $root = $this->unwrap($this->result);
@@ -190,6 +199,11 @@ final class Promise implements PromiseInterface
 
         foreach ($handlers as $handler) {
             $handler($result);
+        }
+
+        // Forward cancellation to rejected promise to avoid reporting unhandled rejection
+        if ($this->cancelled && $result instanceof RejectedPromise) {
+            $result->cancel();
         }
     }
 

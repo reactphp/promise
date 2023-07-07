@@ -14,6 +14,9 @@ final class RejectedPromise implements PromiseInterface
     /** @var \Throwable */
     private $reason;
 
+    /** @var bool */
+    private $handled = false;
+
     /**
      * @param \Throwable $reason
      */
@@ -22,11 +25,25 @@ final class RejectedPromise implements PromiseInterface
         $this->reason = $reason;
     }
 
+    public function __destruct()
+    {
+        if ($this->handled) {
+            return;
+        }
+
+        $message = 'Unhandled promise rejection with ' . \get_class($this->reason) . ': ' . $this->reason->getMessage() . ' in ' . $this->reason->getFile() . ':' . $this->reason->getLine() . PHP_EOL;
+        $message .= 'Stack trace:' . PHP_EOL . $this->reason->getTraceAsString();
+
+        \error_log($message);
+    }
+
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
         if (null === $onRejected) {
             return $this;
         }
+
+        $this->handled = true;
 
         try {
             return resolve($onRejected($this->reason));
@@ -55,6 +72,7 @@ final class RejectedPromise implements PromiseInterface
 
     public function cancel(): void
     {
+        $this->handled = true;
     }
 
     /**

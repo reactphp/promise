@@ -128,6 +128,10 @@ class FunctionResolveTest extends TestCase
     /** @test */
     public function shouldSupportVeryDeepNestedPromises(): void
     {
+        if (PHP_VERSION_ID < 70200 && ini_get('xdebug.max_nesting_level') !== false) {
+            $this->markTestSkipped('Skip unhandled rejection on legacy PHP 7.1');
+        }
+
         $deferreds = [];
 
         for ($i = 0; $i < 150; $i++) {

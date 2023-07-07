@@ -10,6 +10,7 @@
     <testsuites>
         <testsuite name="Promise Test Suite">
             <directory>./tests/</directory>
+            <directory suffix=".phpt">./tests/</directory>
         </testsuite>
     </testsuites>
     <coverage>

@@ -4,3 +4,7 @@ parameters:
     paths:
         - src/
         - tests/
+
+    fileExtensions:
+        - php
+        - phpt
