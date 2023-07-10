@@ -5,6 +5,7 @@ namespace React\Promise\Internal;
 use React\Promise\PromiseInterface;
 use function React\Promise\_checkTypehint;
 use function React\Promise\resolve;
+use function React\Promise\set_rejection_handler;
 
 /**
  * @internal
@@ -25,16 +26,31 @@ final class RejectedPromise implements PromiseInterface
         $this->reason = $reason;
     }
 
+    /** @throws void */
     public function __destruct()
     {
         if ($this->handled) {
             return;
         }
 
-        $message = 'Unhandled promise rejection with ' . \get_class($this->reason) . ': ' . $this->reason->getMessage() . ' in ' . $this->reason->getFile() . ':' . $this->reason->getLine() . PHP_EOL;
-        $message .= 'Stack trace:' . PHP_EOL . $this->reason->getTraceAsString();
+        $handler = set_rejection_handler(null);
+        if ($handler === null) {
+            $message = 'Unhandled promise rejection with ' . \get_class($this->reason) . ': ' . $this->reason->getMessage() . ' in ' . $this->reason->getFile() . ':' . $this->reason->getLine() . PHP_EOL;
+            $message .= 'Stack trace:' . PHP_EOL . $this->reason->getTraceAsString();
 
-        \error_log($message);
+            \error_log($message);
+            return;
+        }
+
+        try {
+            $handler($this->reason);
+        } catch (\Throwable $e) {
+            $message = 'Fatal error: Uncaught ' . \get_class($e) . ' from unhandled promise rejection handler: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL;
+            $message .= 'Stack trace:' . PHP_EOL . $e->getTraceAsString();
+
+            \error_log($message);
+            exit(255);
+        }
     }
 
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
