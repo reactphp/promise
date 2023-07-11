@@ -207,6 +207,53 @@ function any(iterable $promisesOrValues): PromiseInterface
 }
 
 /**
+ * Sets the global rejection handler for unhandled promise rejections.
+ *
+ * Note that rejected promises should always be handled similar to how any
+ * exceptions should always be caught in a `try` + `catch` block. If you remove
+ * the last reference to a rejected promise that has not been handled, it will
+ * report an unhandled promise rejection. See also the [`reject()` function](#reject)
+ * for more details.
+ *
+ * The `?callable $callback` argument MUST be a valid callback function that
+ * accepts a single `Throwable` argument or a `null` value to restore the
+ * default promise rejection handler. The return value of the callback function
+ * will be ignored and has no effect, so you SHOULD return a `void` value. The
+ * callback function MUST NOT throw or the program will be terminated with a
+ * fatal error.
+ *
+ * The function returns the previous rejection handler or `null` if using the
+ * default promise rejection handler.
+ *
+ * The default promise rejection handler will log an error message plus its
+ * stack trace:
+ *
+ * ```php
+ * // Unhandled promise rejection with RuntimeException: Unhandled in example.php:2
+ * React\Promise\reject(new RuntimeException('Unhandled'));
+ * ```
+ *
+ * The promise rejection handler may be used to use customize the log message or
+ * write to custom log targets. As a rule of thumb, this function should only be
+ * used as a last resort and promise rejections are best handled with either the
+ * [`then()` method](#promiseinterfacethen), the
+ * [`catch()` method](#promiseinterfacecatch), or the
+ * [`finally()` method](#promiseinterfacefinally).
+ * See also the [`reject()` function](#reject) for more details.
+ *
+ * @param callable(\Throwable):void|null $callback
+ * @return callable(\Throwable):void|null
+ */
+function set_rejection_handler(?callable $callback): ?callable
+{
+    static $current = null;
+    $previous = $current;
+    $current = $callback;
+
+    return $previous;
+}
+
+/**
  * @internal
  */
 function _checkTypehint(callable $callback, \Throwable $reason): bool
