@@ -7,14 +7,6 @@ A lightweight implementation of
 [![CI status](https://github.com/reactphp/promise/workflows/CI/badge.svg)](https://github.com/reactphp/promise/actions)
 [![installs on Packagist](https://img.shields.io/packagist/dt/react/promise?color=blue&label=installs%20on%20Packagist)](https://packagist.org/packages/react/promise)
 
-> **Development version:** This branch contains the code for the upcoming 3.0 release.
-> For the code of the current stable 2.x release, check out the
-> [`2.x` branch](https://github.com/reactphp/promise/tree/2.x).
->
-> The upcoming 3.0 release will be the way forward for this package.
-> However, we will still actively support 2.0 and 1.0 for those not yet
-> on PHP 7.1+.
-
 Table of Contents
 -----------------
 
@@ -41,7 +33,7 @@ Table of Contents
      * [all()](#all)
      * [race()](#race)
      * [any()](#any)
-     * [set_rejection_handler()](#set-rejection-handler)
+     * [set_rejection_handler()](#set_rejection_handler)
 4. [Examples](#examples)
    * [How to use Deferred](#how-to-use-deferred)
    * [How promise forwarding works](#how-promise-forwarding-works)
@@ -438,7 +430,7 @@ A rejected promise will also be considered "handled" if you abort the operation
 with the [`cancel()` method](#promiseinterfacecancel) (which in turn would
 usually reject the promise if it is still pending).
 
-See also the [`set_rejection_handler()` function](#set-rejection-handler).
+See also the [`set_rejection_handler()` function](#set_rejection_handler).
 
 #### all()
 
@@ -668,11 +660,11 @@ Install
 The recommended way to install this library is [through Composer](https://getcomposer.org/).
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
 
-Once released, this project will follow [SemVer](https://semver.org/).
-At the moment, this will install the latest development version:
+This project follows [SemVer](https://semver.org/).
+This will install the latest supported version from this branch:
 
 ```bash
-composer require react/promise:^3@dev
+composer require react/promise:^3
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
@@ -690,7 +682,7 @@ You may target multiple versions at the same time to support a wider range of
 PHP versions like this:
 
 ```bash
-composer require "react/promise:^3@dev || ^2 || ^1"
+composer require "react/promise:^3 || ^2 || ^1"
 ```
 
 ## Tests
