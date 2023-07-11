@@ -2,6 +2,9 @@
 
 namespace React\Promise;
 
+/**
+ * @template-covariant T
+ */
 interface PromiseInterface
 {
     /**
@@ -28,9 +31,11 @@ interface PromiseInterface
      *  2. `$onFulfilled` and `$onRejected` will never be called more
      *      than once.
      *
-     * @param callable|null $onFulfilled
-     * @param callable|null $onRejected
-     * @return PromiseInterface
+     * @template TFulfilled
+     * @template TRejected
+     * @param ?(callable((T is void ? null : T)): (PromiseInterface<TFulfilled>|TFulfilled)) $onFulfilled
+     * @param ?(callable(\Throwable): (PromiseInterface<TRejected>|TRejected)) $onRejected
+     * @return PromiseInterface<($onRejected is null ? ($onFulfilled is null ? T : TFulfilled) : ($onFulfilled is null ? T|TRejected : TFulfilled|TRejected))>
      */
     public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
@@ -44,8 +49,10 @@ interface PromiseInterface
      * Additionally, you can type hint the `$reason` argument of `$onRejected` to catch
      * only specific errors.
      *
-     * @param callable $onRejected
-     * @return PromiseInterface
+     * @template TThrowable of \Throwable
+     * @template TRejected
+     * @param callable(TThrowable): (PromiseInterface<TRejected>|TRejected) $onRejected
+     * @return PromiseInterface<T|TRejected>
      */
     public function catch(callable $onRejected): PromiseInterface;
 
@@ -91,8 +98,8 @@ interface PromiseInterface
      *     ->finally('cleanup');
      * ```
      *
-     * @param callable $onFulfilledOrRejected
-     * @return PromiseInterface
+     * @param callable(): (void|PromiseInterface<void>) $onFulfilledOrRejected
+     * @return PromiseInterface<T>
      */
     public function finally(callable $onFulfilledOrRejected): PromiseInterface;
 
@@ -117,8 +124,10 @@ interface PromiseInterface
      * $promise->catch($onRejected);
      * ```
      *
-     * @param callable $onRejected
-     * @return PromiseInterface
+     * @template TThrowable of \Throwable
+     * @template TRejected
+     * @param callable(TThrowable): (PromiseInterface<TRejected>|TRejected) $onRejected
+     * @return PromiseInterface<T|TRejected>
      * @deprecated 3.0.0 Use catch() instead
      * @see self::catch()
      */
@@ -134,8 +143,8 @@ interface PromiseInterface
      * $promise->finally($onFulfilledOrRejected);
      * ```
      *
-     * @param callable $onFulfilledOrRejected
-     * @return PromiseInterface
+     * @param callable(): (void|PromiseInterface<void>) $onFulfilledOrRejected
+     * @return PromiseInterface<T>
      * @deprecated 3.0.0 Use finally() instead
      * @see self::finally()
      */

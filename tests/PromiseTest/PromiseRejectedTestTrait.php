@@ -5,6 +5,7 @@ namespace React\Promise\PromiseTest;
 use Exception;
 use InvalidArgumentException;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -298,7 +299,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): int { // @phpstan-ignore-line
                 return 1;
             })
             ->then(null, $mock);
@@ -319,7 +320,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then(null, $mock);
@@ -504,7 +505,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-        ->finally(function () {
+        ->finally(function (): int { // @phpstan-ignore-line
             return 1;
         })
         ->then(null, $mock);
@@ -528,7 +529,7 @@ trait PromiseRejectedTestTrait
 
         $adapter->reject($exception);
         $adapter->promise()
-            ->always(function () {
+            ->always(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then(null, $mock);

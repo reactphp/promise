@@ -9,14 +9,20 @@ use React\Promise\PromiseTest\PromiseFulfilledTestTrait;
 use React\Promise\PromiseTest\PromiseSettledTestTrait;
 use React\Promise\TestCase;
 
+/**
+ * @template T
+ */
 class FulfilledPromiseTest extends TestCase
 {
     use PromiseSettledTestTrait,
         PromiseFulfilledTestTrait;
 
+    /**
+     * @return CallbackPromiseAdapter<T>
+     */
     public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
-        /** @var ?FulfilledPromise */
+        /** @var ?FulfilledPromise<T> */
         $promise = null;
 
         return new CallbackPromiseAdapter([

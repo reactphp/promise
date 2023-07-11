@@ -4,12 +4,16 @@ namespace React\Promise;
 
 use React\Promise\Internal\RejectedPromise;
 
+/**
+ * @template T
+ * @template-implements PromiseInterface<T>
+ */
 final class Promise implements PromiseInterface
 {
     /** @var ?callable */
     private $canceller;
 
-    /** @var ?PromiseInterface */
+    /** @var ?PromiseInterface<T> */
     private $result;
 
     /** @var callable[] */
@@ -66,6 +70,12 @@ final class Promise implements PromiseInterface
         );
     }
 
+    /**
+     * @template TThrowable of \Throwable
+     * @template TRejected
+     * @param callable(TThrowable): (PromiseInterface<TRejected>|TRejected) $onRejected
+     * @return PromiseInterface<T|TRejected>
+     */
     public function catch(callable $onRejected): PromiseInterface
     {
         return $this->then(null, static function ($reason) use ($onRejected) {
@@ -73,6 +83,9 @@ final class Promise implements PromiseInterface
                 return new RejectedPromise($reason);
             }
 
+            /**
+             * @var callable(\Throwable):(PromiseInterface<TRejected>|TRejected) $onRejected
+             */
             return $onRejected($reason);
         });
     }
@@ -175,6 +188,9 @@ final class Promise implements PromiseInterface
         $this->settle(reject($reason));
     }
 
+    /**
+     * @param PromiseInterface<T> $result
+     */
     private function settle(PromiseInterface $result): void
     {
         $result = $this->unwrap($result);
@@ -207,9 +223,14 @@ final class Promise implements PromiseInterface
         }
     }
 
+    /**
+     * @param PromiseInterface<T> $promise
+     * @return PromiseInterface<T>
+     */
     private function unwrap(PromiseInterface $promise): PromiseInterface
     {
         while ($promise instanceof self && null !== $promise->result) {
+            /** @var PromiseInterface<T> $promise */
             $promise = $promise->result;
         }
 

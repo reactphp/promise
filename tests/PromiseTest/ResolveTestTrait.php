@@ -6,6 +6,7 @@ use Exception;
 use LogicException;
 use React\Promise;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
 use stdClass;
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -200,7 +201,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): int { // @phpstan-ignore-line
                 return 1;
             })
             ->then($mock);
@@ -222,7 +223,7 @@ trait ResolveTestTrait
             ->with($this->identicalTo($value));
 
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then($mock);

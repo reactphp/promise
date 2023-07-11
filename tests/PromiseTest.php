@@ -5,10 +5,16 @@ namespace React\Promise;
 use Exception;
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 
+/**
+ * @template T
+ */
 class PromiseTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
+    /**
+     * @return CallbackPromiseAdapter<T>
+     */
     public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
         $resolveCallback = $rejectCallback = null;
@@ -146,7 +152,7 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
-        /** @var Promise $promise */
+        /** @var Promise<never> $promise */
         $promise = new Promise(function () {}, function () use (&$promise) {
             assert($promise instanceof Promise);
             throw new \Exception('foo');
@@ -165,7 +171,7 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfResolverWithReferenceThrowsException(): void
     {
         gc_collect_cycles();
-        /** @var Promise $promise */
+        /** @var Promise<never> $promise */
         $promise = new Promise(function () use (&$promise) {
             assert($promise instanceof Promise);
             throw new \Exception('foo');
@@ -186,7 +192,7 @@ class PromiseTest extends TestCase
     public function shouldRejectWithoutCreatingGarbageCyclesIfCancellerHoldsReferenceAndResolverThrowsException(): void
     {
         gc_collect_cycles();
-        /** @var Promise $promise */
+        /** @var Promise<never> $promise */
         $promise = new Promise(function () {
             throw new \Exception('foo');
         }, function () use (&$promise) {

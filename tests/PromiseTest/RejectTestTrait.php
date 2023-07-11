@@ -6,6 +6,7 @@ use Exception;
 use React\Promise;
 use React\Promise\Deferred;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -73,7 +74,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception1));
 
         $adapter->promise()
-            ->then(null, function ($value) use ($exception3, $adapter) {
+            ->then(null, function (\Throwable $value) use ($exception3, $adapter): PromiseInterface {
                 $adapter->reject($exception3);
 
                 return reject($value);
@@ -140,7 +141,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): int { // @phpstan-ignore-line
                 return 1;
             })
             ->then(null, $mock);
@@ -162,7 +163,7 @@ trait RejectTestTrait
             ->with($this->identicalTo($exception));
 
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then(null, $mock);
