@@ -8,6 +8,8 @@ use function React\Promise\resolve;
 
 /**
  * @internal
+ *
+ * @template-implements PromiseInterface<never>
  */
 final class RejectedPromise implements PromiseInterface
 {
@@ -37,6 +39,12 @@ final class RejectedPromise implements PromiseInterface
         \error_log($message);
     }
 
+    /**
+     * @template TRejected
+     * @param ?callable $onFulfilled
+     * @param ?(callable(\Throwable): (PromiseInterface<TRejected>|TRejected)) $onRejected
+     * @return PromiseInterface<($onRejected is null ? never : TRejected)>
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
         if (null === $onRejected) {
@@ -52,12 +60,21 @@ final class RejectedPromise implements PromiseInterface
         }
     }
 
+    /**
+     * @template TThrowable of \Throwable
+     * @template TRejected
+     * @param callable(TThrowable): (PromiseInterface<TRejected>|TRejected) $onRejected
+     * @return PromiseInterface<TRejected>
+     */
     public function catch(callable $onRejected): PromiseInterface
     {
         if (!_checkTypehint($onRejected, $this->reason)) {
             return $this;
         }
 
+        /**
+         * @var callable(\Throwable):(PromiseInterface<TRejected>|TRejected) $onRejected
+         */
         return $this->then(null, $onRejected);
     }
 

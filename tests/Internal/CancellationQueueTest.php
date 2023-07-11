@@ -96,6 +96,9 @@ class CancellationQueueTest extends TestCase
         $cancellationQueue();
     }
 
+    /**
+     * @return Deferred<never>
+     */
     private function getCancellableDeferred(): Deferred
     {
         return new Deferred($this->expectCallableOnce());

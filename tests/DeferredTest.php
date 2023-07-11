@@ -4,10 +4,16 @@ namespace React\Promise;
 
 use React\Promise\PromiseAdapter\CallbackPromiseAdapter;
 
+/**
+ * @template T
+ */
 class DeferredTest extends TestCase
 {
     use PromiseTest\FullTestTrait;
 
+    /**
+     * @return CallbackPromiseAdapter<T>
+     */
     public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
     {
         $d = new Deferred($canceller);
@@ -54,7 +60,7 @@ class DeferredTest extends TestCase
         gc_collect_cycles();
         gc_collect_cycles(); // clear twice to avoid leftovers in PHP 7.4 with ext-xdebug and code coverage turned on
 
-        /** @var Deferred $deferred */
+        /** @var Deferred<never> $deferred */
         $deferred = new Deferred(function () use (&$deferred) {
             assert($deferred instanceof Deferred);
         });

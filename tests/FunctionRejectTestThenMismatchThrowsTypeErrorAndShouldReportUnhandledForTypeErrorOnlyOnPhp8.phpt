@@ -12,7 +12,7 @@ use function React\Promise\reject;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-reject(new RuntimeException('foo'))->then(null, function (UnexpectedValueException $unexpected): void {
+reject(new RuntimeException('foo'))->then(null, function (UnexpectedValueException $unexpected): void { // @phpstan-ignore-line
     echo 'This will never be shown because the types do not match' . PHP_EOL;
 });
 

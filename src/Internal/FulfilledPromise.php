@@ -7,14 +7,17 @@ use function React\Promise\resolve;
 
 /**
  * @internal
+ *
+ * @template T
+ * @template-implements PromiseInterface<T>
  */
 final class FulfilledPromise implements PromiseInterface
 {
-    /** @var mixed */
+    /** @var T */
     private $value;
 
     /**
-     * @param mixed $value
+     * @param T $value
      * @throws \InvalidArgumentException
      */
     public function __construct($value = null)
@@ -26,6 +29,11 @@ final class FulfilledPromise implements PromiseInterface
         $this->value = $value;
     }
 
+    /**
+     * @template TFulfilled
+     * @param ?(callable((T is void ? null : T)): (PromiseInterface<TFulfilled>|TFulfilled)) $onFulfilled
+     * @return PromiseInterface<($onFulfilled is null ? T : TFulfilled)>
+     */
     public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
     {
         if (null === $onFulfilled) {
@@ -33,7 +41,11 @@ final class FulfilledPromise implements PromiseInterface
         }
 
         try {
-            return resolve($onFulfilled($this->value));
+            /**
+             * @var PromiseInterface<T>|T $result
+             */
+            $result = $onFulfilled($this->value);
+            return resolve($result);
         } catch (\Throwable $exception) {
             return new RejectedPromise($exception);
         }

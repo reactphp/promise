@@ -2,9 +2,14 @@
 
 namespace React\Promise;
 
+/**
+ * @template T
+ */
 final class Deferred
 {
-    /** @var Promise */
+    /**
+     * @var PromiseInterface<T>
+     */
     private $promise;
 
     /** @var callable */
@@ -21,13 +26,16 @@ final class Deferred
         }, $canceller);
     }
 
+    /**
+     * @return PromiseInterface<T>
+     */
     public function promise(): PromiseInterface
     {
         return $this->promise;
     }
 
     /**
-     * @param mixed $value
+     * @param T $value
      */
     public function resolve($value): void
     {

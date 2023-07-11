@@ -4,6 +4,7 @@ namespace React\Promise\PromiseTest;
 
 use Exception;
 use React\Promise\PromiseAdapter\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
 use stdClass;
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -187,6 +188,7 @@ trait PromiseFulfilledTestTrait
      */
     public function thenShouldContinueToExecuteCallbacksWhenPriorCallbackSuspendsFiber(): void
     {
+        /** @var PromiseAdapterInterface<int> $adapter */
         $adapter = $this->getPromiseTestAdapter();
         $adapter->resolve(42);
 
@@ -261,7 +263,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): int { // @phpstan-ignore-line
                 return 1;
             })
             ->then($mock);
@@ -282,7 +284,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->finally(function () {
+            ->finally(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then($mock);
@@ -382,7 +384,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function () {
+            ->always(function (): int { // @phpstan-ignore-line
                 return 1;
             })
             ->then($mock);
@@ -406,7 +408,7 @@ trait PromiseFulfilledTestTrait
 
         $adapter->resolve($value);
         $adapter->promise()
-            ->always(function () {
+            ->always(function (): PromiseInterface { // @phpstan-ignore-line
                 return resolve(1);
             })
             ->then($mock);

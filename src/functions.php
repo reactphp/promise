@@ -17,8 +17,9 @@ use React\Promise\Internal\RejectedPromise;
  *
  * If `$promiseOrValue` is a promise, it will be returned as is.
  *
- * @param mixed $promiseOrValue
- * @return PromiseInterface
+ * @template T
+ * @param PromiseInterface<T>|T $promiseOrValue
+ * @return PromiseInterface<T>
  */
 function resolve($promiseOrValue): PromiseInterface
 {
@@ -31,6 +32,7 @@ function resolve($promiseOrValue): PromiseInterface
 
         if (\method_exists($promiseOrValue, 'cancel')) {
             $canceller = [$promiseOrValue, 'cancel'];
+            assert(\is_callable($canceller));
         }
 
         return new Promise(function ($resolve, $reject) use ($promiseOrValue): void {
@@ -54,8 +56,7 @@ function resolve($promiseOrValue): PromiseInterface
  * throwing an exception. For example, it allows you to propagate a rejection with
  * the value of another promise.
  *
- * @param \Throwable $reason
- * @return PromiseInterface
+ * @return PromiseInterface<never>
  */
 function reject(\Throwable $reason): PromiseInterface
 {
@@ -68,8 +69,9 @@ function reject(\Throwable $reason): PromiseInterface
  * will be an array containing the resolution values of each of the items in
  * `$promisesOrValues`.
  *
- * @param iterable<mixed> $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param iterable<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<array<T>>
  */
 function all(iterable $promisesOrValues): PromiseInterface
 {
@@ -119,14 +121,15 @@ function all(iterable $promisesOrValues): PromiseInterface
  * The returned promise will become **infinitely pending** if  `$promisesOrValues`
  * contains 0 items.
  *
- * @param iterable<mixed> $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param iterable<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<T>
  */
 function race(iterable $promisesOrValues): PromiseInterface
 {
     $cancellationQueue = new Internal\CancellationQueue();
 
-    return new Promise(function ($resolve, $reject) use ($promisesOrValues, $cancellationQueue): void {
+    return new Promise(function (callable $resolve, callable $reject) use ($promisesOrValues, $cancellationQueue): void {
         $continue = true;
 
         foreach ($promisesOrValues as $promiseOrValue) {
@@ -154,8 +157,9 @@ function race(iterable $promisesOrValues): PromiseInterface
  * The returned promise will also reject with a `React\Promise\Exception\LengthException`
  * if `$promisesOrValues` contains 0 items.
  *
- * @param iterable<mixed> $promisesOrValues
- * @return PromiseInterface
+ * @template T
+ * @param iterable<PromiseInterface<T>|T> $promisesOrValues
+ * @return PromiseInterface<T>
  */
 function any(iterable $promisesOrValues): PromiseInterface
 {
