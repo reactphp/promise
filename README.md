@@ -55,7 +55,7 @@ It also provides several other useful promise-related concepts, such as joining
 multiple promises and mapping and reducing collections of promises.
 
 If you've never heard about promises before,
-[read this first](https://gist.github.com/3889970).
+[read this first](https://gist.github.com/domenic/3889970).
 
 Concepts
 --------
