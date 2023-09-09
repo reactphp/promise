@@ -19,10 +19,13 @@ class PromiseTest extends TestCase
     {
         $resolveCallback = $rejectCallback = null;
 
-        $promise = new Promise(function ($resolve, $reject) use (&$resolveCallback, &$rejectCallback) {
+        $promise = new Promise(function (callable $resolve, callable $reject) use (&$resolveCallback, &$rejectCallback): void {
             $resolveCallback = $resolve;
             $rejectCallback  = $reject;
         }, $canceller);
+
+        assert(is_callable($resolveCallback));
+        assert(is_callable($rejectCallback));
 
         return new CallbackPromiseAdapter([
             'promise' => function () use ($promise) {
