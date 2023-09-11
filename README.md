@@ -318,7 +318,7 @@ $promise = new React\Promise\Promise($resolver, $canceller);
 ```
 
 The promise constructor receives a resolver function and an optional canceller
-function which both will be called with 3 arguments:
+function which both will be called with two arguments:
 
   * `$resolve($value)` - Primary function that seals the fate of the
     returned promise. Accepts either a non-promise value, or another promise.
