@@ -34,7 +34,7 @@ assertType('React\Promise\PromiseInterface<int>', resolve(true)->then(function (
 assertType('React\Promise\PromiseInterface<int>', resolve(true)->then(function (bool $value): PromiseInterface {
     return resolve(42);
 }));
-assertType('React\Promise\PromiseInterface<*NEVER*>', resolve(true)->then(function (bool $value): never {
+assertType('React\Promise\PromiseInterface<never>', resolve(true)->then(function (bool $value): never {
     throw new \RuntimeException();
 }));
 assertType('React\Promise\PromiseInterface<bool|int>', resolve(true)->then(null, function (\Throwable $e): int {
@@ -61,10 +61,10 @@ assertType('React\Promise\PromiseInterface<bool|int>', resolve(true)->catch(func
 }));
 
 assertType('React\Promise\PromiseInterface<bool>', resolve(true)->finally(function (): void { }));
-// assertType('React\Promise\PromiseInterface<*NEVER*>', resolve(true)->finally(function (): never {
+// assertType('React\Promise\PromiseInterface<never>', resolve(true)->finally(function (): never {
 //     throw new \RuntimeException();
 // }));
-// assertType('React\Promise\PromiseInterface<*NEVER*>', resolve(true)->finally(function (): PromiseInterface {
+// assertType('React\Promise\PromiseInterface<never>', resolve(true)->finally(function (): PromiseInterface {
 //     return reject(new \RuntimeException());
 // }));
 
@@ -79,9 +79,9 @@ assertType('React\Promise\PromiseInterface<bool|int>', resolve(true)->otherwise(
 }));
 
 assertType('React\Promise\PromiseInterface<bool>', resolve(true)->always(function (): void { }));
-// assertType('React\Promise\PromiseInterface<*NEVER*>', resolve(true)->always(function (): never {
+// assertType('React\Promise\PromiseInterface<never>', resolve(true)->always(function (): never {
 //     throw new \RuntimeException();
 // }));
-// assertType('React\Promise\PromiseInterface<*NEVER*>', resolve(true)->always(function (): PromiseInterface {
+// assertType('React\Promise\PromiseInterface<never>', resolve(true)->always(function (): PromiseInterface {
 //     return reject(new \RuntimeException());
 // }));
