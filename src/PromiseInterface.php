@@ -4,6 +4,7 @@ namespace React\Promise;
 
 /**
  * @template-covariant T
+ * @yield T
  */
 interface PromiseInterface
 {
