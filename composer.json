@@ -28,17 +28,22 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5 || ^5.7 || ^4.8.36"
+        "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36"
     },
     "autoload": {
         "psr-4": {
             "React\\Promise\\": "src/"
         },
-        "files": ["src/functions_include.php"]
+        "files": [
+            "src/functions_include.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "React\\Promise\\": ["tests", "tests/fixtures"]
+            "React\\Promise\\": [
+                "tests/",
+                "tests/fixtures/"
+            ]
         }
     },
     "keywords": [
