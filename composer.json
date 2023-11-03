@@ -9,17 +9,19 @@
         "php": ">=5.3.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5 || ^5.7 || ^4.8.36"
+        "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36"
     },
     "autoload": {
         "psr-4": { 
-            "React\\Promise\\": "src/React/Promise/" 
+            "React\\Promise\\": "src/React/Promise/"
         },
-        "files": ["src/React/Promise/functions_include.php"]
+        "files": [
+            "src/React/Promise/functions_include.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "React\\Tests\\Promise\\": "tests/React/Promise/" 
+            "React\\Tests\\Promise\\": "tests/React/Promise/"
         }
     },
     "extra": {
