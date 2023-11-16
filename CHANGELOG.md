@@ -1,6 +1,19 @@
 CHANGELOG for 1.x
 =================
 
+* 1.3.0 (2023-11-16)
+
+  This is a compatibility release to ensure a smooth upgrade path for those not
+  yet on Promise v3. We encourage upgrading to the latest version when possible,
+  as Promise v3 will be the way forward for this project.
+
+  * Feature: Full PHP 8.3 compatibility.
+    (#257 by @clue)
+
+  * Improve test suite, use GitHub actions for continuous integration (CI) and
+    report failed assertions.
+    (#242 by @clue and #175, #184, #187, #216 and #218 by @SimonFrings)
+
 * 1.2.1 (2016-03-07)
 
   * Fix `DeferredPromise` to also implement the `CancellablePromiseInterface`.
