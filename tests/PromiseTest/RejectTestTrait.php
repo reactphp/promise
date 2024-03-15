@@ -12,7 +12,7 @@ use function React\Promise\resolve;
 
 trait RejectTestTrait
 {
-    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
+    abstract public function getPromiseTestAdapter(?callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
     public function rejectShouldRejectWithAnException(): void

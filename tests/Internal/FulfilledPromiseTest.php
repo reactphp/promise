@@ -20,7 +20,7 @@ class FulfilledPromiseTest extends TestCase
     /**
      * @return CallbackPromiseAdapter<T>
      */
-    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
+    public function getPromiseTestAdapter(?callable $canceller = null): CallbackPromiseAdapter
     {
         /** @var ?FulfilledPromise<T> */
         $promise = null;

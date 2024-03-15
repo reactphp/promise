@@ -61,7 +61,7 @@ final class RejectedPromise implements PromiseInterface
      * @param ?(callable(\Throwable): (PromiseInterface<TRejected>|TRejected)) $onRejected
      * @return PromiseInterface<($onRejected is null ? never : TRejected)>
      */
-    public function then(callable $onFulfilled = null, callable $onRejected = null): PromiseInterface
+    public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface
     {
         if (null === $onRejected) {
             return $this;
