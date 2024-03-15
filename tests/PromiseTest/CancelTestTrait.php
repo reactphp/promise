@@ -8,7 +8,7 @@ use React\Promise\PromiseAdapter\PromiseAdapterInterface;
 
 trait CancelTestTrait
 {
-    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
+    abstract public function getPromiseTestAdapter(?callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
     public function cancelShouldCallCancellerWithResolverArguments(): void

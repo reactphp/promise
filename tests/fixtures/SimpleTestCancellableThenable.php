@@ -10,12 +10,12 @@ class SimpleTestCancellableThenable
     /** @var ?callable */
     public $onCancel;
 
-    public function __construct(callable $onCancel = null)
+    public function __construct(?callable $onCancel = null)
     {
         $this->onCancel = $onCancel;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null): self
+    public function then(?callable $onFulfilled = null, ?callable $onRejected = null): self
     {
         return new self();
     }
