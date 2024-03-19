@@ -15,7 +15,7 @@ class PromiseTest extends TestCase
     /**
      * @return CallbackPromiseAdapter<T>
      */
-    public function getPromiseTestAdapter(callable $canceller = null): CallbackPromiseAdapter
+    public function getPromiseTestAdapter(?callable $canceller = null): CallbackPromiseAdapter
     {
         $resolveCallback = $rejectCallback = null;
 

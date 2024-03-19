@@ -8,7 +8,7 @@ use React\Promise\PromiseInterface;
 
 trait PromiseSettledTestTrait
 {
-    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
+    abstract public function getPromiseTestAdapter(?callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
     public function thenShouldReturnAPromiseForSettledPromise(): void

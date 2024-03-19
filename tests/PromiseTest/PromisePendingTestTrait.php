@@ -7,7 +7,7 @@ use React\Promise\PromiseInterface;
 
 trait PromisePendingTestTrait
 {
-    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
+    abstract public function getPromiseTestAdapter(?callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
     public function thenShouldReturnAPromiseForPendingPromise(): void

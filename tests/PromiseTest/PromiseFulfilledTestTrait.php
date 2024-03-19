@@ -11,7 +11,7 @@ use function React\Promise\resolve;
 
 trait PromiseFulfilledTestTrait
 {
-    abstract public function getPromiseTestAdapter(callable $canceller = null): PromiseAdapterInterface;
+    abstract public function getPromiseTestAdapter(?callable $canceller = null): PromiseAdapterInterface;
 
     /** @test */
     public function fulfilledPromiseShouldBeImmutable(): void
