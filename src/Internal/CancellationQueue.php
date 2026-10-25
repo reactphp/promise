@@ -41,7 +41,7 @@ final class CancellationQueue
 
     private function drain(): void
     {
-        for ($i = \key($this->queue); isset($this->queue[$i]); $i++) {
+        for ($i = \key($this->queue) ?? 0; isset($this->queue[$i]); $i++) {
             $cancellable = $this->queue[$i];
             assert(\method_exists($cancellable, 'cancel'));
 
