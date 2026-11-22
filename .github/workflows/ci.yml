@@ -7,10 +7,11 @@ on:
 jobs:
   PHPUnit:
     name: PHPUnit (PHP ${{ matrix.php }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
@@ -36,10 +37,11 @@ jobs:
 
   PHPStan:
     name: PHPStan (PHP ${{ matrix.php }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         php:
+          - 8.6
           - 8.5
           - 8.4
           - 8.3
