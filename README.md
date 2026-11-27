@@ -15,10 +15,11 @@ Table of Contents
    * [Deferred](#deferred)
    * [Promise](#promise-1)
 3. [API](#api)
+    * [DeferredInterface](#deferredinterface)
+     * [DeferredInterface::promise()](#deferredinterfacepromise)
+     * [DeferredInterface::resolve()](#deferredinterfaceresolve)
+     * [DeferredInterface::reject()](#deferredinterfacereject)
    * [Deferred](#deferred-1)
-     * [Deferred::promise()](#deferredpromise)
-     * [Deferred::resolve()](#deferredresolve)
-     * [Deferred::reject()](#deferredreject)
    * [PromiseInterface](#promiseinterface)
      * [PromiseInterface::then()](#promiseinterfacethen)
      * [PromiseInterface::catch()](#promiseinterfacecatch)
@@ -75,10 +76,56 @@ a placeholder for its actual result.
 API
 ---
 
-### Deferred
+### DeferredInterface
+
+The deferred interface provides the common interface for all deferred
+implementations.
+See [Deferred](#deferred-1) for the only public implementation exposed by this
+package.
 
 A deferred represents an operation whose resolution is pending. It has separate
 promise and resolver parts.
+
+#### DeferredInterface::promise()
+
+```php
+$promise = $deferred->promise();
+```
+
+Returns the promise of the deferred, which you can hand out to others while
+keeping the authority to modify its state to yourself.
+
+#### DeferredInterface::resolve()
+
+```php
+$deferred->resolve(mixed $value);
+```
+
+Resolves the promise returned by `promise()`. All consumers are notified by
+having `$onFulfilled` (which they registered via `$promise->then()`) called with
+`$value`.
+
+If `$value` itself is a promise, the promise will transition to the state of
+this promise once it is resolved.
+
+See also the [`resolve()` function](#resolve).
+
+#### DeferredInterface::reject()
+
+```php
+$deferred->reject(\Throwable $reason);
+```
+
+Rejects the promise returned by `promise()`, signalling that the deferred's
+computation failed.
+All consumers are notified by having `$onRejected` (which they registered via
+`$promise->then()`) called with `$reason`.
+
+See also the [`reject()` function](#reject).
+
+### Deferred
+
+Creates a Deferred to control the state of an associated promise.
 
 ```php
 $deferred = new React\Promise\Deferred();
@@ -95,43 +142,6 @@ The `resolve` and `reject` methods control the state of the deferred.
 
 The constructor of the `Deferred` accepts an optional `$canceller` argument.
 See [Promise](#promise-2) for more information.
-
-#### Deferred::promise()
-
-```php
-$promise = $deferred->promise();
-```
-
-Returns the promise of the deferred, which you can hand out to others while
-keeping the authority to modify its state to yourself.
-
-#### Deferred::resolve()
-
-```php
-$deferred->resolve(mixed $value);
-```
-
-Resolves the promise returned by `promise()`. All consumers are notified by
-having `$onFulfilled` (which they registered via `$promise->then()`) called with
-`$value`.
-
-If `$value` itself is a promise, the promise will transition to the state of
-this promise once it is resolved.
-
-See also the [`resolve()` function](#resolve).
-
-#### Deferred::reject()
-
-```php
-$deferred->reject(\Throwable $reason);
-```
-
-Rejects the promise returned by `promise()`, signalling that the deferred's
-computation failed.
-All consumers are notified by having `$onRejected` (which they registered via
-`$promise->then()`) called with `$reason`.
-
-See also the [`reject()` function](#reject).
 
 ### PromiseInterface
 
