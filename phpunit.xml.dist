@@ -28,5 +28,7 @@
         <ini name="assert.active" value="1" />
         <ini name="assert.exception" value="1" />
         <ini name="assert.bail" value="0" />
+        <!-- Prevent Xdebug from overriding var_dump() -->
+        <env name="XDEBUG_MODE" value="off"/>
     </php>
 </phpunit>

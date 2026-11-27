@@ -128,18 +128,31 @@ class FunctionResolveTest extends TestCase
     /** @test */
     public function shouldSupportVeryDeepNestedPromises(): void
     {
-        if (PHP_VERSION_ID < 70200 && ini_get('xdebug.max_nesting_level') !== false) {
+        $stackDepthLimit = ini_get('xdebug.max_nesting_level');
+        if (PHP_VERSION_ID < 70200 && $stackDepthLimit !== false) {
             $this->markTestSkipped('Skip unhandled rejection on legacy PHP 7.1');
         }
 
+        // Calculate the maximum number of nested promises we can handle
+        $stackOverhead = 25; // allow for PHPUnit's stack entries
+        $promiseStackRequirement = 4; // each nested promise requires 4 entries on the stack
+
+        // Normalise stack depth limit and ensure we have enough room on the stack for a meaningful test
+        $stackDepthLimit = (int) ($stackDepthLimit ?: 512);
+        if ($stackDepthLimit <= $stackOverhead + ($promiseStackRequirement * 10)) {
+            $this->markTestSkipped("Skip xdebug.max_nesting_limit set too low");
+        }
+
+        $nestingLimit = (int) (($stackDepthLimit - $stackOverhead) / $promiseStackRequirement);
+
         $deferreds = [];
 
-        for ($i = 0; $i < 150; $i++) {
+        for ($i = 0; $i < $nestingLimit; $i++) {
             $deferreds[] = $d = new Deferred();
             $p = $d->promise();
 
             $last = $p;
-            for ($j = 0; $j < 150; $j++) {
+            for ($j = 0; $j < $nestingLimit; $j++) {
                 $last = $last->then(function ($result) {
                     return $result;
                 });
