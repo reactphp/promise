@@ -4,8 +4,9 @@ namespace React\Promise;
 
 /**
  * @template T
+ * @template-implements DeferredInterface<T>
  */
-final class Deferred
+final class Deferred implements DeferredInterface
 {
     /**
      * @var PromiseInterface<T>
